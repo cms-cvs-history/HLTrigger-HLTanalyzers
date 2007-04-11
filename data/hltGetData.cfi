@@ -1,0 +1,5 @@
+	module hltGetData = HLTGetData {
+		InputTag EBdigiCollection = ecalDigis:ebDigis
+		InputTag EEdigiCollection = ecalDigis:eeDigis
+		InputTag ESdigiCollection = ecalPreshowerDigis
+	}
