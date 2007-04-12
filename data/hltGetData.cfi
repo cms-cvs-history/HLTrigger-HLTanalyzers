@@ -2,4 +2,22 @@
 		InputTag EBdigiCollection = ecalDigis:ebDigis
 		InputTag EEdigiCollection = ecalDigis:eeDigis
 		InputTag ESdigiCollection = ecalPreshowerDigis
+
+                #--- Unsuppressed digis ---#
+#		InputTag HBHEdigiCollection = hcalDigis
+#		InputTag HOdigiCollection = hcalDigis
+#		InputTag HFdigiCollection = hcalDigis
+
+                #--- Zero-suppressed digis ---#
+		InputTag HBHEdigiCollection = hbheZeroSuppressedDigis
+		InputTag HOdigiCollection = hoZeroSuppressedDigis
+		InputTag HFdigiCollection = hfZeroSuppressedDigis
+
+                InputTag SiPixeldigiCollection = siPixelDigis
+                InputTag SiStripdigiCollection = siStripDigis
+
+                InputTag CSCStripdigiCollection = muonCSCDigis:MuonCSCStripDigi
+                InputTag CSCWiredigiCollection = muonCSCDigis:MuonCSCWireDigi
+                InputTag DTdigiCollection = muonDTDigis
+                InputTag RPCdigiCollection = muonRPCDigis
 	}
