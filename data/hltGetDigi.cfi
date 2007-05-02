@@ -1,17 +1,28 @@
-	module hltGetDigi = HLTGetDigi {
-		InputTag EBdigiCollection = ecalDigis:ebDigis
-		InputTag EEdigiCollection = ecalDigis:eeDigis
-		InputTag ESdigiCollection = ecalPreshowerDigis
+module hltGetDigi = HLTGetDigi {
+   
+   # Define which digis we want to "get"
+   untracked bool getEcal   = true
+   untracked bool getEcalES = true
+   untracked bool getHcal   = true
+   untracked bool getPixels = true
+   untracked bool getStrips = true
+   untracked bool getCSC    = true
+   untracked bool getDT     = true
+   untracked bool getRPC    = true
 
-		InputTag HBHEdigiCollection = hcalDigis
-		InputTag HOdigiCollection   = hcalDigis
-		InputTag HFdigiCollection   = hcalDigis
+   InputTag EBdigiCollection = ecalDigis:ebDigis
+   InputTag EEdigiCollection = ecalDigis:eeDigis
+   InputTag ESdigiCollection = ecalPreshowerDigis
 
-                InputTag SiPixeldigiCollection = siPixelDigis
-                InputTag SiStripdigiCollection = siStripDigis
+   InputTag HBHEdigiCollection = hcalDigis
+   InputTag HOdigiCollection   = hcalDigis
+   InputTag HFdigiCollection   = hcalDigis
 
-                InputTag CSCStripdigiCollection = muonCSCDigis:MuonCSCStripDigi
-                InputTag CSCWiredigiCollection  = muonCSCDigis:MuonCSCWireDigi
-                InputTag DTdigiCollection       = muonDTDigis
-                InputTag RPCdigiCollection      = muonRPCDigis
-	}
+   InputTag SiPixeldigiCollection = siPixelDigis
+   InputTag SiStripdigiCollection = siStripDigis
+
+   InputTag CSCStripdigiCollection = muonCSCDigis:MuonCSCStripDigi
+   InputTag CSCWiredigiCollection  = muonCSCDigis:MuonCSCWireDigi
+   InputTag DTdigiCollection       = muonDTDigis
+   InputTag RPCdigiCollection      = muonRPCDigis
+}
