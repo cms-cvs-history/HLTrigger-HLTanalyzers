@@ -54,8 +54,8 @@ TH1F cum("cum","hlt obj",bin,min,max);
 /////////////////////////////////////////////////////////////
 // Cross-sections [pb]
 
-const Int_t Nfil = 18; // Total number of files, of different x-section, to be read
-const Int_t Nqcd = 16; // Actual number of QCD files
+const Int_t Nfil = 28; // Total number of files, of different x-section, to be read
+const Int_t Nqcd = 14; // Actual number of QCD files
 Double_t xsec[Nfil];
 xsec[0] = 5.52E10; // PYTHIA cross-section for QCD in 0 < ^pt < 15
 xsec[1] = 1.46E9; // PYTHIA cross-section for QCD in 15 < ^pt < 20
@@ -71,16 +71,38 @@ xsec[10] = 1.78E3; // PYTHIA cross-section for QCD in 380 < ^pt < 470
 xsec[11] = 6.83E2; // PYTHIA cross-section for QCD in 470 < ^pt < 600
 xsec[12] = 2.04E2; // PYTHIA cross-section for QCD in 600 < ^pt < 800
 xsec[13] = 3.51E1; // PYTHIA cross-section for QCD in 800 < ^pt < 1000
-xsec[14] = 1.09E1; // PYTHIA cross-section for QCD in 1000 < ^pt < 1400
-xsec[15] = 1.06; // PYTHIA cross-section for QCD in 1400 < ^pt < 1800
-// xsec[16] = 1.45E-1; // PYTHIA cross-section for QCD in 1800 < ^pt < 2200
-// xsec[17] = 2.38E-2; // PYTHIA cross-section for QCD in 2200 < ^pt < 2600
-// xsec[18] = 4.29E-3; // PYTHIA cross-section for QCD in 2600 < ^pt < 3000
-// xsec[19] = 8.44E-4; // PYTHIA cross-section for QCD in 3000 < ^pt < 3500
-// xsec[20] = 1.08E-4; // PYTHIA cross-section for QCD in 3500 < ^pt < ...
 // Add below the x-section of any other "signal" file to be read
-xsec[16] = 7.9E3; // PYTHIA cross-section for W -> e nu
-xsec[17] = 9.8E3; // PYTHIA cross-section for W -> mu nu
+xsec[14] = 1.702E8; // PYTHIA cross-section for Gamma+Jet 0_15
+xsec[15] = 2.570E5; // PYTHIA cross-section for Gamma+Jet 15_20
+xsec[16] = 1.319E5; // PYTHIA cross-section for Gamma+Jet 20_30
+xsec[17] = 4.114E4; // PYTHIA cross-section for Gamma+Jet 30_50
+xsec[18] = 7.210E3; // PYTHIA cross-section for Gamma+Jet 50_80
+xsec[19] = 2.578E2; // PYTHIA cross-section for Gamma+Jet 120_170
+xsec[20] = 8.709E1; // PYTHIA cross-section for Gamma+Jet 170_300
+xsec[21] = 8.285E0; // PYTHIA cross-section for Gamma+Jet 300_500
+xsec[22] = 8.778E-1; // PYTHIA cross-section for Gamma+Jet 500_7000
+xsec[23] = 7.9E3; // PYTHIA cross-section for W -> e nu
+xsec[24] = 9.8E3; // PYTHIA cross-section for W -> mu nu
+xsec[25] = 8.2E2; // PYTHIA cross-section for Z -> 2e
+xsec[26] = 7.9E2; // PYTHIA cross-section for Z -> 2mu
+xsec[27] = 2.4E7 * 0.246165; // PYTHIA cross-section for pp->muX   x   skim efficiency
+
+Double_t skmeff[Nqcd]; // Skim efficiencies for QCD bins
+skmeff[0] = 0.00785551;
+skmeff[1] = 0.0662648;
+skmeff[2] = 0.180299;
+skmeff[3] = 0.479294;
+skmeff[4] = 0.8257;
+skmeff[5] = 0.977063;
+skmeff[6] = 1.;
+skmeff[7] = 1.;
+skmeff[8] = 1.;
+skmeff[9] = 1.;
+skmeff[10] = 1.;
+skmeff[11] = 1.;
+skmeff[12] = 1.;
+skmeff[13] = 1.;
+for (int ip = 1; ip != Nqcd; ++ip){xsec[ip] *= skmeff[ip];}
 
 
 // Convert cross-sections in cm^2
@@ -90,40 +112,45 @@ for (int i=0; i != Nfil; ++i){xsec[i] *= 1.E-36;}
 // Instanteneous Luminosity [cm^-2 s^-1]
 
 // const Double_t ILumi = 8.E32;
-const Double_t ILumi = 2.E33;
-// const Double_t ILumi = 1.E34;
+// const Double_t ILumi = 2.E33;
+const Double_t ILumi = 1.E32;
 
 /////////////////////////////////////////////////////////////
 // Files
 
 TString ProcFil[Nfil];
-ProcFil[0] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-0-15.root";
-ProcFil[1] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-15-20.root";
-ProcFil[2] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-20-30.root";
-ProcFil[3] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-30-50.root";
-ProcFil[4] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-50-80.root";
-ProcFil[5] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-80-120.root";
-ProcFil[6] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-120-170.root";
-ProcFil[7] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-170-230.root";
-ProcFil[8] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-230-300.root";
-ProcFil[9] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-300-380.root";
-ProcFil[10] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-380-470.root";
-ProcFil[11] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-470-600.root";
-ProcFil[12] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-600-800.root";
-ProcFil[13] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-800-1000.root";
-ProcFil[14] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-1000-1400.root";
-ProcFil[15] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/1_3_0/HLTanalysis_QCD-1400-1800.root";
-// ProcFil[16] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_QCD-1800-2200.root";
-// ProcFil[17] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_QCD-2200-2600.root";
-// ProcFil[18] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_QCD-2600-3000.root";
-// ProcFil[19] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_QCD-3000-3500.root";
-// ProcFil[20] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_QCD-3500.root";
+ProcFil[0] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-0-15.root";
+ProcFil[1] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-15-20.root";
+ProcFil[2] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-20-30.root";
+ProcFil[3] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-30-50.root";
+ProcFil[4] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-50-80.root";
+ProcFil[5] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-80-120.root";
+ProcFil[6] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-120-170.root";
+ProcFil[7] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-170-230.root";
+ProcFil[8] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-230-300.root";
+ProcFil[9] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-300-380.root";
+ProcFil[10] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-380-470.root";
+ProcFil[11] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-470-600.root";
+ProcFil[12] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-600-800.root";
+ProcFil[13] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_QCD-800-1000.root";
 // Add below any other "signal" file to be read
-ProcFil[16] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_W_ENU.root";
-ProcFil[17] = "/afs/cern.ch/user/b/bargassa/scratch0/HLTAnalysis_inputs/HLTanalysis_W_MUNU.root";
+ProcFil[14] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_0_15_CMSSW_1_2_0-Analysis.root";
+ProcFil[15] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_15_20_CMSSW_1_2_0-Analysis.root";
+ProcFil[16] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_20_30_CMSSW_1_2_0-Analysis.root";
+ProcFil[17] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_30_50_CMSSW_1_2_0-Analysis.root";
+ProcFil[18] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_50_80_CMSSW_1_2_0-Analysis.root";
+ProcFil[19] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_120_170_CMSSW_1_2_0-Analysis.root";
+ProcFil[20] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_170_300_CMSSW_1_2_0-Analysis.root";
+ProcFil[21] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_300_500_CMSSW_1_2_0-Analysis.root";
+ProcFil[22] = "/afs/hep.wisc.edu/cms/dasu/apana/GLOBAL/131HLT3/mc-onsel-120_PU_Photon_Jets_pt_500_7000_CMSSW_1_2_0-Analysis.root";
+ProcFil[23] = "/afs/hep.wisc.edu/home/tulika/data/GLOBAL/Round2/WenuHistos.root";
+ProcFil[24] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_W_MuNu.root";
+ProcFil[25] = "/afs/hep.wisc.edu/home/tulika/data/GLOBAL/Round2/ZeeHistos.root";
+ProcFil[26] = "/afs/hep.wisc.edu/home/tulika/data/GLOBAL/Round2/ZmumuHistos.root";
+ProcFil[27] = "/afs/hep.wisc.edu/cms/dasu/bargassa/v3p/HLTanalysis_ppmuX.root";
 
 TChain TabChain[Nfil];
-for (int ip = 0; ip != Nfil; ++ip){
+for (int ip = 1; ip != Nfil; ++ip){
   TabChain[ip] = new TChain("HltTree");
   TabChain[ip].Add(ProcFil[ip]);
 }
@@ -132,10 +159,9 @@ for (int ip = 0; ip != Nfil; ++ip){
 // Triggers
 
 // Number of triggers
-const Int_t Ntrig = 25;
+const Int_t Ntrig = 51;
 TString trigname[Ntrig];
 
-// Jet/MET triggers
 trigname[0] = "HLT1jet";
 trigname[1] = "HLT2jet";
 trigname[2] = "HLT3jet";
@@ -147,26 +173,46 @@ trigname[7] = "HLT1jet1MET";
 trigname[8] = "HLT2jet1MET";
 trigname[9] = "HLT3jet1MET";
 trigname[10] = "HLT4jet1MET";
-trigname[11] = "HLT1MET1HT";
-trigname[12] = "HLT1jetPE1";
-trigname[13] = "HLT1jetPE3";
-trigname[14] = "HLT1jetPE5";
-// Egamma triggers
-trigname[15] = "HLT1Electron";
-trigname[16] = "HLT2Electron";
-trigname[17] = "HLT2ElectronRelaxed";
-trigname[18] = "HLT1Photon";
-trigname[19] = "HLT2Photon";
-trigname[20] = "HLT2PhotonRelaxed";
-// Muon triggers
-trigname[21] = "HLT1MuonIso";
-trigname[22] = "HLT1MuonNonIso";
-trigname[23] = "HLT2MuonIso";
-trigname[24] = "HLT2MuonNonIso";
-// Tau triggers
-// trigname[25] = "HLT1Tau";
-// trigname[26] = "HLT2Tau";
-// trigname[27] = "HLTPixelTau";
+trigname[11] = "HLT2jetvbfMET";
+trigname[12] = "HLT1MET1HT";
+trigname[13] = "HLT1jetPE1";
+trigname[14] = "HLT1jetPE3";
+trigname[15] = "HLT1jetPE5";
+trigname[16] = "HLT1Electron";
+trigname[17] = "HLT2Electron";
+trigname[18] = "HLT2ElectronRelaxed";
+trigname[19] = "HLT1Photon";
+trigname[20] = "HLT2Photon";
+trigname[21] = "HLT2PhotonRelaxed";
+trigname[22] = "HLT1MuonIso";
+trigname[23] = "HLT1MuonNonIso";
+trigname[24] = "HLT2MuonIso";
+trigname[25] = "HLT2MuonNonIso";
+trigname[26] = "HLT2MuonJPsi";
+trigname[27] = "HLT2MuonUpsilon";
+trigname[28] = "HLT2MuonZ";
+trigname[29] = "HLTNMuonNonIso";
+trigname[30] = "HLT2MuonSameSign";
+trigname[31] = "HLTB1Jet";
+trigname[32] = "HLTB2Jet";
+trigname[33] = "HLTB3Jet";
+trigname[34] = "HLTB4Jet";
+trigname[35] = "HLTB1JetMu";
+trigname[36] = "HLTB2JetMu";
+trigname[37] = "HLTB3JetMu";
+trigname[38] = "HLTB4JetMu";
+trigname[39] = "HLTBJPsiMuMu";
+trigname[40] = "HLT1Tau";
+trigname[41] = "HLT2Tau";
+trigname[42] = "HLTPixelTau";
+trigname[43] = "HLTXElectronBJet";
+trigname[44] = "HLTXMuonBJet";
+trigname[45] = "HLTXMuonBJetSoftMuon";
+trigname[46] = "HLTXMuonJets";
+trigname[47] = "HLTXElectronMuon";
+trigname[48] = "HLTXElectronTau";
+trigname[49] = "HLTMinBias";
+trigname[50] = "HLTZeroBias";
 
 
 // Trigger cuts
@@ -192,66 +238,39 @@ for (int it = 0; it != Ntrig; ++it){
 }
 
 // Loop over files of different processes
-for (int ip = 0; ip != Nfil; ++ip){
+for (int ip = 1; ip != Nfil; ++ip){
 
   TabChain[ip] . Draw("NobjHltPart>>den");                     // Get the denominators
   Int_t deno = den.GetEntries();                               //
 
-  // Setup the flag for special particles generated
-  Int_t BsFg = 0;
-//   if (ip<Nqcd){
-//     TH1F *mid = new TH1F("mid","MCid",100,0.,1000000000.);
-//     TabChain[ip].Draw("MCPid>>mid");
-//     Int_t *vid = TabChain[ip].GetV1();
-//     for (int i=0; i<mid->GetEntries(); i++){
-//       if ((vid[i]==-24)||(vid[i]==24)){BsFg = 1;}      // W
-// //       if ((vid[i]==-23)||(vid[i]==23)){BsFg = 1;}      // Z
-// //       if ((vid[i]==-11)||(vid[i]==11)){BsFg = 1;}      // Muon
-//       else{BsFg = 0;}
-//     }
-//   }
-//   else {BsFg = 0;}
-
-  if (BsFg==0){
-
 // Loop over triggers
-    for (int it = 0; it != Ntrig; ++it){
+  for (int it = 0; it != Ntrig; ++it){
       
-      TabChain[ip] . Draw("NobjHltPart>>num",hc[it]);            // Get the numerators
-      Int_t nume = num.GetEntries();                             //
+    TabChain[ip] . Draw("NobjHltPart>>num",hc[it]);            // Get the numerators
+    Int_t nume = num.GetEntries();                             //
       
-      //test
-      if (trigname[it]=="HLT1MuonIso"){
-	cout << trigname[it] << " " << ip << " " << ILumi*xsec[ip]*eff(nume,deno) << " " 
-	     << ILumi*xsec[ip]*seff(nume,deno) << "\n";
-      }
-
-      if (eff(nume,deno)>=2.E-4){                                // Not exposed to stat. fluctuation : fix the limit ... !
-	Rat[it] += (xsec[ip]*eff(nume,deno));                      // Single rates
-	sRat[it] += (pow(xsec[ip],2.)*pow(seff(nume,deno),2.));    //
+    Rat[it] += (xsec[ip]*eff(nume,deno));                      // Single rates
+    sRat[it] += (pow(xsec[ip],2.)*pow(seff(nume,deno),2.));    //
 	
-	Oden[it] += nume;                                          // Get global overlap denominator
-	TCut all = hc[it];
-	for (int jt = 0; jt != Ntrig; ++jt){
-	  if (jt==it){
-	    Onum[it][jt] = Oden[it];                               // Get global overlap numerator 
-	  }
-	  else {
-	    TCut hov = hc[it] + hc[jt];                            // Get global overlap numerator 
-	    TabChain[ip] . Draw("NobjHltPart>>num",hov);           //
-	    Onum[it][jt] += num.GetEntries();                      //
-	  }
-	  if (jt<it) {all += hnc[jt];}
-	}
-	TabChain[ip] . Draw("NobjHltPart>>cum",all);               // Get Trigger[it] pure rate...
-	int cumu = cum.GetEntries();                               // ...
-	pRat[it] += (xsec[ip]*eff(cumu,deno));                     // ... summed over different processes
-	spRat[it] += (pow(xsec[ip],2.)*pow(seff(cumu,deno),2.));   //
+    Oden[it] += nume;                                          // Get global overlap denominator
+    TCut all = hc[it];
+    for (int jt = 0; jt != Ntrig; ++jt){
+      if (jt==it){
+	Onum[it][jt] = Oden[it];                               // Get global overlap numerator 
       }
+      else {
+	TCut hov = hc[it] + hc[jt];                            // Get global overlap numerator 
+	TabChain[ip] . Draw("NobjHltPart>>num",hov);           //
+	Onum[it][jt] += num.GetEntries();                      //
+      }
+      if (jt<it) {all += hnc[jt];}
+    }
+    TabChain[ip] . Draw("NobjHltPart>>cum",all);               // Get Trigger[it] pure rate...
+    int cumu = cum.GetEntries();                               // ...
+    pRat[it] += (xsec[ip]*eff(cumu,deno));                     // ... summed over different processes
+    spRat[it] += (pow(xsec[ip],2.)*pow(seff(cumu,deno),2.));   //
       
-    } // End loop over triggers
-
-  }
+  } // End loop over triggers
 
 }
 
