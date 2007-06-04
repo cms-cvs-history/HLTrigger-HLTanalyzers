@@ -10,8 +10,6 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   //set parameter defaults 
   _EtaMin=-5.2;
   _EtaMax=5.2;
-//   _CalJetMin=0.;
-//   _GenJetMin=0.;
   _HistName="test.root";
   m_file=0; // set to null
 
@@ -46,8 +44,6 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
     if ( (*iParam) == "HistogramFile" ) _HistName =  myAnaParams.getParameter<string>( *iParam );
     else if ( (*iParam) == "EtaMin" ) _EtaMin =  myAnaParams.getParameter<double>( *iParam );
     else if ( (*iParam) == "EtaMax" ) _EtaMax =  myAnaParams.getParameter<double>( *iParam );
-//     else if ( (*iParam) == "CalJetMin" ) _CalJetMin =  myAnaParams.getParameter<double>( *iParam );
-//     else if ( (*iParam) == "GenJetMin" ) _GenJetMin =  myAnaParams.getParameter<double>( *iParam );
   }
 
 //   cout << "---------- Input Parameters ---------------------------" << endl;

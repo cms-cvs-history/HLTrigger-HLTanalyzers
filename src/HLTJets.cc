@@ -17,6 +17,8 @@ HLTJets::HLTJets() {
   //set parameter defaults 
   _Monte=false;
   _Debug=false;
+  _CalJetMin=0.;
+  _GenJetMin=0.;
 }
 
 /*  Setup the analysis to put the branch-variables into the tree. */
@@ -29,6 +31,8 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 	iParam != parameterNames.end(); iParam++ ){
     if  ( (*iParam) == "Monte" ) _Monte =  myJetParams.getParameter<bool>( *iParam );
     else if ( (*iParam) == "Debug" ) _Debug =  myJetParams.getParameter<bool>( *iParam );
+    else if ( (*iParam) == "CalJetMin" ) _CalJetMin =  myJetParams.getParameter<double>( *iParam );
+    else if ( (*iParam) == "GenJetMin" ) _GenJetMin =  myJetParams.getParameter<double>( *iParam );
   }
 
   const int kMaxJetCal = 10000;
@@ -106,8 +110,7 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
     int jcal=0;
     for ( cjiter i=mycalojets.begin(); i!=mycalojets.end(); i++) {
 
-//       if (i->pt()>_CalJetMin){
-      if (i->pt()>10.){
+      if (i->pt()>_CalJetMin){
 	jcalpt[jcal] = i->pt();
 	jcalphi[jcal] = i->phi();
 	jcaleta[jcal] = i->eta();
@@ -158,8 +161,7 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
       int jgen=0;
       for ( gjiter i=mygenjets.begin(); i!=mygenjets.end(); i++) {
 
-// 	if (i->pt()>_GenJetMin){
-	if (i->pt()>10.){
+	if (i->pt()>_GenJetMin){
 	  jgenpt[jgen] = i->pt();
 	  jgenphi[jgen] = i->phi();
 	  jgeneta[jgen] = i->eta();
