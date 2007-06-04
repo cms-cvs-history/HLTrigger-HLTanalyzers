@@ -97,7 +97,7 @@ void HLTInfo::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("NobjL1ExtCenJet",&nl1extjetc,"NobjL1ExtCenJet/I");
   HltTree->Branch("L1ExtCenJetEt",l1extjtcet,"L1ExtCenJetEt[NobjL1ExtCenJet]/F");
   HltTree->Branch("L1ExtCenJetE",l1extjtce,"L1ExtCenJetE[NobjL1ExtCenJet]/F");
-  HltTree->Branch("L1ExtCenJetEta",l1extjtceta,"L1ExtCenJetEta[NobjL1ExtJCenet]/F");
+  HltTree->Branch("L1ExtCenJetEta",l1extjtceta,"L1ExtCenJetEta[NobjL1ExtCenJet]/F");
   HltTree->Branch("L1ExtCenJetPhi",l1extjtcphi,"L1ExtCenJetPhi[NobjL1ExtCenJet]/F");
   HltTree->Branch("NobjL1ExtForJet",&nl1extjetf,"NobjL1ExtForJet/I");
   HltTree->Branch("L1ExtForJetEt",l1extjtfet,"L1ExtForJetEt[NobjL1ExtForJet]/F");
@@ -111,6 +111,7 @@ void HLTInfo::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("L1ExtTauPhi",l1exttauphi,"L1ExtTauPhi[NobjL1ExtTau]/F");
   HltTree->Branch("L1ExtMet",&met,"L1ExtMet/F");
   HltTree->Branch("L1ExtMetPhi",&metphi,"L1ExtMetPhi/F");
+  HltTree->Branch("L1ExtMetEta",&meteta,"L1ExtMetEta/F");
   HltTree->Branch("L1ExtMetTot",&mettot,"L1ExtMetTot/F");
   HltTree->Branch("L1ExtMetHad",&methad,"L1ExtMetHad/F");
 
@@ -308,6 +309,7 @@ void HLTInfo::analyze(const HLTFilterObjectWithRefs& hltobj,
   if (&L1ExtMet) {
     met = L1ExtMet.energy();
     metphi = L1ExtMet.phi();
+    meteta = L1ExtMet.eta();
     mettot = L1ExtMet.etTotal();
     methad = L1ExtMet.etHad();
   }
