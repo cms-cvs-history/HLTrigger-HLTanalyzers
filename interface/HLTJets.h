@@ -59,6 +59,7 @@ private:
 
   // input variables
   bool _Monte,_Debug;
+  float _CalJetMin, _GenJetMin;
 
   int evtCounter;
 
