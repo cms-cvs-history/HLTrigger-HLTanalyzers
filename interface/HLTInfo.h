@@ -61,7 +61,7 @@ private:
   float *l1extjtcet, *l1extjtce, *l1extjtceta, *l1extjtcphi;
   float *l1extjtfet, *l1extjtfe, *l1extjtfeta, *l1extjtfphi;
   float *l1exttauet, *l1exttaue, *l1exttaueta, *l1exttauphi;
-  float met, metphi, mettot, methad;
+  float met, metphi, meteta, mettot, methad;
   int L1EvtCnt,HltEvtCnt,nhltpart,nl1extiem,nl1extnem,nl1extmu,nl1extjetc,nl1extjetf,nl1extjt,nl1exttau;
   int *trigflag, *l1flag, *l1extmuiso, *l1extmumip;
 
