@@ -47,6 +47,7 @@ void HLTMCtruth::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("MCmu3",&nmu3,"MCmu3/I");
   HltTree->Branch("MCbb",&nbb,"MCbb/I");
   HltTree->Branch("MCab",&nab,"MCab/I");
+  HltTree->Branch("MCPtHat",&pthat,"MCPtHat/F");
 
 }
 
@@ -63,6 +64,7 @@ void HLTMCtruth::analyze(const HepMC::GenEvent mctruth,
     int mbb = 0;
 
     if (&mctruth){
+
       for (HepMC::GenEvent::particle_const_iterator partIter = mctruth.particles_begin();
 	   partIter != mctruth.particles_end();++partIter) {
 	CLHEP::HepLorentzVector creation = (*partIter)->CreationVertex();
@@ -78,6 +80,8 @@ void HLTMCtruth::analyze(const HepMC::GenEvent mctruth,
 	if (mcpid[nmc]==-5) {mab += 1;} // Flag for bbar
 	if (mcpid[nmc]==5) {mbb += 1;} // Flag for b
       }
+
+      pthat = mctruth.event_scale(); // Pt-hat of the event
 
     }
     else {std::cout << "%HLTMCtruth -- No MC truth information" << std::endl;}
