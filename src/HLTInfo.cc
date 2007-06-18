@@ -317,9 +317,11 @@ void HLTInfo::analyze(const HLTFilterObjectWithRefs& hltobj,
 
   if (&L1MapColl) {
 
+    int nl1mapcol = L1MapColl.size();
+
     // 1st event : Book as many branches as trigger paths provided in the input...
     if (L1EvtCnt==0){
-      for (int itrig = 0; itrig != l1extra::L1ParticleMap::kNumOfL1TriggerTypes; ++itrig){
+      for (int itrig = 0; itrig != nl1mapcol; ++itrig){
 	const l1extra::L1ParticleMap& map = ( L1MapColl )[ itrig ] ;
 	TString trigName = map.triggerName();
 	HltTree->Branch(trigName,l1flag+itrig,trigName+"/I");
@@ -327,7 +329,7 @@ void HLTInfo::analyze(const HLTFilterObjectWithRefs& hltobj,
       L1EvtCnt++;
     }
     // ...Fill the corresponding accepts in branch-variables
-    for (int itrig = 0; itrig != l1extra::L1ParticleMap::kNumOfL1TriggerTypes; ++itrig){
+    for (int itrig = 0; itrig != nl1mapcol; ++itrig){
       const l1extra::L1ParticleMap& map = ( L1MapColl )[ itrig ] ;
       l1flag[itrig] = map.triggerDecision();
     }

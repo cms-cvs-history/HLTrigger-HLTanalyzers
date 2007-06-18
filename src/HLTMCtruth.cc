@@ -69,14 +69,14 @@ void HLTMCtruth::analyze(const HepMC::GenEvent mctruth,
 	   partIter != mctruth.particles_end();++partIter) {
 	CLHEP::HepLorentzVector creation = (*partIter)->CreationVertex();
 	CLHEP::HepLorentzVector momentum = (*partIter)->Momentum();
-	HepPDT::ParticleID id = (*partIter)->particleID();  // electrons and positrons are 11 and -11
+	HepPDT::ParticleID id = (*partIter)->particleID();
 	mcpid[nmc] = id.pid();
 	mcvx[nmc] = creation.x();
 	mcvy[nmc] = creation.y();
 	mcvz[nmc] = creation.z();
 	mcpt[nmc] = momentum.perp();
 	nmc++;
-	if (((mcpid[nmc]==11)||(mcpid[nmc]==-11))&&(mcpt[nmc]>3.)) {mu3 += 1;} // Flag for muons with pT > 3 GeV/c
+	if (((mcpid[nmc]==13)||(mcpid[nmc]==-13))&&(mcpt[nmc]>3.)) {mu3 += 1;} // Flag for muons with pT > 3 GeV/c
 	if (mcpid[nmc]==-5) {mab += 1;} // Flag for bbar
 	if (mcpid[nmc]==5) {mbb += 1;} // Flag for b
       }
