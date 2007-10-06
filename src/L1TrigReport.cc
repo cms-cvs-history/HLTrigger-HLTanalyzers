@@ -2,8 +2,8 @@
  *
  * See header file for documentation
  *
- *  $Date: 2007/03/28 20:33:07 $
- *  $Revision: 1.2 $
+ *  $Date: 2007/10/05 18:17:51 $
+ *  $Revision: 1.8 $
  *
  *  \author Martin Grunewald
  *
@@ -14,24 +14,22 @@
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
-#include "DataFormats/L1Trigger/interface/L1ParticleMap.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include <cassert>
 #include <iomanip>
 
 //
 // constructors and destructor
 //
 L1TrigReport::L1TrigReport(const edm::ParameterSet& iConfig) :
-  l1ParticleMapTag_ (iConfig.getParameter<edm::InputTag> ("L1ExtraParticleMap")),
   l1GTReadoutRecTag_(iConfig.getParameter<edm::InputTag> ("L1GTReadoutRecord")),
   nEvents_(0),
   nErrors_(0),
   nAccepts_(0),
   l1Accepts_(0),
   l1Names_(0),
-  init_(false)
+  init_(false),
+  nSize_(0)
 {
   LogDebug("") << "Level-1 Global Trigger Readout Record: " + l1GTReadoutRecTag_.encode();
 }
@@ -51,8 +49,6 @@ L1TrigReport::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   using namespace std;
   using namespace edm;
-  using namespace reco;
-  const unsigned int n(l1extra::L1ParticleMap::kNumOfL1TriggerTypes);
 
   nEvents_++;
 
@@ -68,40 +64,27 @@ L1TrigReport::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nErrors_++;
     return;
   }
+  const unsigned int n(L1GTRR->decisionWord().size());
 
-  // get hold of L1ParticleMapCollection
-  Handle<l1extra::L1ParticleMapCollection> L1PMC;
-  try {iEvent.getByLabel(l1ParticleMapTag_,L1PMC);} catch (...) {;}
-  if (L1PMC.isValid()) {
-    LogDebug("") << "L1ParticleMapCollection contains " << L1PMC->size() << " maps.";
-  } else {
-    LogDebug("") << "L1ParticleMapCollection with label ["+l1ParticleMapTag_.encode()+"] not found!";
-    nErrors_++;
-    return;
-  }
-
-  // initialisation (could be made dynamic)
-  assert(n==L1PMC->size());
-  if (!init_) {
+  // initialisation - check for L1T table change
+  if ( (!init_) || (nSize_!=n) ) {
+    if (init_) endJob();
     init_=true;
+    nSize_=n;
+    nEvents_=0;
+    nErrors_=0;
+    nAccepts_=0;
     l1Names_.resize(n);
     l1Accepts_.resize(n);
     for (unsigned int i=0; i!=n; ++i) {
       l1Accepts_[i]=0;
-      if (i<l1extra::L1ParticleMap::kNumOfL1TriggerTypes) {
-	l1extra::L1ParticleMap::L1TriggerType 
-	  type(static_cast<l1extra::L1ParticleMap::L1TriggerType>(i));
-	l1Names_[i]=l1extra::L1ParticleMap::triggerName(type);
-      } else {
-	l1Names_[i]="@@NameNotFound??";
-      }
+      l1Names_[i]="NameNotAvailable";
     }
   }
 
   // decision for each L1 algorithm
   for (unsigned int i=0; i!=n; ++i) {
-    if ((*L1PMC)[i].triggerDecision()) l1Accepts_[i]++;
-    //    if (L1GTRR->decisionWord()[i]) l1Accepts_[i]++;
+    if (L1GTRR->decisionWord()[i]) l1Accepts_[i]++;
   }
 
   return;
@@ -114,7 +97,6 @@ L1TrigReport::endJob()
   // final printout of accumulated statistics
 
   using namespace std;
-  const unsigned int n(l1extra::L1ParticleMap::kNumOfL1TriggerTypes);
 
     cout << dec << endl;
     cout << "L1T-Report " << "---------- Event  Summary ------------\n";
@@ -135,7 +117,7 @@ L1TrigReport::endJob()
 	 << "Name" << "\n";
 
   if (init_) {
-    for (unsigned int i=0; i!=n; ++i) {
+    for (unsigned int i=0; i!=nSize_; ++i) {
       cout << "L1T-Report "
 	   << right << setw(10) << i << " "
 	   << right << setw(10) << l1Accepts_[i] << " "
