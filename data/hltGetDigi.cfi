@@ -9,6 +9,13 @@ module hltGetDigi = HLTGetDigi {
    untracked bool getCSC    = true
    untracked bool getDT     = true
    untracked bool getRPC    = true
+   untracked bool getGTReadoutRecord = true
+   untracked bool getGmtReadout      = true
+   untracked bool getGt       = true
+   untracked bool getGmtCands = true
+   untracked bool getGctEm    = true
+   untracked bool getGctJet   = true
+   untracked bool getGctEt    = true
 
    InputTag EBdigiCollection = ecalDigis:ebDigis
    InputTag EEdigiCollection = ecalDigis:eeDigis
@@ -25,4 +32,27 @@ module hltGetDigi = HLTGetDigi {
    InputTag CSCWiredigiCollection  = muonCSCDigis:MuonCSCWireDigi
    InputTag DTdigiCollection       = muonDTDigis
    InputTag RPCdigiCollection      = muonRPCDigis
+
+   InputTag L1CaloEmCollection = l1RctEmulDigis
+   InputTag L1CaloRegionCollection = l1RctEmulDigis
+
+   InputTag GctIsoEmCollection = l1GctEmulDigis:isoEm
+   InputTag GctNonIsoEmCollection = l1GctEmulDigis:nonIsoEm
+
+   InputTag GctCenJetCollection = l1GctEmulDigis:cenJets
+   InputTag GctForJetCollection = l1GctEmulDigis:tauJets
+   InputTag GctTauJetCollection = l1GctEmulDigis:tauJets
+   InputTag GctJetCounts = l1GctEmulDigis
+
+   InputTag GctEtHadCollection = l1GctEmulDigis
+   InputTag GctEtMissCollection = l1GctEmulDigis
+   InputTag GctEtTotalCollection = l1GctEmulDigis
+
+   InputTag GtEvmReadoutRecord = l1GtEmulDigis
+   InputTag GtObjectMapRecord = l1GtEmulDigis
+   InputTag GtReadoutRecord = l1GtEmulDigis
+
+   InputTag GmtCands = l1GmtEmulDigis
+   InputTag GmtReadoutCollection = l1GmtEmulDigis
+
 }
