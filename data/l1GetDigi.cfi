@@ -1,21 +1,23 @@
-module hltGetDigi = HLTGetDigi {
+module l1GetDigi = HLTGetDigi {
    
    # Define which digis we want to "get"
-   untracked bool getEcal   = true
-   untracked bool getEcalES = true
-   untracked bool getHcal   = true
-   untracked bool getPixels = true
-   untracked bool getStrips = true
-   untracked bool getCSC    = true
-   untracked bool getDT     = true
-   untracked bool getRPC    = true
-   untracked bool getGTReadoutRecord = true
-   untracked bool getGmtReadout      = true
+   untracked bool getEcal   = false
+   untracked bool getEcalES = false
+   untracked bool getHcal   = false
+   untracked bool getPixels = false
+   untracked bool getStrips = false
+   untracked bool getCSC    = false
+   untracked bool getDT     = false
+   untracked bool getRPC    = false
+   #--- L1 values that are unpacked ---#
+   untracked bool getGTReadoutRecord = false
+   untracked bool getGmtReadout      = false
+   #--- L1 quantities we must "get" ---#
    untracked bool getGt       = true
    untracked bool getGmtCands = true
-   untracked bool getGctEm    = true
-   untracked bool getGctJet   = true
-   untracked bool getGctEt    = true
+   untracked bool getGctEm  = true
+   untracked bool getGctJet = true
+   untracked bool getGctEt  = true
 
    InputTag EBdigiCollection = ecalDigis:ebDigis
    InputTag EEdigiCollection = ecalDigis:eeDigis

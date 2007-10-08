@@ -1,6 +1,5 @@
 //
 	module l1TrigReport = L1TrigReport {
-		InputTag L1ExtraParticleMap = l1extraParticleMap
-		InputTag L1GTReadoutRecord  = l1extraParticleMap
+		InputTag L1GTReadoutRecord  = l1GtEmulDigis
 	}
 //
