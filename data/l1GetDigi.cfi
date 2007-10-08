@@ -1,0 +1,60 @@
+module l1GetDigi = HLTGetDigi {
+   
+   # Define which digis we want to "get"
+   untracked bool getEcal   = false
+   untracked bool getEcalES = false
+   untracked bool getHcal   = false
+   untracked bool getPixels = false
+   untracked bool getStrips = false
+   untracked bool getCSC    = false
+   untracked bool getDT     = false
+   untracked bool getRPC    = false
+   #--- L1 values that are unpacked ---#
+   untracked bool getGTReadoutRecord = false
+   untracked bool getGmtReadout      = false
+   #--- L1 quantities we must "get" ---#
+   untracked bool getGt       = true
+   untracked bool getGmtCands = true
+   untracked bool getGctEm  = true
+   untracked bool getGctJet = true
+   untracked bool getGctEt  = true
+
+   InputTag EBdigiCollection = ecalDigis:ebDigis
+   InputTag EEdigiCollection = ecalDigis:eeDigis
+   InputTag ESdigiCollection = ecalPreshowerDigis
+
+   InputTag HBHEdigiCollection = hcalDigis
+   InputTag HOdigiCollection   = hcalDigis
+   InputTag HFdigiCollection   = hcalDigis
+
+   InputTag SiPixeldigiCollection = siPixelDigis
+   InputTag SiStripdigiCollection = siStripDigis
+
+   InputTag CSCStripdigiCollection = muonCSCDigis:MuonCSCStripDigi
+   InputTag CSCWiredigiCollection  = muonCSCDigis:MuonCSCWireDigi
+   InputTag DTdigiCollection       = muonDTDigis
+   InputTag RPCdigiCollection      = muonRPCDigis
+
+   InputTag L1CaloEmCollection = l1RctEmulDigis
+   InputTag L1CaloRegionCollection = l1RctEmulDigis
+
+   InputTag GctIsoEmCollection = l1GctEmulDigis:isoEm
+   InputTag GctNonIsoEmCollection = l1GctEmulDigis:nonIsoEm
+
+   InputTag GctCenJetCollection = l1GctEmulDigis:cenJets
+   InputTag GctForJetCollection = l1GctEmulDigis:tauJets
+   InputTag GctTauJetCollection = l1GctEmulDigis:tauJets
+   InputTag GctJetCounts = l1GctEmulDigis
+
+   InputTag GctEtHadCollection = l1GctEmulDigis
+   InputTag GctEtMissCollection = l1GctEmulDigis
+   InputTag GctEtTotalCollection = l1GctEmulDigis
+
+   InputTag GtEvmReadoutRecord = l1GtEmulDigis
+   InputTag GtObjectMapRecord = l1GtEmulDigis
+   InputTag GtReadoutRecord = l1GtEmulDigis
+
+   InputTag GmtCands = l1GmtEmulDigis
+   InputTag GmtReadoutCollection = l1GmtEmulDigis
+
+}
