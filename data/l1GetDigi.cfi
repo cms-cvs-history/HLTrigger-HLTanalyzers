@@ -1,6 +1,7 @@
 module l1GetDigi = HLTGetDigi {
    
    # Define which digis we want to "get"
+
    untracked bool getEcal   = false
    untracked bool getEcalES = false
    untracked bool getHcal   = false
@@ -9,15 +10,15 @@ module l1GetDigi = HLTGetDigi {
    untracked bool getCSC    = false
    untracked bool getDT     = false
    untracked bool getRPC    = false
-   #--- L1 values that are unpacked ---#
-   untracked bool getGTReadoutRecord = false
-   untracked bool getGmtReadout      = false
-   #--- L1 quantities we must "get" ---#
-   untracked bool getGt       = true
-   untracked bool getGmtCands = true
+
    untracked bool getGctEm    = true
    untracked bool getGctJet   = true
    untracked bool getGctEt    = true
+   untracked bool getL1Calo          = false
+   untracked bool getGtRecords= true
+   untracked bool getGTReadoutRecord = false
+   untracked bool getGmtCands = true
+   untracked bool getGmtReadout      = false
 
    InputTag EBdigiCollection = ecalDigis:ebDigis
    InputTag EEdigiCollection = ecalDigis:eeDigis
