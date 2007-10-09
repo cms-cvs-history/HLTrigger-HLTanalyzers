@@ -15,9 +15,9 @@ module l1GetDigi = HLTGetDigi {
    #--- L1 quantities we must "get" ---#
    untracked bool getGt       = true
    untracked bool getGmtCands = true
-   untracked bool getGctEm  = true
-   untracked bool getGctJet = true
-   untracked bool getGctEt  = true
+   untracked bool getGctEm    = true
+   untracked bool getGctJet   = true
+   untracked bool getGctEt    = true
 
    InputTag EBdigiCollection = ecalDigis:ebDigis
    InputTag EEdigiCollection = ecalDigis:eeDigis
