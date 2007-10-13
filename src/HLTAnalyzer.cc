@@ -121,8 +121,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   try {iEvent.getByLabel(muon_,muon);} catch (...) { errMsg=errMsg + "  -- No Candidate Muons";}
 //   try {iEvent.getByLabel(hltobj_,hltobj);} catch (...) { errMsg=errMsg + "  -- No HLTOBJ";}
   try {iEvent.getByType(hltresults);} catch (...) { errMsg=errMsg + "  -- No HLTRESULTS";}
-  try {iEvent.getByLabel(l1extramc_,l1extemi);} catch (...) { errMsg=errMsg + "  -- No Isol. L1Em objects";}
-  try {iEvent.getByLabel(l1extramc_,l1extemn);} catch (...) { errMsg=errMsg + "  -- No Non-isol. L1Em objects";}
+  try {iEvent.getByLabel(l1extramc_,"Isolated",l1extemi);} catch (...) { errMsg=errMsg + "  -- No Isol. L1Em objects";}
+  try {iEvent.getByLabel(l1extramc_,"NonIsolated",l1extemn);} catch (...) { errMsg=errMsg + "  -- No Non-isol. L1Em objects";}
   try {iEvent.getByLabel(l1extramc_,l1extmu);} catch (...) { errMsg=errMsg + "  -- No L1Mu objects";}
   try {iEvent.getByLabel(l1extramc_,"Central",l1extjetc);} catch (...) { errMsg=errMsg + "  -- No central L1Jet objects";}
   try {iEvent.getByLabel(l1extramc_,"Forward",l1extjetf);} catch (...) { errMsg=errMsg + "  -- No forward L1Jet objects";}
