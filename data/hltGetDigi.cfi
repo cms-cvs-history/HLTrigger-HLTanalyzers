@@ -12,13 +12,15 @@ module hltGetDigi = HLTGetDigi {
    untracked bool getDT     = true
    untracked bool getRPC    = true
 
-   untracked bool getGctEm    = true
-   untracked bool getGctJet   = true
-   untracked bool getGctEt    = true
+   untracked bool getGctEm           = true
+   untracked bool getGctJet          = true
+   untracked bool getGctJetCounts    = true
+   untracked bool getGctEt           = true
    untracked bool getL1Calo          = false
-   untracked bool getGtRecords= true
-   untracked bool getGTReadoutRecord = true
-   untracked bool getGmtCands = true
+   untracked bool getGtEvmRR         = true
+   untracked bool getGtObjectMap     = true
+   untracked bool getGtReadoutRecord = true
+   untracked bool getGmtCands        = true
    untracked bool getGmtReadout      = true
 
    InputTag EBdigiCollection = ecalDigis:ebDigis
