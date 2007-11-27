@@ -35,19 +35,19 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     else if ( (*iParam) == "GenJetMin" ) _GenJetMin =  myJetParams.getParameter<double>( *iParam );
   }
 
-  const int kMaxJetCal = 10000;
+  const int kMaxJetCal = 500;
   jcalpt = new float[kMaxJetCal];
   jcalphi = new float[kMaxJetCal];
   jcaleta = new float[kMaxJetCal];
   jcalet = new float[kMaxJetCal];
   jcale = new float[kMaxJetCal];
-  const int kMaxJetgen = 10000;
+  const int kMaxJetgen = 500;
   jgenpt = new float[kMaxJetgen];
   jgenphi = new float[kMaxJetgen];
   jgeneta = new float[kMaxJetgen];
   jgenet = new float[kMaxJetgen];
   jgene = new float[kMaxJetgen];
-  const int kMaxTower = 10000;
+  const int kMaxTower = 500;
   towet = new float[kMaxTower];
   toweta = new float[kMaxTower];
   towphi = new float[kMaxTower];
@@ -55,7 +55,17 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   towem = new float[kMaxTower];
   towhd = new float[kMaxTower];
   towoe = new float[kMaxTower];
-
+  const int kMaxTau2 = 500;
+  l2t2emiso = new float[kMaxTau2];
+  l25t2Pt = new float[kMaxTau2];
+  l25t2tckiso = new int[kMaxTau2];
+  const int kMaxTau1 = 500;
+  l2t1emiso = new float[kMaxTau1];
+  l25t1Pt = new float[kMaxTau1];
+  l25t1tckiso = new int[kMaxTau1];
+  l3t1Pt = new float[kMaxTau1];
+  l3t1tiso = new int[kMaxTau1];
+  
   // Jet- MEt-specific branches of the tree 
   HltTree->Branch("NrecoJetCal",&njetcal,"NrecoJetCal/I");
   HltTree->Branch("NrecoJetGen",&njetgen,"NrecoJetGen/I");
@@ -86,6 +96,16 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoHTCal",&htcalet,"recoHTCal/F");
   HltTree->Branch("recoHTCalPhi",&htcalphi,"recoHTCalPhi/F");
   HltTree->Branch("recoHTCalSum",&htcalsum,"recoHTCalSum/F");
+  HltTree->Branch("NohTau2",&nohtau2,"NohTau2/I");
+  HltTree->Branch("ohTau2Eiso",l2t2emiso,"ohTau2Eiso[NohTau2]/F");
+  HltTree->Branch("ohTau2L2Tpt",l25t2Pt,"ohTau2L2Tpt[NohTau2]/F");
+  HltTree->Branch("ohTau2L2Tiso",l25t2tckiso,"ohTau2L2Tiso[NohTau2]/I");
+  HltTree->Branch("NohTau1",&nohtau1,"NohTau1/I");
+  HltTree->Branch("ohTau1Eiso",l2t1emiso,"ohTau1Eiso[NohTau1]/F");
+  HltTree->Branch("ohTau1L2Tpt",l25t1Pt,"ohTau1L2Tpt[NohTau1]/F");
+  HltTree->Branch("ohTau1L2Tiso",l25t1tckiso,"ohTau1L2Tiso[NohTau1]/I");
+  HltTree->Branch("ohTau1L3Tpt",l3t1Pt,"ohTau1L3Tpt[NohTau1]/F");
+  HltTree->Branch("ohTau1L3Tiso",l3t1tiso,"ohTau1L3Tiso[NohTau1]/I");
 
   //for(int ieta=0;ieta<NETA;ieta++){cout << " ieta " << ieta << " eta min " << CaloTowerEtaBoundries[ieta] <<endl;}
 
@@ -98,6 +118,8 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
 		      const GenMETCollection& genmets,
 		      const METCollection& ht,
 		      const CaloTowerCollection& caloTowers,
+		      const reco::HLTTauCollection& myHLT1Tau,
+		      const reco::HLTTauCollection& myHLT2Tau,
 		      const CaloGeometry& geom,
 		      TTree* HltTree) {
 
@@ -201,6 +223,51 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
     }
 
   }
+
+  /////////////////////////////// Open-HLT Taus ///////////////////////////////
+
+    if (&myHLT2Tau){
+
+      nohtau2 = myHLT2Tau.size();
+      typedef HLTTauCollection::const_iterator t2it;
+      int it2=0;
+      for(t2it i=myHLT2Tau.begin(); i!=myHLT2Tau.end(); i++){
+	//Ask for L2 EMIsolation cut: Nominal cut : < 5
+	l2t2emiso[it2] = i->getEMIsolationValue();
+	//Get L25 LeadTrackPt : Nominal cut : > 3 GeV
+	l25t2Pt[it2] = i->getL25LeadTrackPtValue();
+	//Get TrackIsolation response (returns 0 = failed or 1= passed)
+	l25t2tckiso[it2] = i->getL25TrackIsolationResponse();
+	it2++;
+      }
+      //FOR THE DOUBLETAU THERE IS NO L3 RECONSTRUCTION
+      //As we are speaking about the DoubleTau Trigger, we want at least 2 candidates surviving the L2.5 condition
+
+    }
+    else {nohtau2 = 0;}
+
+    if (&myHLT1Tau){
+
+      nohtau1 = myHLT1Tau.size();
+      typedef HLTTauCollection::const_iterator t1it;
+      int it1=0;
+      for(t1it i=myHLT1Tau.begin(); i!=myHLT1Tau.end(); i++){
+	//Ask for L2 EMIsolation cut: Nominal cut : < 5
+	l2t1emiso[it1] = i->getEMIsolationValue();
+	//Get L25 LeadTrackPt : Nominal cut : > 20 GeV
+	l25t1Pt[it1] = i->getL25LeadTrackPtValue();
+	//Get TrackIsolation response (returns 0 = failed or 1= passed)
+	l25t1tckiso[it1] = i->getL25TrackIsolationResponse();
+	//Get L3 LeadTrackPt : Nominal cut : > 20 GeV
+	l3t1Pt[it1] = i->getL3LeadTrackPtValue();
+	//Get TrackIsolation response (returns 0 = failed or 1= passed)
+	l3t1tiso[it1] = i->getL3TrackIsolationResponse();
+	//MET : > 65
+	it1++;
+      }
+
+    }
+    else {nohtau1 = 0;}
 
 
 }
