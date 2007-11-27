@@ -23,6 +23,9 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 
+#include"DataFormats/TauReco/interface/HLTTau.h"
+/* #include"DataFormats/TauReco/interface/HLTTauFwd.h" */
+
 #include "HLTrigger/HLTanalyzers/interface/JetUtil.h"
 #include "HLTrigger/HLTanalyzers/interface/CaloTowerBoundries.h"
 
@@ -47,6 +50,8 @@ public:
 	       const GenMETCollection& gmets,
 	       const METCollection& ht,
 	       const CaloTowerCollection& caloTowers,
+	       const reco::HLTTauCollection& myHLT1Tau,
+	       const reco::HLTTauCollection& myHLT2Tau,
 	       const CaloGeometry& geom,
 	       TTree* tree);
 
@@ -60,8 +65,12 @@ private:
   float htcalet,htcalphi,htcalsum;
   float mgenmet,mgenphi,mgensum;
   int njetcal,njetgen,ntowcal;
+  int nohtau1,nohtau2;
 
-  // input variables
+  float *l2t2emiso, *l25t2Pt;
+  float *l2t1emiso, *l25t1Pt, *l3t1Pt;
+  int *l25t2tckiso, *l25t1tckiso, *l3t1tiso;
+
   bool _Monte,_Debug;
   float _CalJetMin, _GenJetMin;
 

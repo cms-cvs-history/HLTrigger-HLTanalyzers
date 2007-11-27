@@ -16,6 +16,10 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/RecoCandidate/interface/RecoChargedCandidate.h"
+#include "DataFormats/MuonReco/interface/MuIsoDeposit.h"
+
 #include "HLTrigger/HLTanalyzers/interface/JetUtil.h"
 #include "HLTrigger/HLTanalyzers/interface/CaloTowerBoundries.h"
 
@@ -37,14 +41,22 @@ public:
 
   /** Analyze the Data */
   void analyze(const MuonCollection& muon,
+	       const RecoChargedCandidateCollection& mucands2,
+	       const reco::MuIsoAssociationMap& isoMap2,
+	       const RecoChargedCandidateCollection& mucands3,
+	       const reco::MuIsoAssociationMap& isoMap3,
 	       const CaloGeometry& geom,
 	       TTree* tree);
+
 
 private:
 
   // Tree variables
   float *muonpt, *muonphi, *muoneta, *muonet, *muone; 
-  int nmuon;
+  float *muonl2pt, *muonl2eta, *muonl2phi, *muonl2dr, *muonl2dz;
+  float *muonl3pt, *muonl3eta, *muonl3phi, *muonl3dr, *muonl3dz;
+  int nmuon, nmu2cand, nmu3cand;
+  int *muonl2chg, *muonl2iso, *muonl3chg, *muonl3iso;
 
   // input variables
   bool _Monte,_Debug;

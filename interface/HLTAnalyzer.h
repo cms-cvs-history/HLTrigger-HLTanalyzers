@@ -47,6 +47,8 @@ private:
   std::string Electron_,Photon_,muon_;
   std::string l1extramc_,particleMapSource_,mctruth_; 
   std::string ecalDigisLabel_,hcalDigisLabel_;
+  std::string MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;
+  std::string myHLT1Tau_,myHLT2Tau_;
   int errCnt;
   const int errMax(){return 100;}
 

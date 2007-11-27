@@ -39,6 +39,13 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   ecalDigisLabel_ = conf.getParameter<std::string> ("ecalDigisLabel");
   hcalDigisLabel_ = conf.getParameter<std::string> ("hcalDigisLabel");
 
+  MuCandTag2_ = conf.getParameter<std::string> ("MuCandTag2");
+  MuIsolTag2_ = conf.getParameter<std::string> ("MuIsolTag2");
+  MuCandTag3_ = conf.getParameter<std::string> ("MuCandTag3");
+  MuIsolTag3_ = conf.getParameter<std::string> ("MuIsolTag3");
+  myHLT1Tau_ = conf.getParameter<std::string> ("HLT1Tau");
+  myHLT2Tau_ = conf.getParameter<std::string> ("HLT2Tau");
+
   errCnt=0;
 
   edm::ParameterSet myAnaParams = conf.getParameter<edm::ParameterSet>("RunParameters") ;
@@ -105,6 +112,9 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<l1extra::L1ParticleMapCollection> l1mapcoll;
   edm::Handle<EcalTrigPrimDigiCollection> ecal;
   edm::Handle<HcalTrigPrimDigiCollection> hcal;
+  edm::Handle<RecoChargedCandidateCollection> mucands2,mucands3;
+  edm::Handle<reco::MuIsoAssociationMap> isoMap2,isoMap3;
+  edm::Handle<reco::HLTTauCollection> myHLT1Tau,myHLT2Tau;
 
 
   // Extract Data objects (event fragments)
@@ -132,8 +142,16 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
 
   try {iEvent.getByLabel(mctruth_,mctruth);} catch (...) { errMsg=errMsg + "  -- No Gen Particles";}
 
-  try {iEvent.getByLabel(ecalDigisLabel_,ecal);} catch (...) { errMsg=errMsg + "  -- No ECAL TriggPrim";}
-  try {iEvent.getByLabel(hcalDigisLabel_,hcal);} catch (...) { errMsg=errMsg + "  -- No HCAL TriggPrim";}
+  //try {iEvent.getByLabel(ecalDigisLabel_,ecal);} catch (...) { errMsg=errMsg + "  -- No ECAL TriggPrim";}
+  //try {iEvent.getByLabel(hcalDigisLabel_,hcal);} catch (...) { errMsg=errMsg + "  -- No HCAL TriggPrim";}
+
+  try {iEvent.getByLabel(MuCandTag2_,mucands2);} catch (...) { errMsg=errMsg + "  -- No L2 muon candidates";}
+  try {iEvent.getByLabel(MuIsolTag2_,isoMap2);} catch (...) { errMsg=errMsg + "  -- No L2 muon isolation map";}
+  try {iEvent.getByLabel(MuCandTag3_,mucands3);} catch (...) { errMsg=errMsg + "  -- No L3 muon candidates";}
+  try {iEvent.getByLabel(MuIsolTag3_,isoMap3);} catch (...) { errMsg=errMsg + "  -- No L3 muon isolation map";}
+
+  try {iEvent.getByLabel(myHLT1Tau_,myHLT1Tau);} catch (...) { errMsg=errMsg + "  -- No OpenHLT SingleTau object";}
+  try {iEvent.getByLabel(myHLT2Tau_,myHLT2Tau);} catch (...) { errMsg=errMsg + "  -- No OpenHLT DoubleTau object";}
 
   HepMC::GenEvent hepmc;
   try {
@@ -153,9 +171,9 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   }
 
   // run the analysis, passing required event fragments
-  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, *geometry, HltTree);
-  elm_analysis_.analyze(*Electron, *Photon, *geometry, HltTree);
-  muon_analysis_.analyze(*muon, *geometry, HltTree);
+  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, *myHLT1Tau, *myHLT2Tau, *geometry, HltTree);
+  elm_analysis_.analyze(iEvent,iSetup,*Electron, *Photon,*geometry,HltTree);
+  muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *geometry, HltTree);
   mct_analysis_.analyze(*mctruth,hepmc,HltTree);
   hlt_analysis_.analyze(/**hltobj,*/*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,*l1mapcoll,HltTree);
 
