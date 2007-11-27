@@ -8,6 +8,7 @@
 <use name=DataFormats/JetReco>
 <use name=DataFormats/METReco>
 <use name=DataFormats/MuonReco>
+<use name=DataFormats/TauReco>
 <use name=DataFormats/EgammaCandidates>
 <use name=DataFormats/HepMCCandidate>
 <use name=DataFormats/CaloTowers>
@@ -36,6 +37,7 @@
   <use name=DataFormats/JetReco>
   <use name=DataFormats/METReco>
   <use name=DataFormats/MuonReco>
+  <use name=DataFormats/TauReco>
   <use name=DataFormats/EgammaCandidates>
   <use name=DataFormats/HepMCCandidate>
   <use name=DataFormats/HcalRecHit>

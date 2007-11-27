@@ -198,7 +198,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
 
   /////////// Analyzing L1Extra objects //////////
 
-  const int maxL1EmIsol = 10;
+  const int maxL1EmIsol = 7;
   for (int i=0; i!=maxL1EmIsol; ++i){
     l1extiemet[i] = -999.;
     l1extieme[i] = -999.;
@@ -225,7 +225,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No Isolated L1 EM object" << std::endl;
   }
 
-  const int maxL1EmNIsol = 10;
+  const int maxL1EmNIsol = 7;
   for (int i=0; i!=maxL1EmNIsol; ++i){
     l1extnemet[i] = -999.;
     l1extneme[i] = -999.;
@@ -252,7 +252,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No Non-Isolated L1 EM object" << std::endl;
   }
 
-  const int maxL1Mu = 10;
+  const int maxL1Mu = 7;
   for (int i=0; i!=maxL1Mu; ++i){
     l1extmupt[i] = -999.;
     l1extmue[i] = -999.;
@@ -290,7 +290,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No L1 MU object" << std::endl;
   }
 
-  const int maxL1CenJet = 10;
+  const int maxL1CenJet = 7;
   for (int i=0; i!=maxL1CenJet; ++i){
     l1extjtcet[i] = -999.;
     l1extjtce[i] = -999.;
@@ -317,7 +317,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No L1 Central JET object" << std::endl;
   }
 
-  const int maxL1ForJet = 10;
+  const int maxL1ForJet = 7;
   for (int i=0; i!=maxL1ForJet; ++i){
     l1extjtfet[i] = -999.;
     l1extjtfe[i] = -999.;
@@ -344,7 +344,7 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No L1 Forward JET object" << std::endl;
   }
 
-  const int maxL1TauJet = 10;
+  const int maxL1TauJet = 7;
   for (int i=0; i!=maxL1TauJet; ++i){
     l1exttauet[i] = -999.;
     l1exttaue[i] = -999.;

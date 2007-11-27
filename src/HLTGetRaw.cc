@@ -2,8 +2,8 @@
  *
  * See header file for documentation
  *
- *  $Date: 2007/04/20 06:58:26 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/05/02 07:02:22 $
+ *  $Revision: 1.2 $
  *
  *  \author various
  *
@@ -50,8 +50,10 @@ HLTGetRaw::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 //    using namespace edm;
 
+    std::string errMsg("");
     edm::Handle<FEDRawDataCollection> RawDataHandle ; 
-    iEvent.getByLabel(RawDataCollection_, RawDataHandle );
+    //iEvent.getByLabel(RawDataCollection_, RawDataHandle );
+    try {iEvent.getByLabel(RawDataCollection_, RawDataHandle);} catch (...) {errMsg=errMsg + " HLTGetRaw: No Raw Data Collection";}
 
     LogDebug("DigiInfo") << "Loaded Raw Data Collection: " << RawDataCollection_ ; 
 
