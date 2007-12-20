@@ -37,22 +37,6 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   muoneta = new float[kMaxMuon];
   muonet = new float[kMaxMuon];
   muone = new float[kMaxMuon];
-  const int kMaxMuonL2 = 500;
-  muonl2pt = new float[kMaxMuonL2];
-  muonl2phi = new float[kMaxMuonL2];
-  muonl2eta = new float[kMaxMuonL2];
-  muonl2dr = new float[kMaxMuonL2];
-  muonl2dz = new float[kMaxMuonL2];
-  muonl2chg = new int[kMaxMuonL2];
-  muonl2iso = new int[kMaxMuonL2];
-  const int kMaxMuonL3 = 500;
-  muonl3pt = new float[kMaxMuonL3];
-  muonl3phi = new float[kMaxMuonL3];
-  muonl3eta = new float[kMaxMuonL3];
-  muonl3dr = new float[kMaxMuonL3];
-  muonl3dz = new float[kMaxMuonL3];
-  muonl3chg = new int[kMaxMuonL3];
-  muonl3iso = new int[kMaxMuonL3];
 
   // Muon-specific branches of the tree 
   HltTree->Branch("NrecoMuon",&nmuon,"NrecoMuon/I");
@@ -61,31 +45,11 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoMuonEta",muoneta,"recoMuonEta[NrecoMuon]/F");
   HltTree->Branch("recoMuonEt",muonet,"recoMuonEt[NrecoMuon]/F");
   HltTree->Branch("recoMuonE",muone,"recoMuonE[NrecoMuon]/F");
-  HltTree->Branch("NohMuL2",&nmu2cand,"NohMuL2/I");
-  HltTree->Branch("ohMuL2Pt",muonl2pt,"ohMuL2Pt[NohMuL2]/F");
-  HltTree->Branch("ohMuL2Phi",muonl2phi,"ohMuL2Phi[NohMuL2]/F");
-  HltTree->Branch("ohMuL2Eta",muonl2eta,"ohMuL2Eta[NohMuL2]/F");
-  HltTree->Branch("ohMuL2Chg",muonl2chg,"ohMuL2Chg[NohMuL2]/I");
-  HltTree->Branch("ohMuL2Iso",muonl2iso,"ohMuL2Iso[NohMuL2]/I");
-  HltTree->Branch("ohMuL2Dr",muonl2dr,"ohMuL2Dr[NohMuL2]/F");
-  HltTree->Branch("ohMuL2Dz",muonl2dz,"ohMuL2Dz[NohMuL2]/F");
-  HltTree->Branch("NohMuL3",&nmu3cand,"NohMuL3/I");
-  HltTree->Branch("ohMuL3Pt",muonl3pt,"ohMuL3Pt[NohMuL3]/F");
-  HltTree->Branch("ohMuL3Phi",muonl3phi,"ohMuL3Phi[NohMuL3]/F");
-  HltTree->Branch("ohMuL3Eta",muonl3eta,"ohMuL3Eta[NohMuL3]/F");
-  HltTree->Branch("ohMuL3Chg",muonl3chg,"ohMuL3Chg[NohMuL3]/I");
-  HltTree->Branch("ohMuL3Iso",muonl3iso,"ohMuL3Iso[NohMuL3]/I");
-  HltTree->Branch("ohMuL3Dr",muonl3dr,"ohMuL3Dr[NohMuL3]/F");
-  HltTree->Branch("ohMuL3Dz",muonl3dz,"ohMuL3Dz[NohMuL3]/F");
 
 }
 
 /* **Analyze the event** */
 void HLTMuon::analyze(const MuonCollection& Muon,
-		      const RecoChargedCandidateCollection& MuCands2,
-		      const reco::MuIsoAssociationMap& isoMap2,
-		      const RecoChargedCandidateCollection& MuCands3,
-		      const reco::MuIsoAssociationMap& isoMap3,
 		      const CaloGeometry& geom,
 		      TTree* HltTree) {
 
@@ -109,6 +73,7 @@ void HLTMuon::analyze(const MuonCollection& Muon,
   }
   else {nmuon = 0;}
 
+<<<<<<< HLTMuon.cc
   /////////////////////////////// Open-HLT muons ///////////////////////////////
 
   // Dealing with L2 muons
@@ -123,9 +88,9 @@ void HLTMuon::analyze(const MuonCollection& Muon,
       TrackRef tk = i->get<TrackRef>();
 
       muonl2pt[imu2c] = tk->pt();
-      muonl2eta[imu2c] = tk->phi();
+      muonl2phi[imu2c] = tk->phi();
       // eta (we require |eta|<2.5 in all filters
-      muonl2phi[imu2c] = tk->eta();
+      muonl2eta[imu2c] = tk->eta();
 
       // Dr (transverse distance to (0,0,0))
       // For baseline triggers, we do no cut at L2 (|dr|<9999 cm)
@@ -182,9 +147,9 @@ void HLTMuon::analyze(const MuonCollection& Muon,
       TrackRef tk = i->get<TrackRef>();
 
       muonl3pt[imu3c] = tk->pt();
-      muonl3eta[imu3c] = tk->phi();
+      muonl3phi[imu3c] = tk->phi();
       // eta (we require |eta|<2.5 in all filters
-      muonl3phi[imu3c] = tk->eta();
+      muonl3eta[imu3c] = tk->eta();
 
 //       // Dr (transverse distance to (0,0,0))
 //       // For baseline triggers, we do no cut at L2 (|dr|<9999 cm)
@@ -233,4 +198,6 @@ void HLTMuon::analyze(const MuonCollection& Muon,
 
 
 
+=======
+>>>>>>> 1.3
 }
