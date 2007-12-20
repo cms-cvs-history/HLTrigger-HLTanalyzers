@@ -5,6 +5,7 @@
 #include "HLTrigger/HLTanalyzers/interface/HLTJets.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMCtruth.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMuon.h"
+#include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -42,6 +43,7 @@ private:
   HLTMCtruth mct_analysis_;
   HLTMuon muon_analysis_;
   HLTInfo hlt_analysis_;
+  EventHeader evt_header_;
 
   std::string recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltobj_,hltresults_;
   std::string Electron_,Photon_,muon_;

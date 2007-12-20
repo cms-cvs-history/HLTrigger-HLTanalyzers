@@ -79,6 +79,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   muon_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
   hlt_analysis_.setup(conf, HltTree);
+	evt_header_.setup(HltTree);
 
 }
 
@@ -176,6 +177,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *geometry, HltTree);
   mct_analysis_.analyze(*mctruth,hepmc,HltTree);
   hlt_analysis_.analyze(/**hltobj,*/*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,*l1mapcoll,HltTree);
+  evt_header_.analyze(iEvent, HltTree);
 
   // After analysis, fill the variables tree
   HltTree->Fill();

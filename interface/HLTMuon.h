@@ -33,6 +33,8 @@ typedef std::vector<std::string> MyStrings;
   * $Revision: 
   * \author P. Bargassa - Rice U.
   */
+	// Revised V. Rekovic - U Minnesota, Date: December 2007
+	// (added handles muonl2pterr, muonl3pterr (relative errors on track pT)
 class HLTMuon {
 public:
   HLTMuon(); 
@@ -55,8 +57,10 @@ private:
   float *muonpt, *muonphi, *muoneta, *muonet, *muone; 
   float *muonl2pt, *muonl2eta, *muonl2phi, *muonl2dr, *muonl2dz;
   float *muonl3pt, *muonl3eta, *muonl3phi, *muonl3dr, *muonl3dz;
+  float *muonl2pterr, *muonl3pterr;
   int nmuon, nmu2cand, nmu3cand;
   int *muonl2chg, *muonl2iso, *muonl3chg, *muonl3iso;
+	
 
   // input variables
   bool _Monte,_Debug;
