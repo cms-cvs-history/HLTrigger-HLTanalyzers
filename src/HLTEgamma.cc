@@ -9,9 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #include "HLTrigger/HLTanalyzers/interface/HLTEgamma.h"
 
-using namespace reco;
+#include "DataFormats/EgammaReco/interface/ElectronPixelSeed.h"
+#include "DataFormats/EgammaReco/interface/ElectronPixelSeedFwd.h"
 
 HLTEgamma::HLTEgamma() {
   evtCounter=0;
@@ -24,15 +26,44 @@ HLTEgamma::HLTEgamma() {
 /*  Setup the analysis to put the branch-variables into the tree. */
 void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
+  CandIso_ = pSet.getParameter<std::string> ("CandIso");
+  CandNonIso_ = pSet.getParameter<std::string> ("CandNonIso");
+  EcalIso_ = pSet.getParameter<std::string> ("EcalIso");
+  EcalNonIso_ = pSet.getParameter<std::string> ("EcalNonIso");
+  HcalIsoPho_ = pSet.getParameter<std::string> ("HcalIsoPho");
+  HcalNonIsoPho_ = pSet.getParameter<std::string> ("HcalNonIsoPho");
+  IsoPhoTrackIsol_ = pSet.getParameter<std::string> ("IsoPhoTrackIsol");
+  NonIsoPhoTrackIsol_ = pSet.getParameter<std::string> ("NonIsoPhoTrackIsol");
+  IsoElectronTag_ = pSet.getParameter<std::string> ("IsoElectrons");
+  NonIsoElectronTag_ = pSet.getParameter<std::string> ("NonIsoElectrons");
+  IsoEleHcalTag_ = pSet.getParameter<std::string> ("HcalIsoEle");
+  NonIsoEleHcalTag_ = pSet.getParameter<std::string> ("HcalNonIsoEle");
+  L1IsoPixelSeedsBarrelTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoBarrel");
+  L1IsoPixelSeedsEndcapTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoEndcap");
+  L1NonIsoPixelSeedsBarrelTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoBarrel");
+  L1NonIsoPixelSeedsEndcapTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoEndcap");
+  IsoEleTrackIsolTag_ = pSet.getParameter<std::string> ("IsoEleTrackIsol");
+  NonIsoEleTrackIsolTag_ = pSet.getParameter<std::string> ("NonIsoEleTrackIsol");
+
+  IsoElectronLargeWindowsTag_ = pSet.getParameter<std::string> ("IsoElectronsLargeWindows");
+  NonIsoElectronLargeWindowsTag_ = pSet.getParameter<std::string> ("NonIsoElectronsLargeWindows");
+  L1IsoPixelSeedsBarrelLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoBarrelLargeWindows");
+  L1IsoPixelSeedsEndcapLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoEndcapLargeWindows");
+  L1NonIsoPixelSeedsBarrelLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoBarrelLargeWindows");
+  L1NonIsoPixelSeedsEndcapLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoEndcapLargeWindows");
+  IsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<std::string> ("IsoEleTrackIsolLargeWindows");
+  NonIsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<std::string> ("NonIsoEleTrackIsolLargeWindows");
+
   edm::ParameterSet myEmParams = pSet.getParameter<edm::ParameterSet>("RunParameters") ;
-  MyStrings parameterNames = myEmParams.getParameterNames() ;
+  vector<std::string> parameterNames = myEmParams.getParameterNames() ;
   
-  for ( MyStrings::iterator iParam = parameterNames.begin();
+  for ( vector<std::string>::iterator iParam = parameterNames.begin();
 	iParam != parameterNames.end(); iParam++ ){
     if  ( (*iParam) == "Monte" ) _Monte =  myEmParams.getParameter<bool>( *iParam );
     else if ( (*iParam) == "Debug" ) _Debug =  myEmParams.getParameter<bool>( *iParam );
   }
   
+
   const int kMaxEl = 10000;
   elpt = new float[kMaxEl];
   elphi = new float[kMaxEl];
@@ -45,6 +76,36 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   photoneta = new float[kMaxPhot];
   photonet = new float[kMaxPhot];
   photone = new float[kMaxPhot];
+  const int kMaxhPhot = 500;
+  hphotet = new float[kMaxhPhot];
+  hphoteta = new float[kMaxhPhot];
+  hphotphi = new float[kMaxhPhot];
+  hphoteiso = new float[kMaxhPhot];
+  hphothiso = new float[kMaxhPhot];
+  hphottiso = new float[kMaxhPhot];
+  hphotl1iso = new int[kMaxhPhot];
+  const int kMaxhEle = 500;
+  heleet = new float[kMaxhEle];
+  heleeta = new float[kMaxhEle];
+  helephi = new float[kMaxhEle];
+  heleE = new float[kMaxhEle];
+  helep = new float[kMaxhEle];
+  helehiso = new float[kMaxhEle];
+  heletiso = new float[kMaxhEle];
+  helel1iso = new int[kMaxhEle];
+  helePixelSeeds = new int[kMaxhEle];
+  heleNewSC = new int[kMaxhEle];
+  const int kMaxhEleLW = 500;
+  heleetLW = new float[kMaxhEleLW];
+  heleetaLW = new float[kMaxhEleLW];
+  helephiLW = new float[kMaxhEleLW];
+  heleELW = new float[kMaxhEleLW];
+  helepLW = new float[kMaxhEleLW];
+  helehisoLW = new float[kMaxhEleLW];
+  heletisoLW = new float[kMaxhEleLW];
+  helel1isoLW = new int[kMaxhEleLW];
+  helePixelSeedsLW = new int[kMaxhEleLW];
+  heleNewSCLW = new int[kMaxhEleLW];
 
   // Egamma-specific branches of the tree 
   HltTree->Branch("NrecoElec",&nele,"NrecoElec/I");
@@ -59,12 +120,43 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoPhotEta",photoneta,"recoPhotEta[NrecoPhot]/F");
   HltTree->Branch("recoPhotEt",photonet,"recoPhotEt[NrecoPhot]/F");
   HltTree->Branch("recoPhotE",photone,"recoPhotE[NrecoPhot]/F");
+  HltTree->Branch("NohPhot",&nhltgam,"NohPhot/I");
+  HltTree->Branch("ohPhotEt",hphotet,"ohPhotEt[NohPhot]/F");
+  HltTree->Branch("ohPhotEta",hphoteta,"ohPhotEta[NohPhot]/F");
+  HltTree->Branch("ohPhotPhi",hphotphi,"ohPhotPhi[NohPhot]/F");
+  HltTree->Branch("ohPhotEiso",hphoteiso,"ohPhotEiso[NohPhot]/F");
+  HltTree->Branch("ohPhotHiso",hphothiso,"ohPhotHiso[NohPhot]/F");
+  HltTree->Branch("ohPhotTiso",hphottiso,"ohPhotTiso[NohPhot]/F");
+  HltTree->Branch("ohPhotL1iso",hphotl1iso,"ohPhotL1iso[NohPhot]/I");
+  HltTree->Branch("NohEle",&nhltele,"NohEle/I");
+  HltTree->Branch("ohEleEt",heleet,"ohEleEt[NohEle]/F");
+  HltTree->Branch("ohEleEta",heleeta,"ohEleEta[NohEle]/F");
+  HltTree->Branch("ohElePhi",helephi,"ohElePhi[NohEle]/F");
+  HltTree->Branch("ohEleE",heleE,"ohEleE[NohEle]/F");
+  HltTree->Branch("ohEleP",helep,"ohEleP[NohEle]/F");
+  HltTree->Branch("ohEleHiso",helehiso,"ohEleHiso[NohEle]/F");
+  HltTree->Branch("ohEleTiso",heletiso,"ohEleTiso[NohEle]/F");
+  HltTree->Branch("ohEleL1iso",helel1iso,"ohEleLiso[NohEle]/I");
+  HltTree->Branch("ohElePixelSeeds",helePixelSeeds,"ohElePixelSeeds[NohEle]/I");
+  HltTree->Branch("ohEleNewSC",heleNewSC,"ohEleNewSC[NohEle]/I");
+  HltTree->Branch("NohEleLW",&nhlteleLW,"NohEleLW/I");
+  HltTree->Branch("ohEleEtLW",heleetLW,"ohEleEtLW[NohEleLW]/F");
+  HltTree->Branch("ohEleEtaLW",heleetaLW,"ohEleEtaLW[NohEleLW]/F");
+  HltTree->Branch("ohElePhiLW",helephiLW,"ohElePhiLW[NohEleLW]/F");
+  HltTree->Branch("ohEleELW",heleELW,"ohEleELW[NohEleLW]/F");
+  HltTree->Branch("ohElePLW",helepLW,"ohElePLW[NohEleLW]/F");
+  HltTree->Branch("ohEleHisoLW",helehisoLW,"ohEleHisoLW[NohEleLW]/F");
+  HltTree->Branch("ohEleTisoLW",heletisoLW,"ohEleTisoLW[NohEleLW]/F");
+  HltTree->Branch("ohEleL1isoLW",helel1isoLW,"ohEleLisoLW[NohEleLW]/I");
+  HltTree->Branch("ohElePixelSeedsLW",helePixelSeedsLW,"ohElePixelSeedsLW[NohEleLW]/I");
+  HltTree->Branch("ohEleNewSCLW",heleNewSCLW,"ohEleNewSCLW[NohEleLW]/I");
 
 }
 
 /* **Analyze the event** */
-void HLTEgamma::analyze(const PixelMatchGsfElectronCollection& Electron,
-			const PhotonCollection& Photon,
+void HLTEgamma::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup,
+			const reco::PixelMatchGsfElectronCollection& Electron,
+			const reco::PhotonCollection& Photon,
 			TTree* HltTree) {
 
   //std::cout << " Beginning HLTEgamma " << std::endl;
@@ -105,4 +197,783 @@ void HLTEgamma::analyze(const PixelMatchGsfElectronCollection& Electron,
   }
   else {nphoton = 0;}
 
+  /////////////////////////////// Open-HLT Egammas ///////////////////////////////
+
+  theHLTPhotons.clear();
+  MakeL1IsolatedPhotons(iEvent,iSetup);
+  MakeL1NonIsolatedPhotons(iEvent,iSetup);
+  nhltgam = theHLTPhotons.size();
+  std::sort(theHLTPhotons.begin(),theHLTPhotons.end(),EtGreater());
+  for(int u=0; u<nhltgam; u++){
+    hphotet[u] = theHLTPhotons[u].Et;
+    hphoteta[u] = theHLTPhotons[u].eta;
+    hphotphi[u] = theHLTPhotons[u].phi;
+    hphoteiso[u] = theHLTPhotons[u].ecalIsol;
+    hphothiso[u] = theHLTPhotons[u].hcalIsol;
+    hphottiso[u] = theHLTPhotons[u].trackIsol;
+    hphotl1iso[u] = theHLTPhotons[u].L1Isolated;
+  }
+// std::cout<<"@@@@@@@@@@@@@@@@@@ 11111111111111 @@@@@@@@@@@@@@@@@@@@@@@@@@@"<<std::endl;
+  theHLTElectrons.clear();
+  MakeL1IsolatedElectrons(iEvent,iSetup);
+  MakeL1NonIsolatedElectrons(iEvent,iSetup);
+  nhltele = theHLTElectrons.size();
+  std::sort(theHLTElectrons.begin(),theHLTElectrons.end(),EtGreater());
+//   std::cout<<"############# Electrons #########"<<std::endl;
+  for(int u=0; u<nhltele; u++){
+    heleet[u] = theHLTElectrons[u].Et;
+    heleeta[u] = theHLTElectrons[u].eta;  
+    helephi[u] = theHLTElectrons[u].phi;
+    heleE[u] = theHLTElectrons[u].E;
+    helep[u] = theHLTElectrons[u].p;
+    helehiso[u] = theHLTElectrons[u].hcalIsol;
+    helePixelSeeds[u] = theHLTElectrons[u].pixelSeeds;
+    heletiso[u] = theHLTElectrons[u].trackIsol;
+    helel1iso[u] = theHLTElectrons[u].L1Isolated;
+    heleNewSC[u] = theHLTElectrons[u].newSC;
+//     std::cout<<u<<" et:"<<heleet[u]<<" L1:"<<helel1iso[u]<<" newSC:"<<heleNewSC[u]<<" hiso:"<<helehiso[u]<<" pix:"<<helePixelSeeds[u]<<"  p:"<<helep[u]<<" triso:"<<heletiso[u]<<std::endl;
+  }
+//   std::cout<<"##################################"<<std::endl;
+
+  
+  theHLTElectronsLargeWindows.clear();
+  MakeL1IsolatedElectronsLargeWindows(iEvent,iSetup);
+  MakeL1NonIsolatedElectronsLargeWindows(iEvent,iSetup);
+  nhlteleLW = theHLTElectronsLargeWindows.size();
+  std::sort(theHLTElectronsLargeWindows.begin(),theHLTElectronsLargeWindows.end(),EtGreater());
+
+//   std::cout<<"############# Large Windows Electrons #########"<<std::endl;
+  for(int u=0; u<nhltele; u++){
+    heleetLW[u] = theHLTElectronsLargeWindows[u].Et;
+    heleetaLW[u] = theHLTElectronsLargeWindows[u].eta;  
+    helephiLW[u] = theHLTElectronsLargeWindows[u].phi;
+    heleELW[u] = theHLTElectronsLargeWindows[u].E;
+    helepLW[u] = theHLTElectronsLargeWindows[u].p;
+    helehisoLW[u] = theHLTElectronsLargeWindows[u].hcalIsol;
+    helePixelSeedsLW[u] = theHLTElectronsLargeWindows[u].pixelSeeds;
+    heletisoLW[u] = theHLTElectronsLargeWindows[u].trackIsol;
+    helel1isoLW[u] = theHLTElectronsLargeWindows[u].L1Isolated;
+    heleNewSCLW[u] = theHLTElectronsLargeWindows[u].newSC;
+//     std::cout<<u<<" et:"<<heleetLW[u]<<" L1:"<<helel1isoLW[u]<<" newSC:"<<heleNewSCLW[u]<<" hiso:"<<helehisoLW[u]<<" pix:"<<helePixelSeedsLW[u]<<"  p:"<<helepLW[u]<<" triso:"<<heletisoLW[u]<<std::endl;
+  }
+//   std::cout<<"##################################"<<std::endl;
+//   std::cout<<"@@@@@@@@@@@@@@@@@@ 22222222222222 @@@@@@@@@@@@@@@@@@@@@@@@@@@"<<std::endl;
+  
+
+}
+
+
+
+
+void HLTEgamma::MakeL1IsolatedPhotons(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundEcalIMap=true;bool foundHcalIMap=true;bool foundTckIMap=true;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> EcalIsolMap,HcalIsolMap,TrackIsolMap;
+  try {iEvent.getByLabel(CandIso_,recoIsolecalcands);} catch (...) {
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No isol eg candidate";
+    foundCand=false;
+  }
+  try {iEvent.getByLabel(EcalIso_,EcalIsolMap);} catch (...) {
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Ecal isol map";
+    foundEcalIMap=false;
+  }
+  try {iEvent.getByLabel(HcalIsoPho_,HcalIsolMap);} catch (...) {
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Hcal isol photon map";
+    foundHcalIMap=false;
+  }
+  try {iEvent.getByLabel(IsoPhoTrackIsol_,TrackIsolMap);} catch (...) {
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Track isol photon map";
+    foundTckIMap=false;
+  }
+
+  // Iterator to the isolation-map
+  reco::RecoEcalCandidateIsolationMap::const_iterator mapi;
+
+  if(foundCand){
+    //Loop over SuperCluster and fill the HLTPhotons
+    for (reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoIsolecalcands->begin(); 
+	 recoecalcand!=recoIsolecalcands->end(); recoecalcand++) {
+
+      myHLTPhoton pho;
+      pho.ecalIsol=-999;pho.hcalIsol=-999;pho.trackIsol=-999;
+      pho.L1Isolated = true;
+
+      pho.Et=recoecalcand->et();
+      pho.eta=recoecalcand->eta();
+      pho.phi=recoecalcand->phi();
+   
+      //Method to get the reference to the candidate
+      reco::RecoEcalCandidateRef ref= reco::RecoEcalCandidateRef(recoIsolecalcands,distance(recoIsolecalcands->begin(),recoecalcand));
+
+      // First/Second member of the Map: Ref-to-Candidate(mapi)/Isolation(->val)
+      //Fill the ecal Isolation
+      if (foundEcalIMap){
+	mapi = (*EcalIsolMap).find( ref);
+	if (mapi !=(*EcalIsolMap).end()) { pho.ecalIsol=mapi->val;}
+      }
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	mapi = (*HcalIsolMap).find( ref);
+	if (mapi !=(*HcalIsolMap).end()) { pho.hcalIsol=mapi->val;}
+      }
+      //Fill the track Isolation
+      if (foundTckIMap){
+	mapi = (*TrackIsolMap).find( ref);
+	if (mapi !=(*TrackIsolMap).end()) { pho.trackIsol=mapi->val;}
+      }
+
+      //store the photon into the vector
+      theHLTPhotons.push_back(pho);
+
+    }
+
+  }
+
+}
+
+void HLTEgamma::MakeL1NonIsolatedPhotons(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundEcalIMap=true;bool foundHcalIMap=true;bool foundTckIMap=true;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoNonIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> EcalNonIsolMap,HcalNonIsolMap,TrackNonIsolMap;
+  try {iEvent.getByLabel(CandNonIso_,recoNonIsolecalcands);} catch (...) { 
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No non-isol eg candidate";
+    foundCand=false;
+  }
+  try {iEvent.getByLabel(EcalNonIso_,EcalNonIsolMap);} catch (...) { 
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Ecal non-isol map";
+    foundEcalIMap=false;
+  }
+  try {iEvent.getByLabel(HcalNonIsoPho_,HcalNonIsolMap);} catch (...) { 
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Hcal non-isol photon map";
+    foundHcalIMap=false;
+  }
+  try {iEvent.getByLabel(NonIsoPhoTrackIsol_,TrackNonIsolMap);} catch (...) { 
+    EGerrMsg=EGerrMsg + "  HLTEgamma: No Track non-isol photon map";
+    foundTckIMap=false;
+  }
+
+  reco::RecoEcalCandidateIsolationMap::const_iterator mapi;
+
+  if(foundCand){
+    for (reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoNonIsolecalcands->begin(); 
+	 recoecalcand!=recoNonIsolecalcands->end(); recoecalcand++) {//Loop over SuperCluster and fill the HLTPhotons
+
+      myHLTPhoton pho;
+      pho.ecalIsol=-999;pho.hcalIsol=-999;pho.trackIsol=-999;
+      pho.L1Isolated = false;
+   
+      pho.Et=recoecalcand->et();
+      pho.eta=recoecalcand->eta();
+      pho.phi=recoecalcand->phi();
+
+      reco::RecoEcalCandidateRef ref= reco::RecoEcalCandidateRef(recoNonIsolecalcands,distance(recoNonIsolecalcands->begin(),recoecalcand));
+      
+      //Fill the ecal Isolation
+      if (foundEcalIMap){
+	mapi = (*EcalNonIsolMap).find( ref);
+	if (mapi !=(*EcalNonIsolMap).end()) { pho.ecalIsol=mapi->val;}
+      }
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	mapi = (*HcalNonIsolMap).find( ref);
+	if (mapi !=(*HcalNonIsolMap).end()) { pho.hcalIsol=mapi->val;}
+      }
+      //Fill the track Isolation
+      if (foundTckIMap){
+	mapi = (*TrackNonIsolMap).find( ref);
+	if (mapi !=(*TrackNonIsolMap).end()) { pho.trackIsol=mapi->val;}
+      }
+
+      //store the photon into the vector
+      theHLTPhotons.push_back(pho);
+      
+    }
+
+  }
+
+}
+
+void HLTEgamma::MakeL1IsolatedElectrons(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+  // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundHandle=true;bool foundHcalIMap=true;
+  bool foundPixelSCMapBarrel = true;  bool foundPixelSCMapEndcap = true; bool foundTckIMap=true;
+
+  edm::Handle<reco::ElectronCollection> electronIsoHandle;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> HcalEleIsolMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1IsoBarrelMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1IsoEndcapMap;
+  edm::Handle<reco::ElectronIsolationMap> TrackEleIsolMap;
+
+  try{iEvent.getByLabel(CandIso_,recoIsolecalcands);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol eg candidate";
+      foundCand=false;
+    }
+  
+  try{iEvent.getByLabel(IsoElectronTag_,electronIsoHandle);}  catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol electron";
+      foundHandle=false;
+    }
+ 
+  try{ iEvent.getByLabel(IsoEleHcalTag_,HcalEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Hcal electron";
+      foundHcalIMap=false;
+    }
+  try {iEvent.getByLabel (L1IsoPixelSeedsBarrelTag_,L1IsoBarrelMap);}catch (...) 
+    {
+      foundPixelSCMapBarrel=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association barrel map for electron";
+    }
+  try {iEvent.getByLabel (L1IsoPixelSeedsEndcapTag_,L1IsoEndcapMap);}catch (...) 
+    { 
+      foundPixelSCMapEndcap=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association endcap map for electron";
+    }
+
+
+  //  EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association map for electron";
+  // foundPixelSCMap=false;
+  try{iEvent.getByLabel(IsoEleTrackIsolTag_,TrackEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Track electron";
+      foundTckIMap=false;
+    }
+
+  if (foundCand){
+    for(reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoIsolecalcands->begin();
+	recoecalcand!=recoIsolecalcands->end(); recoecalcand++) {
+      //get the ref to the SC:
+      reco::RecoEcalCandidateRef ref = reco::RecoEcalCandidateRef(recoIsolecalcands,distance(recoIsolecalcands->begin(),recoecalcand));
+      reco::SuperClusterRef recrSC = ref->superCluster();
+      //reco::SuperClusterRef recrSC = recoecalcand->superCluster();
+
+      myHLTElectron ele;
+      ele.hcalIsol=-999; ele.trackIsol=-999;
+      ele.L1Isolated = true; ele.p=-999; 
+      ele.pixelSeeds = -999; ele.newSC=true;
+      
+      ele.Et=recoecalcand->et();
+      ele.eta=recoecalcand->eta();
+      ele.phi=recoecalcand->phi();
+      ele.E = recrSC->energy();
+      
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	//	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoIsolecalcands,distance(recoIsolecalcands->begin(),recoecalcand)) );
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( ref );
+	if(mapi !=(*HcalEleIsolMap).end()) {ele.hcalIsol=mapi->val;}
+      }
+      //look if the SC has associated pixelSeeds
+      int nmatch = 0;
+      //Barrel
+      if(foundPixelSCMapBarrel){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator itb = L1IsoBarrelMap->begin(); 
+	    itb != L1IsoBarrelMap->end(); itb++){
+	  edm::Ref<reco::SuperClusterCollection> theClusBarrel = itb->val;
+	  if(&(*recrSC) ==  &(*theClusBarrel)) {nmatch++;}
+	}
+      }
+      //Endcap
+      if(foundPixelSCMapEndcap){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator ite = L1IsoEndcapMap->begin(); 
+	    ite != L1IsoEndcapMap->end(); ite++){
+	  edm::Ref<reco::SuperClusterCollection> theClusEndcap = ite->val;
+	  if(&(*recrSC) ==  &(*theClusEndcap)) {nmatch++;}
+	}
+      }
+      ele.pixelSeeds = nmatch;
+    
+      //look if the SC was promoted to an electron:
+      if (foundHandle){
+	bool FirstElectron = true;
+	reco::ElectronRef electronref;
+	for(reco::ElectronCollection::const_iterator iElectron = electronIsoHandle->begin(); iElectron != 
+	      electronIsoHandle->end();iElectron++){
+	  // 1) find the SC from the electron
+	  electronref= reco::ElectronRef(electronIsoHandle,iElectron - electronIsoHandle->begin());
+	  const reco::SuperClusterRef theClus = electronref->superCluster(); //SC from the electron;
+  	  if(&(*recrSC) ==  &(*theClus)) {// ref is the RecoEcalCandidateRef corresponding to the electron
+	    if(FirstElectron) {//the first electron is stored in ele, keeping the ele.newSC=true
+	      FirstElectron = false;
+	      ele.p=electronref->track()->momentum().R();
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele.trackIsol=mapTr->val;}
+	      }	  
+	    }
+	    else {//FirstElectron is false, i.e. the SC of this electron is common to another electron.
+	      // A new  myHLTElectron is inserted in the theHLTElectrons vector setting newSC=false
+	      myHLTElectron ele2;
+	      ele2.hcalIsol=ele.hcalIsol;
+	      ele2.trackIsol=-999;
+	      ele2.Et  = ele.Et;
+	      ele2.eta = ele.eta;
+	      ele2.phi = ele.phi;
+	      ele2.E   = ele.E;
+	      ele2.L1Isolated = ele.L1Isolated; 
+	      ele2.pixelSeeds = ele.pixelSeeds; 
+	      ele2.newSC=false;
+	      ele2.p=electronref->track()->momentum().R(); 
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele2.trackIsol=mapTr->val;}
+	      }	  
+	      theHLTElectrons.push_back(ele2);
+	    }
+	  }
+	}//end of loop over electrons
+      }//end of if (foundHandle){
+      
+      //store the electron into the vector
+      theHLTElectrons.push_back(ele);
+    }//end of loop over ecalCandidates
+  }//end of if (foundCand){
+}
+
+
+
+void HLTEgamma::MakeL1NonIsolatedElectrons(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+   // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundHandle=true;bool foundHcalIMap=true;
+  bool foundPixelSCMapBarrel = true;  bool foundPixelSCMapEndcap = true; bool foundTckIMap=true;
+
+  edm::Handle<reco::ElectronCollection> electronNonIsoHandle;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoNonIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> HcalEleIsolMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1NonIsoBarrelMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1NonIsoEndcapMap;
+  edm::Handle<reco::ElectronIsolationMap> TrackEleIsolMap;
+
+  try{iEvent.getByLabel(CandNonIso_,recoNonIsolecalcands);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol eg candidate";
+      foundCand=false;
+    }
+  
+  try{iEvent.getByLabel(NonIsoElectronTag_,electronNonIsoHandle);}  catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol electron";
+      foundHandle=false;
+    }
+ 
+  try{ iEvent.getByLabel(NonIsoEleHcalTag_,HcalEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Hcal electron";
+      foundHcalIMap=false;
+    }
+  try {iEvent.getByLabel (L1NonIsoPixelSeedsBarrelTag_,L1NonIsoBarrelMap);}catch (...) 
+    {
+      foundPixelSCMapBarrel=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association barrel map for electron";
+    }
+  try {iEvent.getByLabel (L1NonIsoPixelSeedsEndcapTag_,L1NonIsoEndcapMap);}catch (...) 
+    { 
+      foundPixelSCMapEndcap=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association endcap map for electron";
+    }
+
+
+  //  EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association map for electron";
+  // foundPixelSCMap=false;
+  try{iEvent.getByLabel(NonIsoEleTrackIsolTag_,TrackEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Track electron";
+      foundTckIMap=false;
+    }
+
+  if (foundCand){
+    for(reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoNonIsolecalcands->begin();
+	recoecalcand!=recoNonIsolecalcands->end(); recoecalcand++) {
+      //get the ref to the SC:
+      reco::RecoEcalCandidateRef ref = reco::RecoEcalCandidateRef(recoNonIsolecalcands,distance(recoNonIsolecalcands->begin(),recoecalcand));
+      reco::SuperClusterRef recrSC = ref->superCluster();
+      //reco::SuperClusterRef recrSC = recoecalcand->superCluster();
+
+      myHLTElectron ele;
+      ele.hcalIsol=-999; ele.trackIsol=-999;
+      ele.L1Isolated = false; ele.p=-999; 
+      ele.pixelSeeds = -999; ele.newSC=true;
+      
+      ele.Et=recoecalcand->et();
+      ele.eta=recoecalcand->eta();
+      ele.phi=recoecalcand->phi();
+      ele.E = recrSC->energy();
+      
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	//	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoNonIsolecalcands,distance(recoNonIsolecalcands->begin(),recoecalcand)) );
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( ref );
+	if(mapi !=(*HcalEleIsolMap).end()) {ele.hcalIsol=mapi->val;}
+      }
+      //look if the SC has associated pixelSeeds
+      int nmatch = 0;
+      //Barrel
+      if(foundPixelSCMapBarrel){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator itb = L1NonIsoBarrelMap->begin(); 
+	    itb != L1NonIsoBarrelMap->end(); itb++){
+	  edm::Ref<reco::SuperClusterCollection> theClusBarrel = itb->val;
+	  if(&(*recrSC) ==  &(*theClusBarrel)) {nmatch++;}
+	}
+      }
+      //Endcap
+      if(foundPixelSCMapEndcap){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator ite = L1NonIsoEndcapMap->begin(); 
+	    ite != L1NonIsoEndcapMap->end(); ite++){
+	  edm::Ref<reco::SuperClusterCollection> theClusEndcap = ite->val;
+	  if(&(*recrSC) ==  &(*theClusEndcap)) {nmatch++;}
+	}
+      }
+      ele.pixelSeeds = nmatch;
+    
+      //look if the SC was promoted to an electron:
+      if (foundHandle){
+	bool FirstElectron = true;
+	reco::ElectronRef electronref;
+	for(reco::ElectronCollection::const_iterator iElectron = electronNonIsoHandle->begin(); iElectron != 
+	      electronNonIsoHandle->end();iElectron++){
+	  // 1) find the SC from the electron
+	  electronref= reco::ElectronRef(electronNonIsoHandle,iElectron - electronNonIsoHandle->begin());
+	  const reco::SuperClusterRef theClus = electronref->superCluster(); //SC from the electron;
+  	  if(&(*recrSC) ==  &(*theClus)) {// ref is the RecoEcalCandidateRef corresponding to the electron
+	    if(FirstElectron) {//the first electron is stored in ele, keeping the ele.newSC=true
+	      FirstElectron = false;
+	      ele.p=electronref->track()->momentum().R();
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele.trackIsol=mapTr->val;}
+	      }	  
+	    }
+	    else {//FirstElectron is false, i.e. the SC of this electron is common to another electron.
+	      // A new  myHLTElectron is inserted in the theHLTElectrons vector setting newSC=false
+	      myHLTElectron ele2;
+	      ele2.hcalIsol=ele.hcalIsol;
+	      ele2.trackIsol=-999;
+	      ele2.Et  = ele.Et;
+	      ele2.eta = ele.eta;
+	      ele2.phi = ele.phi;
+	      ele2.E   = ele.E;
+	      ele2.L1Isolated = ele.L1Isolated; 
+	      ele2.pixelSeeds = ele.pixelSeeds; 
+	      ele2.newSC=false;
+	      ele2.p=electronref->track()->momentum().R(); 
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele2.trackIsol=mapTr->val;}
+	      }	  
+	      theHLTElectrons.push_back(ele2);
+	    }
+	  }
+	}//end of loop over electrons
+      }//end of if (foundHandle){
+      
+      //store the electron into the vector
+      theHLTElectrons.push_back(ele);
+    }//end of loop over ecalCandidates
+  }//end of if (foundCand){  
+
+}
+
+void HLTEgamma::MakeL1IsolatedElectronsLargeWindows(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+  // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+  // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundHandle=true;bool foundHcalIMap=true;
+  bool foundPixelSCMapBarrel = true;  bool foundPixelSCMapEndcap = true; bool foundTckIMap=true;
+
+  edm::Handle<reco::ElectronCollection> electronIsoHandle;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> HcalEleIsolMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1IsoBarrelMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1IsoEndcapMap;
+  edm::Handle<reco::ElectronIsolationMap> TrackEleIsolMap;
+
+  try{iEvent.getByLabel(CandIso_,recoIsolecalcands);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol eg candidate";
+      foundCand=false;
+    }
+  
+  try{iEvent.getByLabel(IsoElectronLargeWindowsTag_,electronIsoHandle);}  catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol electron";
+      foundHandle=false;
+    }
+ 
+  try{ iEvent.getByLabel(IsoEleHcalTag_,HcalEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Hcal electron";
+      foundHcalIMap=false;
+    }
+  try {iEvent.getByLabel (L1IsoPixelSeedsBarrelLargeWindowsTag_,L1IsoBarrelMap);}catch (...) 
+    {
+      foundPixelSCMapBarrel=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association barrel map for electron";
+    }
+  try {iEvent.getByLabel (L1IsoPixelSeedsEndcapLargeWindowsTag_,L1IsoEndcapMap);}catch (...) 
+    { 
+      foundPixelSCMapEndcap=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association endcap map for electron";
+    }
+
+
+  //  EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association map for electron";
+  // foundPixelSCMap=false;
+  try{iEvent.getByLabel(IsoEleTrackIsolLargeWindowsTag_,TrackEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Track electron";
+      foundTckIMap=false;
+    }
+
+  if (foundCand){
+    for(reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoIsolecalcands->begin();
+	recoecalcand!=recoIsolecalcands->end(); recoecalcand++) {
+      //get the ref to the SC:
+      reco::RecoEcalCandidateRef ref = reco::RecoEcalCandidateRef(recoIsolecalcands,distance(recoIsolecalcands->begin(),recoecalcand));
+      reco::SuperClusterRef recrSC = ref->superCluster();
+      //reco::SuperClusterRef recrSC = recoecalcand->superCluster();
+
+      myHLTElectron ele;
+      ele.hcalIsol=-999; ele.trackIsol=-999;
+      ele.L1Isolated = true; ele.p=-999; 
+      ele.pixelSeeds = -999; ele.newSC=true;
+      
+      ele.Et=recoecalcand->et();
+      ele.eta=recoecalcand->eta();
+      ele.phi=recoecalcand->phi();
+      ele.E = recrSC->energy();
+      
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	//	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoIsolecalcands,distance(recoIsolecalcands->begin(),recoecalcand)) );
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( ref );
+	if(mapi !=(*HcalEleIsolMap).end()) {ele.hcalIsol=mapi->val;}
+      }
+      //look if the SC has associated pixelSeeds
+      int nmatch = 0;
+      //Barrel
+      if(foundPixelSCMapBarrel){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator itb = L1IsoBarrelMap->begin(); 
+	    itb != L1IsoBarrelMap->end(); itb++){
+	  edm::Ref<reco::SuperClusterCollection> theClusBarrel = itb->val;
+	  if(&(*recrSC) ==  &(*theClusBarrel)) {nmatch++;}
+	}
+      }
+      //Endcap
+      if(foundPixelSCMapEndcap){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator ite = L1IsoEndcapMap->begin(); 
+	    ite != L1IsoEndcapMap->end(); ite++){
+	  edm::Ref<reco::SuperClusterCollection> theClusEndcap = ite->val;
+	  if(&(*recrSC) ==  &(*theClusEndcap)) {nmatch++;}
+	}
+      }
+      ele.pixelSeeds = nmatch;
+    
+      //look if the SC was promoted to an electron:
+      if (foundHandle){
+	bool FirstElectron = true;
+	reco::ElectronRef electronref;
+	for(reco::ElectronCollection::const_iterator iElectron = electronIsoHandle->begin(); iElectron != 
+	      electronIsoHandle->end();iElectron++){
+	  // 1) find the SC from the electron
+	  electronref= reco::ElectronRef(electronIsoHandle,iElectron - electronIsoHandle->begin());
+	  const reco::SuperClusterRef theClus = electronref->superCluster(); //SC from the electron;
+  	  if(&(*recrSC) ==  &(*theClus)) {// ref is the RecoEcalCandidateRef corresponding to the electron
+	    if(FirstElectron) {//the first electron is stored in ele, keeping the ele.newSC=true
+	      FirstElectron = false;
+	      ele.p=electronref->track()->momentum().R();
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele.trackIsol=mapTr->val;}
+	      }	  
+	    }
+	    else {//FirstElectron is false, i.e. the SC of this electron is common to another electron.
+	      // A new  myHLTElectron is inserted in the theHLTElectrons vector setting newSC=false
+	      myHLTElectron ele2;
+	      ele2.hcalIsol=ele.hcalIsol;
+	      ele2.trackIsol=-999;
+	      ele2.Et  = ele.Et;
+	      ele2.eta = ele.eta;
+	      ele2.phi = ele.phi;
+	      ele2.E   = ele.E;
+	      ele2.L1Isolated = ele.L1Isolated; 
+	      ele2.pixelSeeds = ele.pixelSeeds; 
+	      ele2.newSC=false;
+	      ele2.p=electronref->track()->momentum().R(); 
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele2.trackIsol=mapTr->val;}
+	      }	  
+	      theHLTElectronsLargeWindows.push_back(ele2);
+	    }
+	  }
+	}//end of loop over electrons
+      }//end of if (foundHandle){
+      
+      //store the electron into the vector
+      theHLTElectronsLargeWindows.push_back(ele);
+    }//end of loop over ecalCandidates
+  }//end of if (foundCand){
+}
+
+void HLTEgamma::MakeL1NonIsolatedElectronsLargeWindows(edm::Event const& iEvent, edm::EventSetup const& iSetup){
+   // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+     // If there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
+
+  string EGerrMsg("");
+  bool foundCand=true;bool foundHandle=true;bool foundHcalIMap=true;
+  bool foundPixelSCMapBarrel = true;  bool foundPixelSCMapEndcap = true; bool foundTckIMap=true;
+
+  edm::Handle<reco::ElectronCollection> electronNonIsoHandle;
+  edm::Handle<reco::RecoEcalCandidateCollection> recoNonIsolecalcands;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap> HcalEleIsolMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1NonIsoBarrelMap;
+  edm::Handle<reco::SeedSuperClusterAssociationCollection> L1NonIsoEndcapMap;
+  edm::Handle<reco::ElectronIsolationMap> TrackEleIsolMap;
+
+  try{iEvent.getByLabel(CandNonIso_,recoNonIsolecalcands);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol eg candidate";
+      foundCand=false;
+    }
+  
+  try{iEvent.getByLabel(NonIsoElectronLargeWindowsTag_,electronNonIsoHandle);}  catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol electron";
+      foundHandle=false;
+    }
+ 
+  try{ iEvent.getByLabel(NonIsoEleHcalTag_,HcalEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Hcal electron";
+      foundHcalIMap=false;
+    }
+  try {iEvent.getByLabel (L1NonIsoPixelSeedsBarrelLargeWindowsTag_,L1NonIsoBarrelMap);}catch (...) 
+    {
+      foundPixelSCMapBarrel=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association barrel map for electron";
+    }
+  try {iEvent.getByLabel (L1NonIsoPixelSeedsEndcapLargeWindowsTag_,L1NonIsoEndcapMap);}catch (...) 
+    { 
+      foundPixelSCMapEndcap=false;
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association endcap map for electron";
+    }
+
+
+  //  EGerrMsg=EGerrMsg + "  HLTEgamma: No pixelSeed-SC association map for electron";
+  // foundPixelSCMap=false;
+  try{iEvent.getByLabel(NonIsoEleTrackIsolLargeWindowsTag_,TrackEleIsolMap);} catch(...)
+    {
+      EGerrMsg=EGerrMsg + "  HLTEgamma: No isol Track electron";
+      foundTckIMap=false;
+    }
+
+  if (foundCand){
+    for(reco::RecoEcalCandidateCollection::const_iterator recoecalcand= recoNonIsolecalcands->begin();
+	recoecalcand!=recoNonIsolecalcands->end(); recoecalcand++) {
+      //get the ref to the SC:
+      reco::RecoEcalCandidateRef ref = reco::RecoEcalCandidateRef(recoNonIsolecalcands,distance(recoNonIsolecalcands->begin(),recoecalcand));
+      reco::SuperClusterRef recrSC = ref->superCluster();
+      //reco::SuperClusterRef recrSC = recoecalcand->superCluster();
+
+      myHLTElectron ele;
+      ele.hcalIsol=-999; ele.trackIsol=-999;
+      ele.L1Isolated = false; ele.p=-999; 
+      ele.pixelSeeds = -999; ele.newSC=true;
+      
+      ele.Et=recoecalcand->et();
+      ele.eta=recoecalcand->eta();
+      ele.phi=recoecalcand->phi();
+      ele.E = recrSC->energy();
+      
+      //Fill the hcal Isolation
+      if (foundHcalIMap){
+	//	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoNonIsolecalcands,distance(recoNonIsolecalcands->begin(),recoecalcand)) );
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( ref );
+	if(mapi !=(*HcalEleIsolMap).end()) {ele.hcalIsol=mapi->val;}
+      }
+      //look if the SC has associated pixelSeeds
+      int nmatch = 0;
+      //Barrel
+      if(foundPixelSCMapBarrel){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator itb = L1NonIsoBarrelMap->begin(); 
+	    itb != L1NonIsoBarrelMap->end(); itb++){
+	  edm::Ref<reco::SuperClusterCollection> theClusBarrel = itb->val;
+	  if(&(*recrSC) ==  &(*theClusBarrel)) {nmatch++;}
+	}
+      }
+      //Endcap
+      if(foundPixelSCMapEndcap){
+	for(reco::SeedSuperClusterAssociationCollection::const_iterator ite = L1NonIsoEndcapMap->begin(); 
+	    ite != L1NonIsoEndcapMap->end(); ite++){
+	  edm::Ref<reco::SuperClusterCollection> theClusEndcap = ite->val;
+	  if(&(*recrSC) ==  &(*theClusEndcap)) {nmatch++;}
+	}
+      }
+      ele.pixelSeeds = nmatch;
+    
+      //look if the SC was promoted to an electron:
+      if (foundHandle){
+	bool FirstElectron = true;
+	reco::ElectronRef electronref;
+	for(reco::ElectronCollection::const_iterator iElectron = electronNonIsoHandle->begin(); iElectron != 
+	      electronNonIsoHandle->end();iElectron++){
+	  // 1) find the SC from the electron
+	  electronref= reco::ElectronRef(electronNonIsoHandle,iElectron - electronNonIsoHandle->begin());
+	  const reco::SuperClusterRef theClus = electronref->superCluster(); //SC from the electron;
+  	  if(&(*recrSC) ==  &(*theClus)) {// ref is the RecoEcalCandidateRef corresponding to the electron
+	    if(FirstElectron) {//the first electron is stored in ele, keeping the ele.newSC=true
+	      FirstElectron = false;
+	      ele.p=electronref->track()->momentum().R();
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele.trackIsol=mapTr->val;}
+	      }	  
+	    }
+	    else {//FirstElectron is false, i.e. the SC of this electron is common to another electron.
+	      // A new  myHLTElectron is inserted in the theHLTElectrons vector setting newSC=false
+	      myHLTElectron ele2;
+	      ele2.hcalIsol=ele.hcalIsol;
+	      ele2.trackIsol=-999;
+	      ele2.Et  = ele.Et;
+	      ele2.eta = ele.eta;
+	      ele2.phi = ele.phi;
+	      ele2.E   = ele.E;
+	      ele2.L1Isolated = ele.L1Isolated; 
+	      ele2.pixelSeeds = ele.pixelSeeds; 
+	      ele2.newSC=false;
+	      ele2.p=electronref->track()->momentum().R(); 
+	      //Fill the track Isolation
+	      if(foundTckIMap){
+		reco::ElectronIsolationMap::const_iterator mapTr = (*TrackEleIsolMap).find( electronref);
+		if(mapTr !=(*TrackEleIsolMap).end()) { ele2.trackIsol=mapTr->val;}
+	      }	  
+	      theHLTElectronsLargeWindows.push_back(ele2);
+	    }
+	  }
+	}//end of loop over electrons
+      }//end of if (foundHandle){
+      
+      //store the electron into the vector
+      theHLTElectronsLargeWindows.push_back(ele);
+    }//end of loop over ecalCandidates
+  }//end of if (foundCand){  
 }

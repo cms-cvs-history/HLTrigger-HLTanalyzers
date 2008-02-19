@@ -24,20 +24,26 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   genmet_     = conf.getParameter< std::string > ("genmet");
   ht_         = conf.getParameter< std::string > ("ht");
   calotowers_ = conf.getParameter< std::string > ("calotowers");
-
   Electron_   = conf.getParameter< std::string > ("Electron");
   Photon_     = conf.getParameter< std::string > ("Photon");
   muon_       = conf.getParameter< std::string > ("muon");
 
   mctruth_    = conf.getParameter< std::string > ("mctruth");
   genEventScale_ = conf.getParameter< std::string > ("genEventScale");
+
   l1extramc_  = conf.getParameter< std::string > ("l1extramc");
   hltresults_ = conf.getParameter< std::string > ("hltresults");
-//  particleMapSource_ = conf.getParameter< std::string > ("particleMapSource");
-  particleMapSource_="";
+  gtReadoutRecord_ = conf.getParameter< std::string > ("l1GtReadoutRecord");
+  gtObjectMap_ = conf.getParameter< std::string > ("l1GtObjectMapRecord");
 
   //ecalDigisLabel_ = conf.getParameter<std::string> ("ecalDigisLabel");
   //hcalDigisLabel_ = conf.getParameter<std::string> ("hcalDigisLabel");
+
+  MuCandTag2_ = conf.getParameter<std::string> ("MuCandTag2");
+  MuIsolTag2_ = conf.getParameter<std::string> ("MuIsolTag2");
+  MuCandTag3_ = conf.getParameter<std::string> ("MuCandTag3");
+  MuIsolTag3_ = conf.getParameter<std::string> ("MuIsolTag3");
+  MuLinkTag_ = conf.getParameter<std::string> ("MuLinkTag");
 
   errCnt=0;
 
@@ -72,6 +78,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   muon_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
   hlt_analysis_.setup(conf, HltTree);
+  evt_header_.setup(HltTree);
 
 }
 
@@ -91,25 +98,24 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<CaloMETCollection> recmet, recmetDummy;
   edm::Handle<GenMETCollection> genmet,genmetDummy;
   edm::Handle<METCollection> ht,htDummy;
-  // edm::Handle<edm::HepMCProduct> hepmcHandle;
   edm::Handle<CandidateCollection> mctruth,mctruthDummy;
   edm::Handle< double > genEventScale;
   edm::Handle<PixelMatchGsfElectronCollection> Electron, ElectronDummy;
   edm::Handle<PhotonCollection> Photon, PhotonDummy;
   edm::Handle<MuonCollection> muon,muonDummy;
-//   edm::Handle<HLTFilterObjectWithRefs> hltobj;
   edm::Handle<edm::TriggerResults> hltresults,hltresultsDummy;
   edm::Handle<l1extra::L1EmParticleCollection> l1extemi,l1extemn,l1extemiDummy,l1extemnDummy;
   edm::Handle<l1extra::L1MuonParticleCollection> l1extmu, l1extmuDummy;
   edm::Handle<l1extra::L1JetParticleCollection> l1extjetc,l1extjetf,l1exttaujet,l1extjetcDummy,l1extjetfDummy,l1exttaujetDummy;
   edm::Handle<l1extra::L1EtMissParticle> l1extmet, l1extmetDummy;
-//edm::Handle<l1extra::L1ParticleMapCollection> l1mapcoll;
+  edm::Handle<L1GlobalTriggerReadoutRecord> l1GtRR,l1GtRRDummy;
+  edm::Handle<L1GlobalTriggerObjectMapRecord> l1GtOMRec,l1GtOMRecDummy;
+  edm::Handle<L1GlobalTriggerObjectMap> l1GtOM,l1GtOMDummy;
 //  edm::Handle<EcalTrigPrimDigiCollection> ecal;
 //  edm::Handle<HcalTrigPrimDigiCollection> hcal;
-
-  
-  // ccla double pthat = *genEventScale;
-
+  edm::Handle<RecoChargedCandidateCollection> mucands2,mucands3,mucands2Dummy,mucands3Dummy;
+  edm::Handle<MuIsoAssociationMap> isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
+  edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
 
   // Extract Data objects (event fragments)
   //Jets and Missing ET
@@ -126,7 +132,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(muon_,muon);
   // HLT 
   iEvent.getByLabel(hltresults_,hltresults);
-  //  L1 Extra Info
+  //  L1 Info
   iEvent.getByLabel(l1extramc_,"Isolated",l1extemi);
   iEvent.getByLabel(l1extramc_,"NonIsolated",l1extemn);
   iEvent.getByLabel(l1extramc_,l1extmu);
@@ -134,10 +140,17 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(l1extramc_,"Forward",l1extjetf);
   iEvent.getByLabel(l1extramc_,"Tau",l1exttaujet);
   iEvent.getByLabel(l1extramc_,l1extmet);
+  iEvent.getByLabel(gtReadoutRecord_,l1GtRR);
+  iEvent.getByLabel(gtObjectMap_,l1GtOMRec);
   // MC info
   iEvent.getByLabel(genEventScale_, genEventScale );
   iEvent.getByLabel(mctruth_,mctruth);
-  // iEvent.getByLabel("VtxSmeared", "", hepmcHandle);  no longer used
+  // OpenHLT info
+  iEvent.getByLabel(MuCandTag2_,mucands2);
+  iEvent.getByLabel(MuCandTag3_,mucands3);
+  iEvent.getByLabel(MuIsolTag2_,isoMap2);
+  iEvent.getByLabel(MuIsolTag3_,isoMap3);
+  iEvent.getByLabel(MuLinkTag_,mulinks);
 
   // check the objects...
   string errMsg("");
@@ -148,7 +161,6 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! caloTowers.isValid() ) { errMsg=errMsg + "  -- No CaloTowers"; caloTowers=caloTowersDummy;}
   if (! ht.isValid()         ) { errMsg=errMsg + "  -- No HT"; ht = htDummy;}
   if (! Electron.isValid()   ) { errMsg=errMsg + "  -- No Candidate Electrons"; Electron=ElectronDummy;}
-
   if (! Photon.isValid()     ) { errMsg=errMsg + "  -- No Candidate Photons"; Photon=PhotonDummy;}
   if (! muon.isValid()       ) { errMsg=errMsg + "  -- No Candidate Muons"; muon=muonDummy;}
 
@@ -161,15 +173,16 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! l1extjetf.isValid()  ) { errMsg=errMsg + "  -- No forward L1Jet objects"; l1extjetf = l1extjetfDummy;}
   if (! l1exttaujet.isValid()) { errMsg=errMsg + "  -- No L1Jet-Tau objects"; l1exttaujet = l1exttaujetDummy;}
   if (! l1extmet.isValid()   ) { errMsg=errMsg + "  -- No L1EtMiss object"; l1extmet = l1extmetDummy;}
-//try {iEvent.getByLabel(particleMapSource_,l1mapcoll );} catch (...) { errMsg=errMsg + "  -- No L1 Map Collection";}
+  if (! l1GtRR.isValid()     ) { errMsg=errMsg + "  -- No L1 GT ReadouRecord";}
+  if (! l1GtOMRec.isValid()  ) { errMsg=errMsg + "  -- No L1 GT ObjectMap";}
 
   if (! mctruth.isValid()    ) { errMsg=errMsg + "  -- No Gen Particles"; mctruth = mctruthDummy;}
 
-
-  //HepMC::GenEvent hepmc,hepmcDummy;
-  //if (hepmcHandle.isValid()){
-  //  hepmc = hepmcHandle->getHepMCData(); 
-  //} else                       { errMsg=errMsg + "  -- No MCTruth"; hepmc = hepmcDummy;}
+  if (! mucands2.isValid()   ) { errMsg=errMsg + "  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
+  if (! mucands3.isValid()   ) { errMsg=errMsg + "  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
+  if (! isoMap2.isValid()    ) { errMsg=errMsg + "  -- No L2 muon isolation map"; isoMap2 = isoMap2Dummy;}
+  if (! isoMap3.isValid()    ) { errMsg=errMsg + "  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
+  if (! mulinks.isValid()    ) { errMsg=errMsg + "  -- No L3 muon link"; mulinks = mulinksDummy;}
 
 
   if ((errMsg != "") && (errCnt < errMax())){
@@ -183,10 +196,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   }
   // run the analysis, passing required event fragments
   jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, HltTree);
-  elm_analysis_.analyze(*Electron, *Photon, HltTree);
-  muon_analysis_.analyze(*muon, HltTree);
+  elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
+  muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
-  hlt_analysis_.analyze(/**hltobj,*/*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,/* *l1mapcoll, */HltTree);
+  hlt_analysis_.analyze(*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,
+			*l1GtRR.product(),*l1GtOMRec.product(),HltTree);
+  evt_header_.analyze(iEvent, HltTree);
+
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
   m_file->cd();
