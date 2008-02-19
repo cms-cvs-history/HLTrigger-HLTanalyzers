@@ -130,7 +130,8 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
 		      const l1extra::L1JetParticleCollection& L1ExtJetF,
 		      const l1extra::L1JetParticleCollection& L1ExtTau,
 		      const l1extra::L1EtMissParticle& L1ExtMet,
-//		      const l1extra::L1ParticleMapCollection& L1MapColl,
+		      const L1GlobalTriggerReadoutRecord& L1GTRR,
+		      const L1GlobalTriggerObjectMapRecord& L1GTOMRec,
 		      TTree* HltTree) {
 
 //   std::cout << " Beginning HLTInfo " << std::endl;
@@ -326,29 +327,36 @@ void HLTInfo::analyze(/*const HLTFilterObjectWithRefs& hltobj,*/
     if (_Debug) std::cout << "%HLTInfo -- No L1 MET object" << std::endl;
   }
 
-  /* comment out full block: uses the obsolete l1ExtraParticleMap|Collection
-
-  if (&L1MapColl) {
-
-    // 1st event : Book as many branches as trigger paths provided in the input...
+  // L1 decisions
+  TString algoBitToName[128];
+  DecisionWord gtDecisionWord = L1GTRR.decisionWord();
+  const unsigned int numberTriggerBits(gtDecisionWord.size());
+  // 1st event : Book as many branches as trigger paths provided in the input...
+  if ((&L1GTRR) && (&L1GTOMRec)) {  
     if (L1EvtCnt==0){
-      for (int itrig = 0; itrig != l1extra::L1ParticleMap::kNumOfL1TriggerTypes; ++itrig){
-	const l1extra::L1ParticleMap& map = ( L1MapColl )[ itrig ] ;
-	TString trigName = map.triggerName();
-	HltTree->Branch(trigName,l1flag+itrig,trigName+"/I");
+      // get ObjectMaps from ObjectMapRecord
+      const std::vector<L1GlobalTriggerObjectMap>& objMapVec =  L1GTOMRec.gtObjectMap();
+      // 1st event : Book as many branches as trigger paths provided in the input...
+      for (std::vector<L1GlobalTriggerObjectMap>::const_iterator itMap = objMapVec.begin();
+	   itMap != objMapVec.end(); ++itMap) {
+	// Get trigger bits
+	int itrig = (*itMap).algoBitNumber();
+	// Get trigger names
+	algoBitToName[itrig] = TString( (*itMap).algoName() );
+	
+	HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
       }
       L1EvtCnt++;
     }
-    // ...Fill the corresponding accepts in branch-variables
-    for (int itrig = 0; itrig != l1extra::L1ParticleMap::kNumOfL1TriggerTypes; ++itrig){
-      const l1extra::L1ParticleMap& map = ( L1MapColl )[ itrig ] ;
-      l1flag[itrig] = map.triggerDecision();
+    for (unsigned int iBit = 0; iBit < numberTriggerBits; ++iBit) {	
+      // ...Fill the corresponding accepts in branch-variables
+      l1flag[iBit] = gtDecisionWord[iBit];
+      //std::cout << "L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" "<<gtDecisionWord[iBit]<< std::endl;
     }
-   
   }
   else {
-    if (_Debug) std::cout << "%HLTInfo -- No [obsolete] L1 Map Collection" << std::endl;
+    if (_Debug) std::cout << "%HLTInfo -- No L1 GT ReadoutRecord or ObjectMapRecord" << std::endl;
   }
-  */
+
 
 }
