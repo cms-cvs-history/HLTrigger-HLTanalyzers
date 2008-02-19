@@ -1,0 +1,136 @@
+############ initialize magnetic field #########################
+include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
+
+############### initialize geometry #####################
+include "Geometry/CMSCommonData/data/cmsIdealGeometryXML.cfi"
+include "Geometry/TrackerGeometryBuilder/data/trackerGeometry.cfi"
+include "Geometry/TrackerNumberingBuilder/data/trackerNumberingGeometry.cfi"
+include "RecoTracker/GeometryESProducer/data/TrackerRecoGeometryESProducer.cfi"
+
+### ESProducers needed for tracking
+include "RecoTracker/TransientTrackingRecHit/data/TransientTrackingRecHitBuilder.cfi"
+include "TrackingTools/KalmanUpdators/data/KFUpdatorESProducer.cfi"
+
+include "TrackingTools/TrackFitters/data/KFTrajectoryFitterESProducer.cfi"
+include "TrackingTools/TrackFitters/data/KFTrajectorySmootherESProducer.cfi"
+include "TrackingTools/TrackFitters/data/KFFittingSmootherESProducer.cfi" 
+
+include "TrackingTools/MaterialEffects/data/MaterialPropagator.cfi"
+include "TrackingTools/MaterialEffects/data/OppositeMaterialPropagator.cfi"
+include "RecoLocalTracker/SiPixelRecHits/data/PixelCPEParmError.cfi"
+include "RecoLocalTracker/SiStripRecHitConverter/data/StripCPEfromTrackAngle.cfi"
+include "RecoLocalTracker/SiStripRecHitConverter/data/SiStripRecHitMatcher.cfi"
+include "RecoTracker/CkfPattern/data/CkfTrajectoryBuilderESProducer.cff"
+
+# modules to make seeds, tracks and electrons
+include "RecoEgamma/EgammaElectronProducers/data/egammaChi2MeasurementEstimatorESProducer.cfi"
+ module l1IsoElectronPixelSeedsLargeWindows = electronPixelSeeds from "RecoEgamma/EgammaElectronProducers/data/electronPixelSeeds.cfi"
+replace l1IsoElectronPixelSeedsLargeWindows.ePhiMin1=-0.035
+replace l1IsoElectronPixelSeedsLargeWindows.ePhiMax1=0.020
+replace l1IsoElectronPixelSeedsLargeWindows.pPhiMin1=-0.035
+replace l1IsoElectronPixelSeedsLargeWindows.pPhiMax1=0.020
+replace l1IsoElectronPixelSeedsLargeWindows.pPhiMin2=-0.002
+replace l1IsoElectronPixelSeedsLargeWindows.pPhiMax2=0.002
+replace l1IsoElectronPixelSeedsLargeWindows.ZMin1=-15.0
+replace l1IsoElectronPixelSeedsLargeWindows.ZMax1=15.0
+replace l1IsoElectronPixelSeedsLargeWindows.ZMin2=-0.1
+replace l1IsoElectronPixelSeedsLargeWindows.ZMax2=0.1
+
+replace l1IsoElectronPixelSeedsLargeWindows.superClusterBarrelProducer = "correctedHybridSuperClustersL1Isolated"
+#string superClusterBarrelLabel = ""
+replace l1IsoElectronPixelSeedsLargeWindows.superClusterEndcapProducer = "correctedEndcapSuperClustersWithPreshowerL1Isolated"
+#string superClusterEndcapLabel = ""
+
+#TrajectoryBuilder
+es_module TrajectoryBuilderForPixelMatchElectronsL1IsoLargeWindows = CkfTrajectoryBuilder from "RecoTracker/CkfPattern/data/CkfTrajectoryBuilderESProducer.cfi"
+
+replace TrajectoryBuilderForPixelMatchElectronsL1IsoLargeWindows.ComponentName = "TrajectoryBuilderForPixelMatchElectronsL1IsoLargeWindows"
+
+replace TrajectoryBuilderForPixelMatchElectronsL1IsoLargeWindows.estimator = "egammaChi2"
+
+# CKFTrackCandidateMaker
+#include "RecoTracker/CkfPattern/data/CkfTrackCandidates.cff"
+module ckfL1IsoTrackCandidatesBarrelLargeWindows = ckfTrackCandidates from "RecoTracker/CkfPattern/data/CkfTrackCandidates.cfi"
+replace ckfL1IsoTrackCandidatesBarrelLargeWindows.SeedProducer ="l1IsoElectronPixelSeedsLargeWindows"
+replace ckfL1IsoTrackCandidatesBarrelLargeWindows.SeedLabel ="correctedHybridSuperClustersL1Isolated"
+
+module ckfL1IsoTrackCandidatesEndcapLargeWindows = ckfTrackCandidates from "RecoTracker/CkfPattern/data/CkfTrackCandidates.cfi"
+replace ckfL1IsoTrackCandidatesEndcapLargeWindows.SeedProducer ="l1IsoElectronPixelSeedsLargeWindows"
+replace ckfL1IsoTrackCandidatesEndcapLargeWindows.SeedLabel ="correctedEndcapSuperClustersWithPreshowerL1Isolated"
+
+# CTF track fit with material
+#include "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cff"
+module ctfL1IsoWithMaterialTracksBarrelLargeWindows = ctfWithMaterialTracks from "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cfi"
+replace ctfL1IsoWithMaterialTracksBarrelLargeWindows.src = "ckfL1IsoTrackCandidatesBarrelLargeWindows"
+module ctfL1IsoWithMaterialTracksEndcapLargeWindows = ctfWithMaterialTracks from "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cfi"
+replace ctfL1IsoWithMaterialTracksEndcapLargeWindows.src = "ckfL1IsoTrackCandidatesEndcapLargeWindows"
+
+#pixelMatchedElectrons
+module pixelMatchElectronsL1IsoForHLTLargeWindows = pixelMatchElectronsForHLT from "RecoEgamma/EgammaHLTProducers/data/pixelMatchElectronsForHLT.cfi"
+
+replace pixelMatchElectronsL1IsoForHLTLargeWindows.TrackBarrelLabel = "ctfL1IsoWithMaterialTracksBarrelLargeWindows"
+#  string TrackBarrelProducer = ""
+replace pixelMatchElectronsL1IsoForHLTLargeWindows.TrackEndcapLabel = "ctfL1IsoWithMaterialTracksEndcapLargeWindows"
+#  string TrackEndcapProducer = ""
+  replace pixelMatchElectronsL1IsoForHLTLargeWindows.SCLBarrelLabel            = "l1IsoElectronPixelSeedsLargeWindows"
+  replace pixelMatchElectronsL1IsoForHLTLargeWindows.SCLBarrelProducer         = "correctedHybridSuperClustersL1Isolated"
+  replace pixelMatchElectronsL1IsoForHLTLargeWindows.SCLEndcapLabel            = "l1IsoElectronPixelSeedsLargeWindows"
+  replace pixelMatchElectronsL1IsoForHLTLargeWindows.SCLEndcapProducer         = "correctedEndcapSuperClustersWithPreshowerL1Isolated"
+  replace pixelMatchElectronsL1IsoForHLTLargeWindows.TrajectoryBuilder    = "TrajectoryBuilderForPixelMatchElectronsL1IsoLargeWindows"
+
+sequence pixelMatchElectronL1IsoLargeWindowSequenceForHLT = {l1IsoElectronPixelSeedsLargeWindows}
+
+sequence pixelMatchElectronL1IsoLargeWindowTrackingSequenceForHLT = {
+                                                     ckfL1IsoTrackCandidatesBarrelLargeWindows &
+                                                     ckfL1IsoTrackCandidatesEndcapLargeWindows &
+                                                     ctfL1IsoWithMaterialTracksBarrelLargeWindows &
+                                                     ctfL1IsoWithMaterialTracksEndcapLargeWindows &
+                                                     pixelMatchElectronsL1IsoForHLTLargeWindows
+                                                     }
+
+
+##------------------------------------------
+
+
+  # RoadSearchCloudMaker
+  include "RecoTracker/RoadSearchCloudMaker/data/RoadSearchClouds.cff"
+
+  # RoadSearchCloudMaker
+  include "RecoTracker/RoadSearchCloudCleaner/data/CleanRoadSearchClouds.cff"
+
+  # RoadSearchTrackCandidateMaker
+  include "RecoTracker/RoadSearchTrackCandidateMaker/data/RoadSearchTrackCandidates.cff"
+
+  # RS track fit with material 
+  include "RecoTracker/TrackProducer/data/RSFinalFitWithMaterial.cff"
+
+module l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows = hltEgammaRegionalPixelSeedGenerator from "RecoEgamma/EgammaHLTProducers/data/hltEgammaRegionalPixelSeedGenerator.cfi"
+
+replace l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows.candTag =  l1IsoRecoEcalCandidate
+replace l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows.candTagEle =  pixelMatchElectronsL1IsoForHLTLargeWindows
+replace l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows.UseZInVertex =  true
+replace l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows.originHalfLength = 0.5  
+
+# TrackerTrajectoryBuilders
+include "RecoTracker/CkfPattern/data/GroupedCkfTrajectoryBuilderESProducer.cff"
+
+############### generate CTF track candidates ############
+
+#include "RecoEgamma/EgammaHLTProducers/data/hltEgammaRegionalCkfTrackCandidates.cfi"
+module  l1IsoElectronsRegionalCkfTrackCandidatesLargeWindows = hltEgammaRegionalCkfTrackCandidates from "RecoEgamma/EgammaHLTProducers/data/hltEgammaRegionalCkfTrackCandidates.cfi"
+replace l1IsoElectronsRegionalCkfTrackCandidatesLargeWindows.SeedProducer = "l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows"
+
+# Chi2MeasurementEstimatorESProducer
+include "TrackingTools/KalmanUpdators/data/Chi2MeasurementEstimatorESProducer.cfi"
+
+# TrackProducer
+module l1IsoElectronsRegionalCTFFinalFitWithMaterialLargeWindows = hltEgammaRegionalCTFFinalFitWithMaterial from "RecoEgamma/EgammaHLTProducers/data/hltEgammaRegionalCTFFinalFitWithMaterial.cfi"
+
+replace l1IsoElectronsRegionalCTFFinalFitWithMaterialLargeWindows.src = "l1IsoElectronsRegionalCkfTrackCandidatesLargeWindows"
+
+sequence l1IsoLargeWindowElectronsRegionalRecoTracker = {l1IsoElectronsRegionalPixelSeedGeneratorLargeWindows, l1IsoElectronsRegionalCkfTrackCandidatesLargeWindows, l1IsoElectronsRegionalCTFFinalFitWithMaterialLargeWindows} 
+
+module l1IsoLargeWindowElectronTrackIsol  = hltElectronTrackIsol from "RecoEgamma/EgammaHLTProducers/data/hltElectronTrackIsol.cfi"
+
+replace l1IsoLargeWindowElectronTrackIsol.electronProducer    = pixelMatchElectronsL1IsoForHLTLargeWindows
+replace l1IsoLargeWindowElectronTrackIsol.trackProducer = l1IsoElectronsRegionalCTFFinalFitWithMaterialLargeWindows

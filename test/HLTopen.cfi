@@ -1,0 +1,96 @@
+ include "FWCore/MessageLogger/data/MessageLogger.cfi"
+ include "Configuration/StandardSequences/data/FakeConditions.cff"	
+
+
+### Open-HLT includes, modules and paths for Muon
+include "HLTrigger/Muon/data/OnlyReco.cff"
+path DoHltMuon = { recoHLTMuIso }
+
+
+### Open-HLT inclues, modules and paths for Egamma
+ include "HLTrigger/Egamma/data/EgammaHLTLocal_1e32.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoRecoEcalCandidate.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoRecoEcalCandidate.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoPhotonEcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoPhotonEcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsolatedPhotonHcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsolatedPhotonHcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoEgammaRegionalRecoTracker.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoEgammaRegionalRecoTracker.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoPhotonTrackIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoPhotonTrackIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsolatedElectronHcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsolatedElectronHcalIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/pixelMatchElectronL1IsoSequenceForHLT.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/pixelMatchElectronL1NonIsoSequenceForHLT.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/pixelMatchElectronL1IsoTrackingSequenceForHLT.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/pixelMatchElectronL1NonIsoTrackingSequenceForHLT.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoElectronsRegionalRecoTracker.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoElectronsRegionalRecoTracker.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1IsoElectronTrackIsol.cff"
+ include "RecoEgamma/EgammaHLTProducers/data/l1NonIsoElectronTrackIsol.cff"
+
+ include "HLTrigger/HLTanalyzers/test/RecoElectronL1IsoLargeWindows.cff"
+ include "HLTrigger/HLTanalyzers/test/RecoElectronL1NonIsoLargeWindows.cff"
+
+path DoHltPhoton = {hltBegin  
+			& doRegionalEgammaEcal
+			& l1IsolatedEcalClusters 
+			& l1NonIsolatedEcalClusters
+			& l1IsoRecoEcalCandidate
+			& l1NonIsoRecoEcalCandidate
+			& l1IsolatedPhotonEcalIsol
+			& l1NonIsolatedPhotonEcalIsol
+			& doLocalHcalWithoutHO
+			& l1IsolatedPhotonHcalIsol
+			& l1NonIsolatedPhotonHcalIsol
+			& doLocalPixel
+			& doLocalStrip
+			& l1IsoEgammaRegionalRecoTracker
+			& l1NonIsoEgammaRegionalRecoTracker
+			& l1IsoPhotonTrackIsol
+			& l1NonIsoPhotonTrackIsol}
+
+path DoHltElectron = {hltBegin   
+			& doRegionalEgammaEcal 
+			& l1IsolatedEcalClusters 
+			& l1NonIsolatedEcalClusters 
+			& l1IsoRecoEcalCandidate 
+			& l1NonIsoRecoEcalCandidate 
+			## & MyMatchFilterRegional
+			& doLocalHcalWithoutHO 
+			& l1IsolatedElectronHcalIsol 
+			& l1NonIsolatedElectronHcalIsol 
+			& doLocalPixel 
+			& pixelMatchElectronL1IsoSequenceForHLT 
+			& pixelMatchElectronL1NonIsoSequenceForHLT 
+			& doLocalStrip // strip rechit for the electron tracking
+			& pixelMatchElectronL1IsoTrackingSequenceForHLT 
+			& pixelMatchElectronL1NonIsoTrackingSequenceForHLT 
+			## & hltL1NonIsoSingleElectronEoverpFilter 
+			& l1IsoElectronsRegionalRecoTracker 
+			& l1NonIsoElectronsRegionalRecoTracker 
+			& l1IsoElectronTrackIsol 
+			& l1NonIsoElectronTrackIsol}
+
+
+ path DoHltElectronLargeWindows = {hltBegin &
+                               	    doRegionalEgammaEcal &
+                                    l1IsolatedEcalClusters &
+                                    l1NonIsolatedEcalClusters &
+                                    l1IsoRecoEcalCandidate &
+                                    l1NonIsoRecoEcalCandidate &
+                                    doLocalHcalWithoutHO &
+                                    l1IsolatedElectronHcalIsol & 
+                                    l1NonIsolatedElectronHcalIsol & 
+                                    doLocalPixel & 
+	                            pixelMatchElectronL1IsoLargeWindowSequenceForHLT & 
+	                            pixelMatchElectronL1NonIsoLargeWindowSequenceForHLT & 
+			            doLocalStrip & 
+                                    pixelMatchElectronL1IsoLargeWindowTrackingSequenceForHLT &
+                                    pixelMatchElectronL1NonIsoLargeWindowTrackingSequenceForHLT &
+                                    l1IsoLargeWindowElectronsRegionalRecoTracker & 
+                                    l1NonIsoLargeWindowElectronsRegionalRecoTracker & 
+                                    l1IsoLargeWindowElectronTrackIsol & 
+                                    l1NonIsoLargeWindowElectronTrackIsol  
+                                   }
