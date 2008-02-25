@@ -38,26 +38,26 @@ module l1GetDigi = HLTGetDigi {
    InputTag DTdigiCollection       = muonDTDigis
    InputTag RPCdigiCollection      = muonRPCDigis
 
-   InputTag L1CaloEmCollection = l1RctEmulDigis
-   InputTag L1CaloRegionCollection = l1RctEmulDigis
+   InputTag L1CaloEmCollection = rctDigis
+   InputTag L1CaloRegionCollection = rctDigis
 
-   InputTag GctIsoEmCollection = l1GctEmulDigis:isoEm
-   InputTag GctNonIsoEmCollection = l1GctEmulDigis:nonIsoEm
+   InputTag GctIsoEmCollection = gctDigis:isoEm
+   InputTag GctNonIsoEmCollection = gctDigis:nonIsoEm
 
-   InputTag GctCenJetCollection = l1GctEmulDigis:cenJets
-   InputTag GctForJetCollection = l1GctEmulDigis:tauJets
-   InputTag GctTauJetCollection = l1GctEmulDigis:tauJets
-   InputTag GctJetCounts = l1GctEmulDigis
+   InputTag GctCenJetCollection = gctDigis:cenJets
+   InputTag GctForJetCollection = gctDigis:tauJets
+   InputTag GctTauJetCollection = gctDigis:tauJets
+   InputTag GctJetCounts = gctDigis
 
-   InputTag GctEtHadCollection = l1GctEmulDigis
-   InputTag GctEtMissCollection = l1GctEmulDigis
-   InputTag GctEtTotalCollection = l1GctEmulDigis
+   InputTag GctEtHadCollection = gctDigis
+   InputTag GctEtMissCollection = gctDigis
+   InputTag GctEtTotalCollection = gctDigis
 
    InputTag GtEvmReadoutRecord = gtDigis
    InputTag GtObjectMapRecord = gtDigis
    InputTag GtReadoutRecord = gtDigis
 
-   InputTag GmtCands = l1GmtEmulDigis
-   InputTag GmtReadoutCollection = l1GmtEmulDigis
+   InputTag GmtCands = gmtDigis
+   InputTag GmtReadoutCollection = gmtDigis
 
 }
