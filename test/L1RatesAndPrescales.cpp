@@ -61,6 +61,8 @@ int main(int argc, char *argv[]){
     Version = atoi(argv[3]);
   }
 
+  float scale = 1000.; // convert to kHz
+    
   ////////////////////////////////////////////////////////////
   // Instanteneous Luminosity [cm^-2 s^-1]
   
@@ -276,16 +278,23 @@ int main(int argc, char *argv[]){
     // Print binwise
     /**/
     cout.setf(ios::floatfield,ios::fixed);
-    cout<<setprecision(1);
+    cout<<setprecision(2);
     for (int it=0; it < Ntrig; it++){
-      cout  << setw(3) << it << ")" << setw(32) << trignames[it]  << " (" << prescales[it] << ")" 
-	    << " :   Indiv.: " << setw(8) << Rat_bin[it] << " +/- " << setw(5) << sqrt(sRat_bin[it]) 
-	    << "   seqPure: " << setw(8) << seqpRat_bin[it]
-	    << "   Pure: " << setw(8) << pRat_bin[it] 
-	    << "   Cumul: " << setw(8) << cRat_bin[it] << "\n"<<flush;
+      cout  << setw(3) << it << ")";
+      cout  << setw(28) << trignames[it]  << " (";
+      if (prescales[it]>=1000000) {
+	cout  <<setw(5)<<scientific<<setprecision(0)<< (float)prescales[it]<<fixed;
+      } else {
+	cout  <<setw(7)<<prescales[it];
+      }
+      cout  <<  setprecision(2) << ")";
+      cout<< " :   Indiv.: " << setw(5) << Rat_bin[it]/scale << " +- " << setw(5) << sqrt(sRat_bin[it])/scale 
+	  << "   sPure: " << setw(5) << seqpRat_bin[it]/scale
+	  << "   Pure: " << setw(5) << pRat_bin[it]/scale 
+	  << "   Cumul: " << setw(6) << cRat_bin[it]/scale << "\n"<<flush;
     }
     cout << "\n"<<flush;
-    cout << setw(60) << "TOTAL RATE : " << setw(5) << RTOT_bin << " +- " << sRTOT_bin << " Hz" << "\n";
+    cout << setw(60) << "TOTAL RATE : " << setw(5) << RTOT_bin/scale << " +- " << sRTOT_bin/scale << " kHz" << "\n";
     cout << "\n"<<flush;
     /**/
     
@@ -317,34 +326,35 @@ int main(int argc, char *argv[]){
     for (int jt = 0; jt != Ntrig; ++jt){
       if (jt>=it) {
 	// Overlap O(ij) = T(i) x T(j) / T(j)
-        cout << "i=" << it << " j=" << jt << "     " << eff((Onum.at(it))[jt],Odenp[jt]) << endl;   
+        cout << "i="  << setw(3)<< it << " j="  << setw(3)<< jt << "     "  << setw(6)<< eff((Onum.at(it))[jt],Odenp[jt]) << endl;   
       }
     }
   }
   /**/
 
   cout.setf(ios::floatfield,ios::fixed);
-  cout<<setprecision(1);
+  cout<<setprecision(2);
 
   cout << "\n";
-  cout << "Trigger Rates [Hz] : " << "\n";
-  cout << "------------------------------------------------------------------------------------------------------------------\n";
+  cout << "Level-1 Trigger Rates [kHz] (prescale): " << "\n";
+  cout << "--------------------------------------------------------------------------------------------------------------------\n"<<flush;
   // This is with the accurate formula: 
   for (int it=0; it < Ntrig; it++){
-    cout  << setw(3) << it << ")" << setw(28) << trignames[it]  << " (";
-    //cout.setf(ios::floatfield,ios::scientific);
-    //cout  << setprecision(0) << setw(5) << (float)prescales[it]; 
-    //cout.setf(ios::floatfield,ios::fixed);
-    cout  << prescales[it]; 
-    cout  <<  setprecision(1) << ")" 
-	  << " :   Indiv.: " << setw(8) << Rat[it] << " +/- " << setw(5) << sqrt(sRat[it]) 
-	  << "   seqPure: " << setw(8) << seqpRat[it]
-	  << "   Pure: " << setw(8) << pRat[it] 
-	  << "   Cumul: " << setw(8) << cRat[it] << "\n"<<flush;
+    cout  << setw(3) << it << ")";
+    cout  << setw(28) << trignames[it]  << " (";
+    if (prescales[it]>=1000000) {
+      cout  <<setw(5)<<scientific<<setprecision(0)<< (float)prescales[it]<<fixed;
+    } else {
+      cout  <<setw(7)<<prescales[it];
+    }
+    cout  <<  setprecision(2) << ")" 
+	  << " :   Indiv: " << setw(5) << Rat[it]/scale << " +- " << setw(5) << sqrt(sRat[it])/scale 
+	  << "   sPure: " << setw(5) << seqpRat[it]/scale
+	  << "   Pure: " << setw(5) << pRat[it]/scale 
+	  << "   Cumul: " << setw(6) << cRat[it]/scale << "\n"<<flush;
   }
-  cout << "\n"<<flush;
-  cout << setw(60) << "TOTAL RATE : " << setw(5) << RTOT << " +- " << sRTOT << " Hz" << "\n";
-  cout << "------------------------------------------------------------------------------------------------------------------\n"<<flush;
+  cout << "--------------------------------------------------------------------------------------------------------------------\n"<<flush;
+  cout << setw(60) << "TOTAL RATE : " << setw(5) << RTOT/scale << " +- " << sRTOT/scale << " kHz" << "\n";
 
 }
 
@@ -414,14 +424,14 @@ void MakeL1Menu_1E27_1(double &ILumi, double &nFilledBunches, vector<string> &tr
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  trignames.push_back("SingleRelEG5"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG6"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
+  trignames.push_back("SingleEG5"); prescales.push_back(1);	
+  trignames.push_back("SingleEG6"); prescales.push_back(1);	
+  trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  trignames.push_back("SingleEG15"); prescales.push_back(1);	
   trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
   trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1);	
@@ -508,89 +518,130 @@ void MakeL1Menu_38E29_43(double &ILumi, double &nFilledBunches, vector<string> &
   nFilledBunches = 43;
 
   /**/ // New Relaxed triggers for early run periods 
+  if (Version==10) { trignames.push_back("OrAllMu"); prescales.push_back(1); }
+
   trignames.push_back("SingleMu0"); prescales.push_back(1);
   trignames.push_back("SingleMu3"); prescales.push_back(1);	
   trignames.push_back("SingleMu5"); prescales.push_back(1);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
   trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
-  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  trignames.push_back("SingleRelEG5"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG6"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+  
+  trignames.push_back("SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG6"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
+
+  //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
 
   if (Version==7) { trignames.push_back("SingleJet10"); prescales.push_back(1); }
   if (Version==7) { trignames.push_back("SingleJet15"); prescales.push_back(1); }
-
   if (Version==8) { trignames.push_back("SingleJet15"); prescales.push_back(1); }
-
+  if (Version==9) { trignames.push_back("SingleJet15"); prescales.push_back(1); }
+  if (Version==10) { trignames.push_back("SingleJet15"); prescales.push_back(1); }
   trignames.push_back("SingleJet20"); prescales.push_back(1);
-  trignames.push_back("SingleJet25"); prescales.push_back(1);
+  //trignames.push_back("SingleJet25"); prescales.push_back(1);
   trignames.push_back("SingleJet30"); prescales.push_back(1);
-  trignames.push_back("SingleJet35"); prescales.push_back(1);
-  trignames.push_back("SingleJet40"); prescales.push_back(1);
+  //trignames.push_back("SingleJet35"); prescales.push_back(1);
+  //trignames.push_back("SingleJet40"); prescales.push_back(1);
   trignames.push_back("SingleJet50"); prescales.push_back(1);
   trignames.push_back("SingleJet70"); prescales.push_back(1);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
-  trignames.push_back("SingleJet150"); prescales.push_back(1);
-
+  //trignames.push_back("SingleJet100"); prescales.push_back(1);
+  //trignames.push_back("SingleJet150"); prescales.push_back(1);
   if (Version==7) { trignames.push_back("L1_SingleJet15"); prescales.push_back(1);}
   if (Version==8) { trignames.push_back("L1_SingleJet15"); prescales.push_back(1);}
-
-  trignames.push_back("L1_SingleJet30"); prescales.push_back(1);
-  trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet30"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
-  //trignames.push_back("SingleTau10"); prescales.push_back(1);	
-  trignames.push_back("SingleTau20"); prescales.push_back(1);	
-  trignames.push_back("SingleTau25"); prescales.push_back(1);	
-  trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1);	
-  trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+  
+  //trignames.push_back("SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet20"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet25"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet30"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet40"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet30"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);
+  
   trignames.push_back("L1_HTT200"); prescales.push_back(1);
   trignames.push_back("L1_HTT250"); prescales.push_back(1);
   trignames.push_back("L1_HTT300"); prescales.push_back(1);
+  trignames.push_back("L1_HTT400"); prescales.push_back(1);
+  //trignames.push_back("L1_HTT500"); prescales.push_back(1);
+
   trignames.push_back("ETM20"); prescales.push_back(1);
   trignames.push_back("ETM25"); prescales.push_back(1);	
-  trignames.push_back("ETM30"); prescales.push_back(1);	
-  trignames.push_back("ETM35"); prescales.push_back(1);	
-  trignames.push_back("ETM40"); prescales.push_back(1);	
-  trignames.push_back("ETM50"); prescales.push_back(1);	
-  trignames.push_back("ETM60"); prescales.push_back(1);	
-  trignames.push_back("L1_ETM20"); prescales.push_back(1);
+  //trignames.push_back("ETM30"); prescales.push_back(1);	
+  //trignames.push_back("ETM35"); prescales.push_back(1);	
+  //trignames.push_back("ETM40"); prescales.push_back(1);	
+  //trignames.push_back("ETM50"); prescales.push_back(1);	
+  //trignames.push_back("ETM60"); prescales.push_back(1);	
+  //trignames.push_back("L1_ETM20"); prescales.push_back(1);
   trignames.push_back("L1_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_ETM40"); prescales.push_back(1);
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);
+  
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleIsoEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG5"); prescales.push_back(1);
   trignames.push_back("L1_DoubleEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG15"); prescales.push_back(1);
+
   trignames.push_back("L1_DoubleJet70"); prescales.push_back(1);
   trignames.push_back("L1_DoubleJet100"); prescales.push_back(1);
+
+  trignames.push_back("L1_DoubleTauJet20"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet30"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet35"); prescales.push_back(1);
   trignames.push_back("L1_DoubleTauJet40"); prescales.push_back(1);
+  
   trignames.push_back("L1_IsoEG10_Jet15"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet20"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet30"); prescales.push_back(1);
@@ -609,6 +660,7 @@ void MakeL1Menu_38E29_43(double &ILumi, double &nFilledBunches, vector<string> &
   trignames.push_back("L1_IsoEG10_Jet20_ForJet10"); prescales.push_back(1);
   trignames.push_back("L1_MinBias_HTT10"); prescales.push_back(1);
   trignames.push_back("L1_ZeroBias"); prescales.push_back(1);
+
   // New Minbias triggers
   if (Version==1) { trignames.push_back("MinBias_SingleHF1"); prescales.push_back(1);  }
   if (Version==1) { trignames.push_back("MinBias_DoubleHF1"); prescales.push_back(1);  }
@@ -626,6 +678,10 @@ void MakeL1Menu_38E29_43(double &ILumi, double &nFilledBunches, vector<string> &
   if (Version==7) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(1);  }
   if (Version==8) { trignames.push_back("MinBias_SingleHF2"); prescales.push_back(1);  }
   if (Version==8) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(1);  }
+  if (Version==9) { trignames.push_back("MinBias_SingleHF2"); prescales.push_back(1);  }
+  if (Version==9) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(1);  }
+  if (Version==10) { trignames.push_back("MinBias_SingleHF2"); prescales.push_back(1);  }
+  if (Version==10) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(1);  }
 
   /**/
 
@@ -642,32 +698,51 @@ void MakeL1Menu_17E30_43(double &ILumi, double &nFilledBunches, vector<string> &
   trignames.push_back("SingleMu0"); prescales.push_back(1);
   trignames.push_back("SingleMu3"); prescales.push_back(1);	
   trignames.push_back("SingleMu5"); prescales.push_back(1);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
   trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  trignames.push_back("SingleRelEG5"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG6"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+
+  trignames.push_back("SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG6"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
+
+  //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
 
   //if (Version==1) { trignames.push_back("SingleJet10"); prescales.push_back(1);   }
   //if (Version==1) { trignames.push_back("SingleJet15"); prescales.push_back(1);	  }
@@ -691,73 +766,94 @@ void MakeL1Menu_17E30_43(double &ILumi, double &nFilledBunches, vector<string> &
 
   if (Version==8) { trignames.push_back("SingleJet20"); prescales.push_back(10);	  }
 
-  //trignames.push_back("SingleJet25"); prescales.push_back(1);
+  if (Version==9) { trignames.push_back("SingleJet15"); prescales.push_back(15);}
+  //if (Version==9) { trignames.push_back("SingleJet20"); prescales.push_back(10);}
+  
+    //trignames.push_back("SingleJet25"); prescales.push_back(1);
   trignames.push_back("SingleJet30"); prescales.push_back(1);
-  trignames.push_back("SingleJet35"); prescales.push_back(1);
-  trignames.push_back("SingleJet40"); prescales.push_back(1);
+  //trignames.push_back("SingleJet35"); prescales.push_back(1);
+  //trignames.push_back("SingleJet40"); prescales.push_back(1);
   trignames.push_back("SingleJet50"); prescales.push_back(1);
   trignames.push_back("SingleJet70"); prescales.push_back(1);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
-  trignames.push_back("SingleJet150"); prescales.push_back(1);
-
-  //if (Version==1) { trignames.push_back("L1_SingleJet15"); prescales.push_back(1); }
-
-  trignames.push_back("L1_SingleJet30"); prescales.push_back(1);
-  trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
+  //trignames.push_back("SingleJet100"); prescales.push_back(1);
+  //trignames.push_back("SingleJet150"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet30"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
+  
+  //if (Version==1) { trignames.push_back("SingleTauJet10"); prescales.push_back(1);	 }
+  if (Version==1) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==1) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  //if (Version==1) { trignames.push_back("SingleTau10"); prescales.push_back(1);	 }
-  if (Version==1) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==1) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  if (Version==2) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==2) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
+  if (Version==4) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==4) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  if (Version==2) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==2) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
-  if (Version==4) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==4) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  if (Version==6) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==6) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  if (Version==6) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==6) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  if (Version==7) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==7) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  if (Version==7) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==7) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  if (Version==8) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==8) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  if (Version==8) { trignames.push_back("SingleTau20"); prescales.push_back(1);	 }
-  if (Version==8) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  if (Version==9) { trignames.push_back("SingleTauJet20"); prescales.push_back(1);	 }
+  if (Version==9) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1);	
-  trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet30"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet40"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet30"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);
+  
   trignames.push_back("L1_HTT200"); prescales.push_back(1);
   trignames.push_back("L1_HTT250"); prescales.push_back(1);
   trignames.push_back("L1_HTT300"); prescales.push_back(1);
+  trignames.push_back("L1_HTT400"); prescales.push_back(1);
+  //trignames.push_back("L1_HTT500"); prescales.push_back(1);
 
   if (Version<8) { trignames.push_back("ETM20"); prescales.push_back(1); }
   if (Version<8) { trignames.push_back("ETM25"); prescales.push_back(1); }
 
   trignames.push_back("ETM30"); prescales.push_back(1);	
-  trignames.push_back("ETM35"); prescales.push_back(1);	
-  trignames.push_back("ETM40"); prescales.push_back(1);	
-  trignames.push_back("ETM50"); prescales.push_back(1);	
-  trignames.push_back("ETM60"); prescales.push_back(1);	
-
+  //trignames.push_back("ETM35"); prescales.push_back(1);	
+  //trignames.push_back("ETM40"); prescales.push_back(1);	
+  //trignames.push_back("ETM50"); prescales.push_back(1);	
+  //trignames.push_back("ETM60"); prescales.push_back(1);	
   if (Version<8) { trignames.push_back("L1_ETM20"); prescales.push_back(1); }
   if (Version<8) { trignames.push_back("L1_ETM25"); prescales.push_back(1); }
-
   trignames.push_back("L1_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_ETM40"); prescales.push_back(1);
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);
+  
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleIsoEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG5"); prescales.push_back(1);
   trignames.push_back("L1_DoubleEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG15"); prescales.push_back(1);
+
   trignames.push_back("L1_DoubleJet70"); prescales.push_back(1);
   trignames.push_back("L1_DoubleJet100"); prescales.push_back(1);
+
+  trignames.push_back("L1_DoubleTauJet20"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet30"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet35"); prescales.push_back(1);
   trignames.push_back("L1_DoubleTauJet40"); prescales.push_back(1);
+  
   trignames.push_back("L1_IsoEG10_Jet15"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet20"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet30"); prescales.push_back(1);
@@ -791,9 +887,11 @@ void MakeL1Menu_17E30_43(double &ILumi, double &nFilledBunches, vector<string> &
   if (Version==6) { trignames.push_back("MinBias_SingleHF2"); prescales.push_back(3);	 }
   if (Version==6) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(3);	 }
   if (Version==7) { trignames.push_back("MinBias_SingleHF1"); prescales.push_back(10);	 }
-
   if (Version==8) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(1);	 }
   if (Version==8) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(1);	 }
+
+  if (Version==9) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(1);	 }
+  if (Version==9) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(1);	 }
 
   /**/
 
@@ -808,38 +906,37 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
 
   /**/  // 160 table for lumi = 1E32
   //trignames.push_back("SingleMu0"); prescales.push_back(1);
-  trignames.push_back("SingleMu3"); prescales.push_back(4000);	
-  trignames.push_back("SingleMu5"); prescales.push_back(2000);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("SingleMu3"); prescales.push_back(4000);	
+  //trignames.push_back("SingleMu5"); prescales.push_back(2000);    
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
   trignames.push_back("L1_SingleMu3"); prescales.push_back(4000);	
   trignames.push_back("L1_SingleMu5"); prescales.push_back(2000);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(20); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  //trignames.push_back("SingleRelEG5"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG6"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
-  //trignames.push_back("L1_SingleIsoEG5"); prescales.push_back(10000);	
-  trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1000);	
-  trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(100);	
-  trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
+
+  //trignames.push_back("SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG6"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);
   trignames.push_back("L1_SingleEG5"); prescales.push_back(10000);	
   trignames.push_back("L1_SingleEG8"); prescales.push_back(1000);	
   trignames.push_back("L1_SingleEG10"); prescales.push_back(100);	
@@ -847,6 +944,17 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
   trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
+
+  //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG5"); prescales.push_back(10000);	
+  trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1000);	
+  trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(100);	
+  trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
+
   //trignames.push_back("SingleJet10"); prescales.push_back(1);
   //trignames.push_back("SingleJet15"); prescales.push_back(1);
   //trignames.push_back("SingleJet20"); prescales.push_back(1);
@@ -855,8 +963,8 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   //trignames.push_back("SingleJet35"); prescales.push_back(1);
   //trignames.push_back("SingleJet40"); prescales.push_back(1);
   //trignames.push_back("SingleJet50"); prescales.push_back(1);
-  trignames.push_back("SingleJet70"); prescales.push_back(100);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
+  //trignames.push_back("SingleJet70"); prescales.push_back(100);
+  //trignames.push_back("SingleJet100"); prescales.push_back(1);
   //trignames.push_back("SingleJet150"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet15"); prescales.push_back(100000);
   //trignames.push_back("L1_SingleJet20"); prescales.push_back(999999999);
@@ -866,21 +974,26 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet200"); prescales.push_back(1);
-  //trignames.push_back("SingleTau10"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau20"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau25"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1000);	
-  //trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
+  
+  //trignames.push_back("SingleTauJet10"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet20"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet25"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet30"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet40"); prescales.push_back(1000);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet10"); prescales.push_back(100000);	
+  trignames.push_back("L1_SingleTauJet20"); prescales.push_back(100000);	
+  trignames.push_back("L1_SingleTauJet30"); prescales.push_back(10000);	
   trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1000);	
-  //trignames.push_back("L1_SingleTauJet60"); prescales.push_back(999999999);	
+  trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1000);	
   trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+
+  
   trignames.push_back("L1_HTT100"); prescales.push_back(10000);
   trignames.push_back("L1_HTT200"); prescales.push_back(1000);
   
@@ -903,6 +1016,12 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   if (Version==8) {trignames.push_back("L1_HTT250"); prescales.push_back(100);}
   if (Version==8) {trignames.push_back("L1_HTT300"); prescales.push_back(1);}
   if (Version==8) {trignames.push_back("L1_HTT400"); prescales.push_back(1);}
+
+  if (Version==9) {trignames.push_back("L1_HTT250"); prescales.push_back(100);}
+  if (Version==9) {trignames.push_back("L1_HTT300"); prescales.push_back(1);}
+  if (Version==9) {trignames.push_back("L1_HTT400"); prescales.push_back(1);}
+  if (Version==9) {trignames.push_back("L1_HTT500"); prescales.push_back(1);}
+
 
   if (Version<8) {trignames.push_back("ETM20"); prescales.push_back(1000000);}
 
@@ -947,7 +1066,12 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   if (Version==8) {trignames.push_back("L1_ETM30"); prescales.push_back(1000);}
   if (Version==8) {trignames.push_back("L1_ETM40"); prescales.push_back(1000);}
 
-  trignames.push_back("ETM50"); prescales.push_back(1);	
+  if (Version==8) {trignames.push_back("L1_ETM20"); prescales.push_back(10000);}
+  if (Version==8) {trignames.push_back("L1_ETM30"); prescales.push_back(1000);}
+  if (Version==8) {trignames.push_back("L1_ETM40"); prescales.push_back(1000);}
+
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);	
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);	
   //trignames.push_back("ETM60"); prescales.push_back(1);	
   //trignames.push_back("ETM50_Jet40"); prescales.push_back(1);
 
@@ -965,6 +1089,7 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   if (Version==6) {trignames.push_back("L1_ETM40"); prescales.push_back(100000);}
   if (Version==7) {trignames.push_back("L1_ETM30"); prescales.push_back(100000);}
   if (Version==7) {trignames.push_back("L1_ETM40"); prescales.push_back(1);}
+  
   //trignames.push_back("L1_ETM50"); prescales.push_back(1);
   //trignames.push_back("L1_ETM60"); prescales.push_back(1);
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
@@ -1002,6 +1127,9 @@ void MakeL1Menu_10E32_1000(double &ILumi, double &nFilledBunches, vector<string>
   if (Version==8) {trignames.push_back("QuadJet40"); prescales.push_back(1);}
   if (Version==8) {trignames.push_back("QuadJet50"); prescales.push_back(1);}
 
+  if (Version==9) {trignames.push_back("QuadJet40"); prescales.push_back(1);}
+  if (Version==9) {trignames.push_back("QuadJet50"); prescales.push_back(1);}
+
   trignames.push_back("L1_ExclusiveDoubleIsoEG6"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveDoubleJet60"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveJet25_Gap_Jet25"); prescales.push_back(1);
@@ -1026,33 +1154,55 @@ void MakeL1Menu_61E30_43(double &ILumi, double &nFilledBunches,
   trignames.push_back("SingleMu0"); prescales.push_back(1);
   trignames.push_back("SingleMu3"); prescales.push_back(1);	
   trignames.push_back("SingleMu5"); prescales.push_back(1);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
-  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  if (Version==1) { trignames.push_back("SingleRelEG5"); prescales.push_back(5); };	
-  if (Version==2) { trignames.push_back("SingleRelEG5"); prescales.push_back(10); };	
-  if (Version==2) { trignames.push_back("SingleRelEG6"); prescales.push_back(1); };	
-  //trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+  
+  if (Version==1) { trignames.push_back("SingleEG5"); prescales.push_back(5); };	
+  if (Version==2) { trignames.push_back("SingleEG5"); prescales.push_back(10); };	
+  if (Version==2) { trignames.push_back("SingleEG6"); prescales.push_back(1); };
+  if (Version==3) { trignames.push_back("SingleEG5"); prescales.push_back(10); };	
+  if (Version==3) { trignames.push_back("SingleEG6"); prescales.push_back(1); };
+  
+  //trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
+
+  //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
 
   //if (Version==1) { trignames.push_back("SingleJet10"); prescales.push_back(10);  }
   if (Version==1) { trignames.push_back("SingleJet20"); prescales.push_back(100);	  }
@@ -1061,35 +1211,43 @@ void MakeL1Menu_61E30_43(double &ILumi, double &nFilledBunches,
   if (Version==2) { trignames.push_back("SingleJet20"); prescales.push_back(100);	  }
   if (Version==2) { trignames.push_back("SingleJet30"); prescales.push_back(10); }
 
-  //trignames.push_back("SingleJet25"); prescales.push_back(1);
-  //trignames.push_back("SingleJet35"); prescales.push_back(1);
+  if (Version==3) { trignames.push_back("SingleJet15"); prescales.push_back(100);	  }
+  if (Version==3) { trignames.push_back("SingleJet20"); prescales.push_back(100);	  }
+  if (Version==3) { trignames.push_back("SingleJet30"); prescales.push_back(10); }
+
   trignames.push_back("SingleJet40"); prescales.push_back(1);
   trignames.push_back("SingleJet50"); prescales.push_back(1);
   trignames.push_back("SingleJet70"); prescales.push_back(1);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
-  trignames.push_back("SingleJet150"); prescales.push_back(1);
-
-  trignames.push_back("L1_SingleJet30"); prescales.push_back(10);
-  trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
 
-  //if (Version==1) { trignames.push_back("SingleTau20"); prescales.push_back(10);	 }
-  //if (Version==1) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
+  //if (Version==1) { trignames.push_back("SingleTauJet20"); prescales.push_back(10);	 }
+  //if (Version==1) { trignames.push_back("SingleTauJet25"); prescales.push_back(1);	 }
 
-  trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1);	
-  trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet20"); prescales.push_back(100);	
+  //trignames.push_back("SingleTauJet25"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet30"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet40"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet30"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);
+
   trignames.push_back("L1_HTT200"); prescales.push_back(1);
   trignames.push_back("L1_HTT250"); prescales.push_back(1);
   trignames.push_back("L1_HTT300"); prescales.push_back(1);
+  trignames.push_back("L1_HTT400"); prescales.push_back(1);
+  //trignames.push_back("L1_HTT500"); prescales.push_back(1);
 
   if (Version==1) { trignames.push_back("ETM20"); prescales.push_back(1); };
   if (Version==2) { trignames.push_back("ETM20"); prescales.push_back(100000); };
@@ -1097,20 +1255,34 @@ void MakeL1Menu_61E30_43(double &ILumi, double &nFilledBunches,
   if (Version==1) { trignames.push_back("ETM25"); prescales.push_back(1);}
   if (Version==2) { trignames.push_back("ETM25"); prescales.push_back(100000);}
 
-  trignames.push_back("ETM30"); prescales.push_back(1);	
-  trignames.push_back("ETM35"); prescales.push_back(1);	
-  trignames.push_back("ETM40"); prescales.push_back(1);	
-  trignames.push_back("ETM50"); prescales.push_back(1);	
-  trignames.push_back("ETM60"); prescales.push_back(1);	
+  //trignames.push_back("ETM20"); prescales.push_back(1);
+  //trignames.push_back("ETM25"); prescales.push_back(1);	
+  //trignames.push_back("ETM30"); prescales.push_back(1);	
+  //trignames.push_back("ETM35"); prescales.push_back(1);	
+  //trignames.push_back("ETM40"); prescales.push_back(1);	
+  //trignames.push_back("ETM50"); prescales.push_back(1);	
+  //trignames.push_back("ETM60"); prescales.push_back(1);	
   if (Version==1) { trignames.push_back("L1_ETM20"); prescales.push_back(1); };
   if (Version==2) { trignames.push_back("L1_ETM20"); prescales.push_back(100000); };
   trignames.push_back("L1_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_ETM40"); prescales.push_back(1);
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);  
+  
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleIsoEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG5"); prescales.push_back(1);
   trignames.push_back("L1_DoubleEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG15"); prescales.push_back(1);
+
   trignames.push_back("L1_DoubleJet70"); prescales.push_back(1);
   trignames.push_back("L1_DoubleJet100"); prescales.push_back(1);
+
+  trignames.push_back("L1_DoubleTauJet20"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet30"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet35"); prescales.push_back(1);
   trignames.push_back("L1_DoubleTauJet40"); prescales.push_back(1);
+  
   trignames.push_back("L1_IsoEG10_Jet15"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet20"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet30"); prescales.push_back(1);
@@ -1136,6 +1308,8 @@ void MakeL1Menu_61E30_43(double &ILumi, double &nFilledBunches,
   if (Version==1) { trignames.push_back("MinBias_DoubleHF2"); prescales.push_back(10);	 }
   if (Version==2) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(30);	 }
   if (Version==2) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(10);	 }
+  if (Version==3) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(20);	 }
+  if (Version==3) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(10);	 }
 
   /**/
 
@@ -1151,36 +1325,59 @@ void MakeL1Menu_11E31_156(double &ILumi, double &nFilledBunches,
   trignames.push_back("SingleMu0"); prescales.push_back(1);
   trignames.push_back("SingleMu3"); prescales.push_back(1);	
   trignames.push_back("SingleMu5"); prescales.push_back(1);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu3"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu5"); prescales.push_back(1);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
-  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
+  
 
-  if (Version==1) { trignames.push_back("SingleRelEG5"); prescales.push_back(1); };	
+  if (Version==1) { trignames.push_back("SingleEG5"); prescales.push_back(1); };	
 
-  if (Version==2) { trignames.push_back("SingleRelEG5"); prescales.push_back(100); };	
-  if (Version==2) { trignames.push_back("SingleRelEG6"); prescales.push_back(100); };	
-  if (Version==2) { trignames.push_back("SingleRelEG7"); prescales.push_back(1); };	
+  if (Version==2) { trignames.push_back("SingleEG5"); prescales.push_back(100); };	
+  if (Version==2) { trignames.push_back("SingleEG6"); prescales.push_back(100); };	
+  if (Version==2) { trignames.push_back("SingleEG7"); prescales.push_back(1); };	
 
-  trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+  if (Version==3) { trignames.push_back("SingleEG5"); prescales.push_back(100); };	
+  if (Version==3) { trignames.push_back("SingleEG6"); prescales.push_back(100); };	
+  if (Version==3) { trignames.push_back("SingleEG7"); prescales.push_back(1); };	
+
+  trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
+
+    //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
   trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
 
   //if (Version==1) { trignames.push_back("SingleJet10"); prescales.push_back(10);  }
   if (Version==1) { trignames.push_back("SingleJet20"); prescales.push_back(1000);	  }
@@ -1191,56 +1388,71 @@ void MakeL1Menu_11E31_156(double &ILumi, double &nFilledBunches,
   if (Version==2) { trignames.push_back("SingleJet30"); prescales.push_back(100); }
   if (Version==2) { trignames.push_back("SingleJet40"); prescales.push_back(10); }
 
-  //trignames.push_back("SingleJet25"); prescales.push_back(1);
+  if (Version==3) { trignames.push_back("SingleJet15"); prescales.push_back(1000);	  }
+  if (Version==3) { trignames.push_back("SingleJet20"); prescales.push_back(1000);	  }
+  if (Version==3) { trignames.push_back("SingleJet30"); prescales.push_back(100); }
+  if (Version==3) { trignames.push_back("SingleJet40"); prescales.push_back(10); }
+
   //trignames.push_back("SingleJet35"); prescales.push_back(1);
+  //trignames.push_back("SingleJet40"); prescales.push_back(1);
   trignames.push_back("SingleJet50"); prescales.push_back(1);
   trignames.push_back("SingleJet70"); prescales.push_back(1);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
-  trignames.push_back("SingleJet150"); prescales.push_back(1);
-
-  if (Version==1) { trignames.push_back("L1_SingleJet30"); prescales.push_back(100);	  }
-  if (Version==2) { trignames.push_back("L1_SingleJet30"); prescales.push_back(100);	  }
-
-  trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
+  //trignames.push_back("SingleJet100"); prescales.push_back(1);
+  //trignames.push_back("SingleJet150"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet30"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet70"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
 
-  //if (Version==1) { trignames.push_back("SingleTau20"); prescales.push_back(10);	 }
-  //if (Version==1) { trignames.push_back("SingleTau25"); prescales.push_back(1);	 }
 
-  //trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1);	
-  trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet20"); prescales.push_back(1000);	
+  //trignames.push_back("SingleTauJet25"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet30"); prescales.push_back(100);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet40"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleTauJet10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet30"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);
+
   trignames.push_back("L1_HTT200"); prescales.push_back(1);
   trignames.push_back("L1_HTT250"); prescales.push_back(1);
   trignames.push_back("L1_HTT300"); prescales.push_back(1);
+  trignames.push_back("L1_HTT400"); prescales.push_back(1);
+  //trignames.push_back("L1_HTT500"); prescales.push_back(1);
 
   if (Version==1) {trignames.push_back("ETM20"); prescales.push_back(100);}
   if (Version==2) {trignames.push_back("ETM20"); prescales.push_back(10000);}
-
-  trignames.push_back("ETM30"); prescales.push_back(1);	
-  trignames.push_back("ETM35"); prescales.push_back(1);	
-  trignames.push_back("ETM40"); prescales.push_back(1);	
-  trignames.push_back("ETM50"); prescales.push_back(1);	
-  trignames.push_back("ETM60"); prescales.push_back(1);	
-
-  if (Version==1) {trignames.push_back("ETM20"); prescales.push_back(100);}
-  if (Version==2) {trignames.push_back("L1_ETM20"); prescales.push_back(10000);}
+  if (Version==3) {trignames.push_back("ETM20"); prescales.push_back(1000);}
 
   trignames.push_back("L1_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_ETM40"); prescales.push_back(1);
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);
+  
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleIsoEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG5"); prescales.push_back(1);
   trignames.push_back("L1_DoubleEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG15"); prescales.push_back(1);
+
   trignames.push_back("L1_DoubleJet70"); prescales.push_back(1);
   trignames.push_back("L1_DoubleJet100"); prescales.push_back(1);
+
+  trignames.push_back("L1_DoubleTauJet20"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet30"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleTauJet35"); prescales.push_back(1);
   trignames.push_back("L1_DoubleTauJet40"); prescales.push_back(1);
+  
   trignames.push_back("L1_IsoEG10_Jet15"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet20"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet30"); prescales.push_back(1);
@@ -1253,6 +1465,7 @@ void MakeL1Menu_11E31_156(double &ILumi, double &nFilledBunches,
   trignames.push_back("L1_HTT100_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_TripleJet50"); prescales.push_back(1);
   trignames.push_back("L1_QuadJet30"); prescales.push_back(1);
+  //if (Version==2) {trignames.push_back("QuadJet40"); prescales.push_back(1);}
   trignames.push_back("L1_ExclusiveDoubleIsoEG6"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveDoubleJet60"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveJet25_Gap_Jet25"); prescales.push_back(1);
@@ -1267,6 +1480,9 @@ void MakeL1Menu_11E31_156(double &ILumi, double &nFilledBunches,
   if (Version==2) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(50);	 }
   if (Version==2) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(50);	 }
 
+  if (Version==3) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(50);	 }
+  if (Version==3) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(50);	 }
+
   /**/
 
 }
@@ -1278,39 +1494,39 @@ void MakeL1Menu_56E31_156(double &ILumi, double &nFilledBunches,
   nFilledBunches = 156;
 
   /**/  // 160 table for lumi = 1E32
+
   //trignames.push_back("SingleMu0"); prescales.push_back(1);
   trignames.push_back("SingleMu3"); prescales.push_back(4000);	
   trignames.push_back("SingleMu5"); prescales.push_back(2000);    
-  trignames.push_back("SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu3"); prescales.push_back(4000);	
-  trignames.push_back("L1_SingleMu5"); prescales.push_back(2000);	
+  //trignames.push_back("SingleMu7"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleMu3"); prescales.push_back(4000);	
+  //trignames.push_back("L1_SingleMu5"); prescales.push_back(2000);	
   trignames.push_back("L1_SingleMu7"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu10"); prescales.push_back(1);
+  trignames.push_back("L1_SingleMu14"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleMu25"); prescales.push_back(1);	
+  
   trignames.push_back("L1_DoubleMu3"); prescales.push_back(1);	
-  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);	
+  trignames.push_back("L1_TripleMu3"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_Jet15"); prescales.push_back(20); 
   trignames.push_back("L1_Mu5_Jet15"); prescales.push_back(1); 
-  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu3_Jet70"); prescales.push_back(1); 
+  trignames.push_back("L1_Mu5_Jet20"); prescales.push_back(1);
+  
   trignames.push_back("L1_Mu3_IsoEG5"); prescales.push_back(1); 
   trignames.push_back("L1_Mu5_IsoEG10"); prescales.push_back(1);
   trignames.push_back("L1_Mu3_EG12"); prescales.push_back(1);
-  //trignames.push_back("SingleRelEG5"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG6"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG7"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG8"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG9"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG10"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG12"); prescales.push_back(1);	
-  //trignames.push_back("SingleRelEG15"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
-  //trignames.push_back("L1_SingleIsoEG5"); prescales.push_back(10000);	
-  trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1000);	
-  trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(100);	
-  trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);	
+  
+  //trignames.push_back("SingleEG5"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG6"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG7"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG8"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG9"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG10"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleEG5"); prescales.push_back(10000);	
   trignames.push_back("L1_SingleEG8"); prescales.push_back(1000);	
   trignames.push_back("L1_SingleEG10"); prescales.push_back(100);	
@@ -1318,40 +1534,60 @@ void MakeL1Menu_56E31_156(double &ILumi, double &nFilledBunches,
   trignames.push_back("L1_SingleEG15"); prescales.push_back(1);	
   trignames.push_back("L1_SingleEG20"); prescales.push_back(1);	
   trignames.push_back("L1_SingleEG25"); prescales.push_back(1);	
-  //trignames.push_back("SingleJet10"); prescales.push_back(1);
-  //trignames.push_back("SingleJet15"); prescales.push_back(1);
-  //trignames.push_back("SingleJet20"); prescales.push_back(1);
-  //trignames.push_back("SingleJet25"); prescales.push_back(1);
-  //trignames.push_back("SingleJet30"); prescales.push_back(1);
-  //trignames.push_back("SingleJet35"); prescales.push_back(1);
-  //trignames.push_back("SingleJet40"); prescales.push_back(1);
-  //trignames.push_back("SingleJet50"); prescales.push_back(1);
-  trignames.push_back("SingleJet70"); prescales.push_back(100);
-  trignames.push_back("SingleJet100"); prescales.push_back(1);
+
+  //trignames.push_back("SingleIsoEG12"); prescales.push_back(1);	
+  //trignames.push_back("SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG5"); prescales.push_back(10000);	
+  trignames.push_back("L1_SingleIsoEG8"); prescales.push_back(1000);	
+  trignames.push_back("L1_SingleIsoEG10"); prescales.push_back(10);	
+  trignames.push_back("L1_SingleIsoEG12"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG15"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG20"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleIsoEG25"); prescales.push_back(1);
+
+  if (Version==3) {
+    //trignames.push_back("SingleJet10"); prescales.push_back(1);
+    trignames.push_back("SingleJet15"); prescales.push_back(100000);
+    trignames.push_back("SingleJet20"); prescales.push_back(100000);
+    //trignames.push_back("SingleJet25"); prescales.push_back(1);
+    trignames.push_back("SingleJet30"); prescales.push_back(10000);
+    //trignames.push_back("SingleJet35"); prescales.push_back(1);
+    //trignames.push_back("SingleJet40"); prescales.push_back(1);
+    trignames.push_back("SingleJet50"); prescales.push_back(10000);
+    trignames.push_back("SingleJet70"); prescales.push_back(100);
+  }
+  //trignames.push_back("SingleJet100"); prescales.push_back(1);
   //trignames.push_back("SingleJet150"); prescales.push_back(1);
-  trignames.push_back("L1_SingleJet15"); prescales.push_back(100000);
+  //trignames.push_back("L1_SingleJet15"); prescales.push_back(100000);
   //trignames.push_back("L1_SingleJet20"); prescales.push_back(999999999);
-  trignames.push_back("L1_SingleJet30"); prescales.push_back(10000);
+  //trignames.push_back("L1_SingleJet30"); prescales.push_back(10000);
   //trignames.push_back("L1_SingleJet50"); prescales.push_back(999999999);
-  trignames.push_back("L1_SingleJet70"); prescales.push_back(100);
+  //trignames.push_back("L1_SingleJet70"); prescales.push_back(100);
+  //trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleJet200"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet100"); prescales.push_back(1);
   trignames.push_back("L1_SingleJet150"); prescales.push_back(1);
-  trignames.push_back("L1_SingleJet200"); prescales.push_back(1);
-  //trignames.push_back("SingleTau10"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau20"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau25"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau30"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau35"); prescales.push_back(1);	
-  trignames.push_back("SingleTau40"); prescales.push_back(1000);	
-  //trignames.push_back("SingleTau50"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau60"); prescales.push_back(1);	
-  //trignames.push_back("SingleTau70"); prescales.push_back(1);	
-  trignames.push_back("SingleTau80"); prescales.push_back(1);	
-  trignames.push_back("SingleTau100"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1000);	
-  //trignames.push_back("L1_SingleTauJet60"); prescales.push_back(999999999);	
-  trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
-  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);	
+
+  trignames.push_back("SingleTauJet10"); prescales.push_back(100000);	
+  trignames.push_back("SingleTauJet20"); prescales.push_back(10000);	
+  //trignames.push_back("SingleTauJet25"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet30"); prescales.push_back(1000);	
+  //trignames.push_back("SingleTauJet35"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet40"); prescales.push_back(1000);	
+  //trignames.push_back("SingleTauJet50"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet60"); prescales.push_back(1000);	
+  //trignames.push_back("SingleTauJet70"); prescales.push_back(1);	
+  trignames.push_back("SingleTauJet80"); prescales.push_back(1);	
+  //trignames.push_back("SingleTauJet100"); prescales.push_back(1);
+  //trignames.push_back("L1_SingleTauJet10"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet20"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet30"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet40"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet60"); prescales.push_back(1);	
+  //trignames.push_back("L1_SingleTauJet80"); prescales.push_back(1);	
+  trignames.push_back("L1_SingleTauJet100"); prescales.push_back(1);
+  
   trignames.push_back("L1_HTT100"); prescales.push_back(10000);
   trignames.push_back("L1_HTT200"); prescales.push_back(1000);
   
@@ -1363,7 +1599,11 @@ void MakeL1Menu_56E31_156(double &ILumi, double &nFilledBunches,
   if (Version==2) {trignames.push_back("L1_HTT300"); prescales.push_back(1);}
   if (Version==2) {trignames.push_back("L1_HTT400"); prescales.push_back(1);}
 
-  trignames.push_back("ETM20"); prescales.push_back(1000000);
+  if (Version==3) {trignames.push_back("L1_HTT250"); prescales.push_back(100);}
+  if (Version==3) {trignames.push_back("L1_HTT300"); prescales.push_back(1);}
+  if (Version==3) {trignames.push_back("L1_HTT400"); prescales.push_back(1);}
+
+  //trignames.push_back("ETM20"); prescales.push_back(10000);
   //trignames.push_back("ETM25"); prescales.push_back(1);	
   //trignames.push_back("ETM35"); prescales.push_back(1);	
   if (Version==1) {trignames.push_back("ETM30"); prescales.push_back(1);}
@@ -1373,36 +1613,51 @@ void MakeL1Menu_56E31_156(double &ILumi, double &nFilledBunches,
   if (Version==2) {trignames.push_back("ETM45"); prescales.push_back(1);}
   if (Version==2) {trignames.push_back("ETM45_Jet30"); prescales.push_back(1);}
 
-  trignames.push_back("ETM50"); prescales.push_back(1);	
-  //trignames.push_back("ETM60"); prescales.push_back(1);	
+  if (Version==3) {trignames.push_back("ETM20"); prescales.push_back(100000);}
+  if (Version==3) {trignames.push_back("ETM30"); prescales.push_back(10000);}
+  if (Version==3) {trignames.push_back("ETM40"); prescales.push_back(1);}
+  if (Version==3) {trignames.push_back("ETM45"); prescales.push_back(1);}
+  if (Version==3) {trignames.push_back("ETM45_Jet30"); prescales.push_back(1);}
+
+  //trignames.push_back("L1_ETM30"); prescales.push_back(1);
+  //trignames.push_back("L1_ETM40"); prescales.push_back(1);
+  trignames.push_back("L1_ETM50"); prescales.push_back(1);
+  trignames.push_back("L1_ETM60"); prescales.push_back(1);
   //trignames.push_back("ETM50_Jet40"); prescales.push_back(1);
 
-  trignames.push_back("L1_ETM20"); prescales.push_back(100000);
+  //trignames.push_back("L1_ETM20"); prescales.push_back(100000);
   if (Version==1) {trignames.push_back("L1_ETM30"); prescales.push_back(1);}
   if (Version==2) {trignames.push_back("L1_ETM30"); prescales.push_back(100000);}
   if (Version==2) {trignames.push_back("L1_ETM40"); prescales.push_back(1);}
   trignames.push_back("L1_ETM50"); prescales.push_back(1);
-  //trignames.push_back("L1_ETM60"); prescales.push_back(1);
+  
   trignames.push_back("L1_DoubleIsoEG8"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleIsoEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG5"); prescales.push_back(1000);
   trignames.push_back("L1_DoubleEG10"); prescales.push_back(1);
+  trignames.push_back("L1_DoubleEG15"); prescales.push_back(1);
+
   trignames.push_back("L1_DoubleJet70"); prescales.push_back(1);
   trignames.push_back("L1_DoubleJet100"); prescales.push_back(1);
+
+  trignames.push_back("L1_DoubleTauJet20"); prescales.push_back(1000);
+  trignames.push_back("L1_DoubleTauJet30"); prescales.push_back(100);
+  trignames.push_back("L1_DoubleTauJet35"); prescales.push_back(100);
   trignames.push_back("L1_DoubleTauJet40"); prescales.push_back(1);
+  
   trignames.push_back("L1_IsoEG10_Jet15"); prescales.push_back(20);
   trignames.push_back("L1_IsoEG10_Jet20"); prescales.push_back(10);
   trignames.push_back("L1_IsoEG10_Jet30"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_Jet70"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_TauJet20"); prescales.push_back(1);
   trignames.push_back("L1_IsoEG10_TauJet30"); prescales.push_back(1);
-  //trignames.push_back("L1_TauJet20_ETM20"); prescales.push_back(100000);
+  trignames.push_back("L1_TauJet20_ETM20"); prescales.push_back(1);
   trignames.push_back("L1_TauJet30_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_TauJet30_ETM40"); prescales.push_back(1);
   trignames.push_back("L1_HTT100_ETM30"); prescales.push_back(1);
   trignames.push_back("L1_TripleJet50"); prescales.push_back(1);
-  if (Version==1) {trignames.push_back("L1_QuadJet30"); prescales.push_back(1);}
-  if (Version==2) {trignames.push_back("QuadJet40"); prescales.push_back(1);}
-  if (Version==2) {trignames.push_back("QuadJet50"); prescales.push_back(1);}
-
+  trignames.push_back("L1_QuadJet30"); prescales.push_back(1);
+  //if (Version==2) {trignames.push_back("QuadJet40"); prescales.push_back(1);}
   trignames.push_back("L1_ExclusiveDoubleIsoEG6"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveDoubleJet60"); prescales.push_back(1);
   trignames.push_back("L1_ExclusiveJet25_Gap_Jet25"); prescales.push_back(1);
@@ -1410,9 +1665,11 @@ void MakeL1Menu_56E31_156(double &ILumi, double &nFilledBunches,
   trignames.push_back("L1_MinBias_HTT10"); prescales.push_back(1);
   trignames.push_back("L1_ZeroBias"); prescales.push_back(1);
 
-
   if (Version==2) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(300);	 }
   if (Version==2) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(300);	 }
+
+  if (Version==3) { trignames.push_back("MinBias_SingleHF3"); prescales.push_back(300);	 }
+  if (Version==3) { trignames.push_back("MinBias_DoubleHF3"); prescales.push_back(300);	 }
   /**/
 
 }
