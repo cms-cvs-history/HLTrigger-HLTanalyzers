@@ -167,9 +167,22 @@ void L1Tree::Loop(vector<int> * iCount
 	if ( ((!doMuonCut) || (MCmu3==0))
 	     && ((!doElecCut) || (MCel1==0)) ) { // Avoids muon/elec double counting
 
+	  // To be extended!
+	  if (trignames[it].compare("OrAllMu") == 0) {
+	    if ( (L1GoodSingleMuPt[0]>=0.) ||
+		 ( NL1GoodDoubleMu>=2 && L1GoodDoubleMuPt[1]>=3.) ) {
+	      triggerBitNoPrescale[it] = true;
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }	  
+	    }
+	  }
+
+
+
+	  
 	  if (trignames[it].compare("SingleMu0") == 0) {
-	    //if (jentry%10000==0) cout<<setprecision(8)<<"SingleMu0: "<<iCount->at(it)<<" / "<<jentry<<" = "<<(double)iCount->at(it)/(double)jentry<<endl;
-	    if ( (L1GoodSingleMuPt[0]>=0.) ) {
+	    if ( (NL1GoodSingleMu>=1 && L1GoodSingleMuPt[0]>=0.) ) {
 	      triggerBitNoPrescale[it] = true;
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -177,7 +190,7 @@ void L1Tree::Loop(vector<int> * iCount
 	    }
 	  }
 	  else if (trignames[it].compare("SingleMu3") == 0) { 
-	    if ( (L1GoodSingleMuPt[0]>=3.) ) {
+	    if ( (NL1GoodSingleMu>=1 && L1GoodSingleMuPt[0]>=3.) ) {
 	      triggerBitNoPrescale[it] = true;
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -186,7 +199,7 @@ void L1Tree::Loop(vector<int> * iCount
 	  }
 	  else if (trignames[it].compare("SingleMu5") == 0) { 
 	    //if (jentry%10000==0) cout<<setprecision(8)<<"SingleMu5: "<<iCount->at(it)<<" / "<<jentry<<" = "<<(double)iCount->at(it)/(double)jentry<<endl;
-	    if ( (L1GoodSingleMuPt[0]>=5.) ) {
+	    if ( (NL1GoodSingleMu>=1 && L1GoodSingleMuPt[0]>=5.) ) {
 	      triggerBitNoPrescale[it] = true;
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -194,7 +207,7 @@ void L1Tree::Loop(vector<int> * iCount
 	    }
 	  }
 	  else if (trignames[it].compare("SingleMu7") == 0) { 
-	    if ( (L1GoodSingleMuPt[0]>=7.) ) {
+	    if ( (NL1GoodSingleMu>=1 && L1GoodSingleMuPt[0]>=7.) ) {
 	      triggerBitNoPrescale[it] = true;
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -234,6 +247,30 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
+	  else if (trignames[it].compare("L1_SingleMu14") == 0) { 
+	    if ( (L1_SingleMu14==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleMu20") == 0) { 
+	    if ( (L1_SingleMu20==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleMu25") == 0) { 
+	    if ( (L1_SingleMu25==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
 	  else if (trignames[it].compare("L1_DoubleMu3") == 0) { 
 	    if ( (L1_DoubleMu3==1) ) { 
 	      triggerBitNoPrescale[it] = true; 
@@ -260,6 +297,14 @@ void L1Tree::Loop(vector<int> * iCount
 	  }
 	  else if (trignames[it].compare("L1_Mu5_Jet15") == 0) { 
 	    if ( (L1_Mu5_Jet15==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_Mu3_Jet70") == 0) { 
+	    if ( (L1_Mu3_Jet70==1) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -298,8 +343,8 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG5") == 0) { 
-	    //if (jentry%10000==0) cout<<setprecision(8)<<"SingleRelEG5: "<<iCount->at(it)<<" / "<<jentry<<" = "<<(double)iCount->at(it)/(double)jentry<<endl;
+	  else if (trignames[it].compare("SingleEG5") == 0) { 
+	    //if (jentry%10000==0) cout<<setprecision(8)<<"SingleEG5: "<<iCount->at(it)<<" / "<<jentry<<" = "<<(double)iCount->at(it)/(double)jentry<<endl;
 	    if ( (L1IsolEmEt[0]>=5. || L1NIsolEmEt[0]>=5.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -307,7 +352,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG6") == 0) { 
+	  else if (trignames[it].compare("SingleEG6") == 0) { 
 	    if ( (L1IsolEmEt[0]>=6. || L1NIsolEmEt[0]>=6.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -315,7 +360,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG7") == 0) { 
+	  else if (trignames[it].compare("SingleEG7") == 0) { 
 	    if ( (L1IsolEmEt[0]>=7. || L1NIsolEmEt[0]>=7.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -323,7 +368,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG8") == 0) { 
+	  else if (trignames[it].compare("SingleEG8") == 0) { 
 	    if ( (L1IsolEmEt[0]>=8. || L1NIsolEmEt[0]>=8.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -331,7 +376,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG9") == 0) { 
+	  else if (trignames[it].compare("SingleEG9") == 0) { 
 	    if ( (L1IsolEmEt[0]>=9. || L1NIsolEmEt[0]>=9.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -339,7 +384,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG10") == 0) { 
+	  else if (trignames[it].compare("SingleEG10") == 0) { 
 	    if ( (L1IsolEmEt[0]>=10. || L1NIsolEmEt[0]>=10.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -347,7 +392,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG12") == 0) { 
+	  else if (trignames[it].compare("SingleEG12") == 0) { 
 	    if ( (L1IsolEmEt[0]>=12. || L1NIsolEmEt[0]>=12.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -355,7 +400,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleRelEG15") == 0) { 
+	  else if (trignames[it].compare("SingleEG15") == 0) { 
 	    if ( (L1IsolEmEt[0]>=15. || L1NIsolEmEt[0]>=15.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -637,7 +682,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau10") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet10") == 0) { 
 	    if ( (L1TauEt[0]>=10.) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -645,7 +690,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau20") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet20") == 0) { 
 	    if ( (L1TauEt[0]>=20. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -653,7 +698,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau25") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet25") == 0) { 
 	    if ( (L1TauEt[0]>=25. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -661,7 +706,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau30") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet30") == 0) { 
 	    if ( (L1TauEt[0]>=30. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -669,7 +714,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau35") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet35") == 0) { 
 	    if ( (L1TauEt[0]>=35. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -677,7 +722,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau40") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet40") == 0) { 
 	    if ( (L1TauEt[0]>=40. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -685,7 +730,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau50") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet50") == 0) { 
 	    if ( (L1TauEt[0]>=50. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -693,7 +738,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau60") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet60") == 0) { 
 	    if ( (L1TauEt[0]>=60. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -701,7 +746,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau70") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet70") == 0) { 
 	    if ( (L1TauEt[0]>=70. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -709,7 +754,7 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau80") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet80") == 0) { 
 	    if ( (L1TauEt[0]>=80. ) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
@@ -717,8 +762,48 @@ void L1Tree::Loop(vector<int> * iCount
 	      }
 	    }
 	  }
-	  else if (trignames[it].compare("SingleTau100") == 0) { 
+	  else if (trignames[it].compare("SingleTauJet100") == 0) { 
 	    if ( (L1TauEt[0]>=100. ) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleTauJet10") == 0) { 
+	    if ( (L1_SingleTauJet10==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleTauJet20") == 0) { 
+	    if ( (L1_SingleTauJet20==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleTauJet30") == 0) { 
+	    if ( (L1_SingleTauJet30==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleTauJet40") == 0) { 
+	    if ( (L1_SingleTauJet40==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_SingleTauJet60") == 0) { 
+	    if ( (L1_SingleTauJet60==1) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -775,6 +860,14 @@ void L1Tree::Loop(vector<int> * iCount
 	  }
 	  else if (trignames[it].compare("L1_HTT400") == 0) { 
 	    if ( (L1_HTT400==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_HTT500") == 0) { 
+	    if ( (L1_HTT500==1) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
@@ -934,7 +1027,31 @@ void L1Tree::Loop(vector<int> * iCount
 	    }
 	  }
 	  else if (trignames[it].compare("L1_DoubleIsoEG10") == 0) { 
+	    if ( (L1_DoubleIsoEG10==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_DoubleEG5") == 0) { 
+	    if ( (L1_DoubleEG5==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_DoubleEG10") == 0) { 
 	    if ( (L1_DoubleEG10==1) ) { 
+	      triggerBitNoPrescale[it] = true; 
+	      if (iCountNoPrescale[it] % prescales[it] == 0) {
+		triggerBit[it] = true;
+	      }
+	    }
+	  }
+	  else if (trignames[it].compare("L1_DoubleEG15") == 0) { 
+	    if ( (L1_DoubleEG15==1) ) { 
 	      triggerBitNoPrescale[it] = true; 
 	      if (iCountNoPrescale[it] % prescales[it] == 0) {
 		triggerBit[it] = true;
