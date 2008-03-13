@@ -53,9 +53,9 @@ module l1GetDigi = HLTGetDigi {
    InputTag GctEtMissCollection = l1GctEmulDigis
    InputTag GctEtTotalCollection = l1GctEmulDigis
 
-   InputTag GtEvmReadoutRecord = l1GtEmulDigis
-   InputTag GtObjectMapRecord = l1GtEmulDigis
-   InputTag GtReadoutRecord = l1GtEmulDigis
+   InputTag GtEvmReadoutRecord = gtDigis
+   InputTag GtObjectMapRecord = gtDigis
+   InputTag GtReadoutRecord = gtDigis
 
    InputTag GmtCands = l1GmtEmulDigis
    InputTag GmtReadoutCollection = l1GmtEmulDigis
