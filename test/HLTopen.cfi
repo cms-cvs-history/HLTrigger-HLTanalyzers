@@ -104,3 +104,9 @@ path DoHltElectron = {hltBegin
                                     l1IsoLargeWindowElectronTrackIsol & 
                                     l1NonIsoLargeWindowElectronTrackIsol  
                                    }
+
+### Open-HLT includes, modules and paths for JetMET
+include "HLTrigger/Configuration/data/common/CaloTowers.cff"
+include "HLTrigger/Configuration/data/common/RecoJetMET.cff"
+sequence recoJetMETPath = {doCalo & (doHLTJetReco & doHLTMETReco & doHLTHTReco)}
+path DoHltJetMET = {recoJetMETPath}
