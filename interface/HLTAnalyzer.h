@@ -58,6 +58,7 @@ private:
 /*   std::string ecalDigisLabel_,hcalDigisLabel_; */
   std::string MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
   std::string gtReadoutRecord_,gtObjectMap_; 
+  std::string gctCounts_;
 
   int errCnt;
   const int errMax(){return 100;}

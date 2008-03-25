@@ -39,6 +39,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   //ecalDigisLabel_ = conf.getParameter<std::string> ("ecalDigisLabel");
   //hcalDigisLabel_ = conf.getParameter<std::string> ("hcalDigisLabel");
 
+  gctCounts_ = conf.getParameter< std::string > ("l1GctCounts");
+
   MuCandTag2_ = conf.getParameter<std::string> ("MuCandTag2");
   MuIsolTag2_ = conf.getParameter<std::string> ("MuIsolTag2");
   MuCandTag3_ = conf.getParameter<std::string> ("MuCandTag3");
@@ -115,6 +117,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<L1GlobalTriggerObjectMap> l1GtOM,l1GtOMDummy;
 //  edm::Handle<EcalTrigPrimDigiCollection> ecal;
 //  edm::Handle<HcalTrigPrimDigiCollection> hcal;
+  edm::Handle<L1GctJetCounts> l1GctCounts;
+
   edm::Handle<RecoChargedCandidateCollection> mucands2,mucands3,mucands2Dummy,mucands3Dummy;
   edm::Handle<MuIsoAssociationMap> isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
   edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
@@ -144,6 +148,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(l1extramc_,l1extmet);
   iEvent.getByLabel(gtReadoutRecord_,l1GtRR);
   iEvent.getByLabel(gtObjectMap_,l1GtOMRec);
+  iEvent.getByLabel(gctCounts_,l1GctCounts);
   // MC info
   iEvent.getByLabel(genEventScale_, genEventScale );
   iEvent.getByLabel(mctruth_,mctruth);
@@ -177,6 +182,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! l1extmet.isValid()   ) { errMsg=errMsg + "  -- No L1EtMiss object"; l1extmet = l1extmetDummy;}
   if (! l1GtRR.isValid()     ) { errMsg=errMsg + "  -- No L1 GT ReadouRecord";}
   if (! l1GtOMRec.isValid()  ) { errMsg=errMsg + "  -- No L1 GT ObjectMap";}
+  if (! l1GctCounts.isValid()) { errMsg=errMsg + "  -- No L1 GctJetCounts object";}
 
   if (! mctruth.isValid()    ) { errMsg=errMsg + "  -- No Gen Particles"; mctruth = mctruthDummy;}
 
@@ -202,7 +208,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
   hlt_analysis_.analyze(*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,
-			*l1GtRR.product(),*l1GtOMRec.product(),HltTree);
+			*l1GtRR.product(),*l1GtOMRec.product(),*l1GctCounts,HltTree);
   evt_header_.analyze(iEvent, HltTree);
 
   // std::cout << " Ending Event Analysis" << std::endl;
