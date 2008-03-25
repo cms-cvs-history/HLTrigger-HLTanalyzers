@@ -51,7 +51,7 @@ void HLTMCtruth::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("MCphi",mcphi,"MCphi[NMCpart]/F");
   HltTree->Branch("MCPtHat",&pthatf,"MCPtHat/F");
   HltTree->Branch("MCmu3",&nmu3,"MCmu3/I");
-  HltTree->Branch("MCel3",&nel3,"MCel3/I");
+  HltTree->Branch("MCel1",&nel1,"MCel1/I");
   HltTree->Branch("MCbb",&nbb,"MCbb/I");
   HltTree->Branch("MCab",&nab,"MCab/I");
   HltTree->Branch("MCWenu",&nwenu,"MCWenu/I");
@@ -70,7 +70,7 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
   if (_Monte) {
     int nmc = 0;
     int mu3 = 0;
-    int el3 = 0;
+    int el1 = 0;
     int mab = 0;
     int mbb = 0;
     int wel = 0;
@@ -115,7 +115,7 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
 	}
 
 	if (((p.pdgId()==13)||(p.pdgId()==-13))&&(p.pt()>2.5)) {mu3 += 1;} // Flag for muons with pT > 2.5 GeV/c
-	if (((p.pdgId()==11)||(p.pdgId()==-11))&&(p.pt()>2.5)) {el3 += 1;} // Flag for electrons with pT > 2.5 GeV/c
+	if (((p.pdgId()==11)||(p.pdgId()==-11))&&(p.pt()>1.)) {el1 += 1;} // Flag for electrons with pT > 1 GeV/c
 	if (p.pdgId()==-5) {mab += 1;} // Flag for bbar
 	if (p.pdgId()==5) {mbb += 1;} // Flag for b
 
@@ -127,7 +127,7 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
 
     nmcpart = nmc;
     nmu3 = mu3;
-    nel3 = el3;
+    nel1 = el1;
     nbb = mbb;
     nab = mab;
     nwenu = wel;
