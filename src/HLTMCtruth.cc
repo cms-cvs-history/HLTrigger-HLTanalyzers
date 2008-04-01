@@ -51,13 +51,15 @@ void HLTMCtruth::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("MCphi",mcphi,"MCphi[NMCpart]/F");
   HltTree->Branch("MCPtHat",&pthatf,"MCPtHat/F");
   HltTree->Branch("MCmu3",&nmu3,"MCmu3/I");
-  HltTree->Branch("MCel1",&nel1,"MCel1/I");
+  HltTree->Branch("MCel3",&nel3,"MCel3/I");
   HltTree->Branch("MCbb",&nbb,"MCbb/I");
   HltTree->Branch("MCab",&nab,"MCab/I");
   HltTree->Branch("MCWenu",&nwenu,"MCWenu/I");
   HltTree->Branch("MCWmunu",&nwmunu,"MCmunu/I");
   HltTree->Branch("MCZee",&nzee,"MCZee/I");
   HltTree->Branch("MCZmumu",&nzmumu,"MCZmumu/I");
+  HltTree->Branch("MCptEleMax",&ptEleMax,"MCptEleMax/F");
+  HltTree->Branch("MCptMuMax",&ptMuMax,"MCptMuMax/F");
 }
 
 /* **Analyze the event** */
@@ -70,7 +72,7 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
   if (_Monte) {
     int nmc = 0;
     int mu3 = 0;
-    int el1 = 0;
+    int el3 = 0;
     int mab = 0;
     int mbb = 0;
     int wel = 0;
@@ -78,6 +80,8 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
     int zee = 0;
     int zmumu = 0;
 
+    ptEleMax=-999.0;
+    ptMuMax=-999.0;    
     pthatf=pthat;
 
     if (&mctruth){
@@ -115,9 +119,14 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
 	}
 
 	if (((p.pdgId()==13)||(p.pdgId()==-13))&&(p.pt()>2.5)) {mu3 += 1;} // Flag for muons with pT > 2.5 GeV/c
-	if (((p.pdgId()==11)||(p.pdgId()==-11))&&(p.pt()>1.)) {el1 += 1;} // Flag for electrons with pT > 1 GeV/c
+	if (((p.pdgId()==11)||(p.pdgId()==-11))&&(p.pt()>2.5)) {el3 += 1;} // Flag for electrons with pT > 1 GeV/c
 	if (p.pdgId()==-5) {mab += 1;} // Flag for bbar
 	if (p.pdgId()==5) {mbb += 1;} // Flag for b
+
+	if ((p.pdgId()==13)||(p.pdgId()==-13))
+	  {if (p.pt()>ptMuMax) {ptMuMax=p.pt();} } // Save max pt of generated Muons
+	if ((p.pdgId()==11)||(p.pdgId()==-11))
+	  {if (p.pt() > ptEleMax) ptEleMax=p.pt();} // Save max pt of generated Electrons
 
 	nmc++;
       }
@@ -127,7 +136,7 @@ void HLTMCtruth::analyze(const CandidateCollection& mctruth,
 
     nmcpart = nmc;
     nmu3 = mu3;
-    nel1 = el1;
+    nel3 = el3;
     nbb = mbb;
     nab = mab;
     nwenu = wel;
