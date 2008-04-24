@@ -52,13 +52,14 @@ private:
   HLTInfo hlt_analysis_;
   EventHeader evt_header_;
 
-  std::string recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltobj_,hltresults_,genEventScale_;
-  std::string Electron_,Photon_,muon_;
-  std::string l1extramc_,particleMapSource_,mctruth_; 
+  edm::InputTag recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltobj_,hltresults_,genEventScale_;
+  edm::InputTag Electron_,Photon_,muon_;
+  std::string l1extramc_;
+  edm::InputTag particleMapSource_,mctruth_; 
 /*   std::string ecalDigisLabel_,hcalDigisLabel_; */
-  std::string MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
-  std::string gtReadoutRecord_,gtObjectMap_; 
-  std::string gctCounts_;
+  edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
+  edm::InputTag gtReadoutRecord_,gtObjectMap_; 
+  edm::InputTag gctCounts_;
 
   int errCnt;
   const int errMax(){return 100;}

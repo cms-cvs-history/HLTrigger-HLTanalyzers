@@ -95,8 +95,8 @@ private:
   int *heleNewSC, *heleNewSCLW;
   int nele,nphoton,nhltgam,nhltele,nhlteleLW;
 
-  std::string CandIso_,CandNonIso_,EcalNonIso_,EcalIso_,HcalIsoPho_,HcalNonIsoPho_,IsoPhoTrackIsol_,NonIsoPhoTrackIsol_;
-  std::string IsoEleHcalTag_,NonIsoEleHcalTag_,IsoElectronTag_,NonIsoElectronTag_,IsoEleTrackIsolTag_,NonIsoEleTrackIsolTag_;
+  edm::InputTag CandIso_,CandNonIso_,EcalNonIso_,EcalIso_,HcalIsoPho_,HcalNonIsoPho_,IsoPhoTrackIsol_,NonIsoPhoTrackIsol_;
+  edm::InputTag IsoEleHcalTag_,NonIsoEleHcalTag_,IsoElectronTag_,NonIsoElectronTag_,IsoEleTrackIsolTag_,NonIsoEleTrackIsolTag_;
   edm::InputTag L1IsoPixelSeedsTag_;
   edm::InputTag L1NonIsoPixelSeedsTag_;
   edm::InputTag L1IsoPixelSeedsLargeWindowsTag_;
@@ -104,7 +104,7 @@ private:
 
   //std::string L1NonIsoPixelSeedsTag_;
 
-  std::string IsoElectronLargeWindowsTag_,NonIsoElectronLargeWindowsTag_,IsoEleTrackIsolLargeWindowsTag_,NonIsoEleTrackIsolLargeWindowsTag_;
+  edm::InputTag IsoElectronLargeWindowsTag_,NonIsoElectronLargeWindowsTag_,IsoEleTrackIsolLargeWindowsTag_,NonIsoEleTrackIsolLargeWindowsTag_;
   //  std::string L1IsoPixelSeedsLargeWindowsTag_,L1NonIsoPixelSeedsLargeWindowsTag_;
 
 
