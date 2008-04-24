@@ -1,0 +1,66 @@
+    module hltanalysis = HLTAnalyzer{
+        ### Reconstructed objects
+	InputTag recjets = MCJetCorJetIcone5
+	InputTag genjets = iterativeCone5GenJets
+	InputTag recmet  = met
+	InputTag genmet  = genMet
+	InputTag ht      = htMet
+	InputTag calotowers = towerMaker
+	//InputTag Electron = pixelMatchGsfElectrons
+	//InputTag Photon = correctedPhotons
+	//InputTag muon = muons // other alternative : trackMuons
+	// If running directly on 17X data with CMSSW_1_8_X, use these InputTags for reco variables:
+	InputTag Electron = ""
+	InputTag Photon = ""
+	InputTag muon = ""
+        ### Trigger-related objects
+	string l1extramc = "l1extraParticles"
+	InputTag hltresults = TriggerResults
+        InputTag l1GtReadoutRecord = l1GmtEmulDigis
+        InputTag l1GtObjectMapRecord = l1GtEmulDigis
+        InputTag l1GctCounts = l1GctEmulDigis
+        ### MC truth object
+	InputTag mctruth = genParticleCandidates
+	InputTag genEventScale = genEventScale
+        ### Muon HLT related objects
+        InputTag MuCandTag2 = hltL2MuonCandidates
+        InputTag MuIsolTag2 = hltL2MuonIsolations
+        InputTag MuCandTag3 = hltL3MuonCandidates
+        InputTag MuIsolTag3 = hltL3MuonIsolations
+	InputTag MuLinkTag = hltL3Muons
+        ### Egamma HLT related objects
+        InputTag CandIso = l1IsoRecoEcalCandidate
+        InputTag CandNonIso = l1NonIsoRecoEcalCandidate
+        InputTag EcalIso = l1IsolatedPhotonEcalIsol
+        InputTag EcalNonIso = l1NonIsolatedPhotonEcalIsol
+        InputTag HcalIsoPho = l1IsolatedPhotonHcalIsol
+        InputTag HcalNonIsoPho = l1NonIsolatedPhotonHcalIsol
+        InputTag IsoPhoTrackIsol = l1IsoPhotonTrackIsol
+        InputTag NonIsoPhoTrackIsol = l1NonIsoPhotonTrackIsol
+        InputTag IsoElectrons = pixelMatchElectronsL1IsoForHLT
+        InputTag NonIsoElectrons = pixelMatchElectronsL1NonIsoForHLT
+        InputTag HcalIsoEle = l1IsolatedElectronHcalIsol
+        InputTag HcalNonIsoEle  = l1NonIsolatedElectronHcalIsol
+        InputTag PixelSeedL1Iso = l1IsoElectronPixelSeeds
+        InputTag PixelSeedL1NonIso = l1NonIsoElectronPixelSeeds
+        InputTag IsoEleTrackIsol = l1IsoElectronTrackIsol
+        InputTag NonIsoEleTrackIsol = l1NonIsoElectronTrackIsol
+    
+        InputTag IsoElectronsLargeWindows = pixelMatchElectronsL1IsoLargeWindowForHLT
+        InputTag NonIsoElectronsLargeWindows = pixelMatchElectronsL1NonIsoLargeWindowForHLT
+        InputTag PixelSeedL1IsoLargeWindows = l1IsoLargeWindowElectronPixelSeeds
+        InputTag PixelSeedL1NonIsoLargeWindows = l1NonIsoLargeWindowElectronPixelSeeds
+	InputTag IsoEleTrackIsolLargeWindows = l1IsoLargeWindowElectronTrackIsol
+        InputTag NonIsoEleTrackIsolLargeWindows = l1NonIsoLargeWindowElectronTrackIsol
+
+	PSet RunParameters =
+	{
+	    string HistogramFile = "TEST.root"
+	    bool Monte = true
+	    bool Debug = false
+	    double EtaMin   = -5.2
+	    double EtaMax   = 5.2
+	    double CalJetMin = 0.
+	    double GenJetMin = 0.
+	}
+    }

@@ -1,6 +1,3 @@
- include "FWCore/MessageLogger/data/MessageLogger.cfi"
-
-
 ### Open-HLT includes, modules and paths for Muon
   include "HLTrigger/Muon/data/OnlyReco.cff"
   path DoHltMuon = { recoHLTMuIso }
