@@ -26,29 +26,30 @@ HLTEgamma::HLTEgamma() {
 /*  Setup the analysis to put the branch-variables into the tree. */
 void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
-  CandIso_ = pSet.getParameter<std::string> ("CandIso");
-  CandNonIso_ = pSet.getParameter<std::string> ("CandNonIso");
-  EcalIso_ = pSet.getParameter<std::string> ("EcalIso");
-  EcalNonIso_ = pSet.getParameter<std::string> ("EcalNonIso");
-  HcalIsoPho_ = pSet.getParameter<std::string> ("HcalIsoPho");
-  HcalNonIsoPho_ = pSet.getParameter<std::string> ("HcalNonIsoPho");
-  IsoPhoTrackIsol_ = pSet.getParameter<std::string> ("IsoPhoTrackIsol");
-  NonIsoPhoTrackIsol_ = pSet.getParameter<std::string> ("NonIsoPhoTrackIsol");
-  IsoElectronTag_ = pSet.getParameter<std::string> ("IsoElectrons");
-  NonIsoElectronTag_ = pSet.getParameter<std::string> ("NonIsoElectrons");
-  IsoEleHcalTag_ = pSet.getParameter<std::string> ("HcalIsoEle");
-  NonIsoEleHcalTag_ = pSet.getParameter<std::string> ("HcalNonIsoEle");
+  CandIso_ = pSet.getParameter<edm::InputTag> ("CandIso");
+  CandNonIso_ = pSet.getParameter<edm::InputTag> ("CandNonIso");
+  EcalIso_ = pSet.getParameter<edm::InputTag> ("EcalIso");
+  EcalNonIso_ = pSet.getParameter<edm::InputTag> ("EcalNonIso");
+  HcalIsoPho_ = pSet.getParameter<edm::InputTag> ("HcalIsoPho");
+  HcalNonIsoPho_ = pSet.getParameter<edm::InputTag> ("HcalNonIsoPho");
+  IsoPhoTrackIsol_ = pSet.getParameter<edm::InputTag> ("IsoPhoTrackIsol");
+  NonIsoPhoTrackIsol_ = pSet.getParameter<edm::InputTag> ("NonIsoPhoTrackIsol");
+  IsoElectronTag_ = pSet.getParameter<edm::InputTag> ("IsoElectrons");
+  NonIsoElectronTag_ = pSet.getParameter<edm::InputTag> ("NonIsoElectrons");
+  IsoEleHcalTag_ = pSet.getParameter<edm::InputTag> ("HcalIsoEle");
+  NonIsoEleHcalTag_ = pSet.getParameter<edm::InputTag> ("HcalNonIsoEle");
+  IsoEleTrackIsolTag_ = pSet.getParameter<edm::InputTag> ("IsoEleTrackIsol");
+  NonIsoEleTrackIsolTag_ = pSet.getParameter<edm::InputTag> ("NonIsoEleTrackIsol");
+
+  IsoElectronLargeWindowsTag_ = pSet.getParameter<edm::InputTag> ("IsoElectronsLargeWindows");
+  NonIsoElectronLargeWindowsTag_ = pSet.getParameter<edm::InputTag> ("NonIsoElectronsLargeWindows");
+  IsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<edm::InputTag> ("IsoEleTrackIsolLargeWindows");
+  NonIsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<edm::InputTag> ("NonIsoEleTrackIsolLargeWindows");
+
   L1IsoPixelSeedsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1Iso");
   L1NonIsoPixelSeedsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
-  IsoEleTrackIsolTag_ = pSet.getParameter<std::string> ("IsoEleTrackIsol");
-  NonIsoEleTrackIsolTag_ = pSet.getParameter<std::string> ("NonIsoEleTrackIsol");
-
-  IsoElectronLargeWindowsTag_ = pSet.getParameter<std::string> ("IsoElectronsLargeWindows");
-  NonIsoElectronLargeWindowsTag_ = pSet.getParameter<std::string> ("NonIsoElectronsLargeWindows");
   L1IsoPixelSeedsLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
   L1NonIsoPixelSeedsLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
-  IsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<std::string> ("IsoEleTrackIsolLargeWindows");
-  NonIsoEleTrackIsolLargeWindowsTag_ = pSet.getParameter<std::string> ("NonIsoEleTrackIsolLargeWindows");
 
   edm::ParameterSet myEmParams = pSet.getParameter<edm::ParameterSet>("RunParameters") ;
   vector<std::string> parameterNames = myEmParams.getParameterNames() ;

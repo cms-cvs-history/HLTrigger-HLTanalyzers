@@ -18,34 +18,34 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   // variables. Example as follows:
   std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
 
-  recjets_    = conf.getParameter< std::string > ("recjets");
-  genjets_    = conf.getParameter< std::string > ("genjets");
-  recmet_     = conf.getParameter< std::string > ("recmet");
-  genmet_     = conf.getParameter< std::string > ("genmet");
-  ht_         = conf.getParameter< std::string > ("ht");
-  calotowers_ = conf.getParameter< std::string > ("calotowers");
-  Electron_   = conf.getParameter< std::string > ("Electron");
-  Photon_     = conf.getParameter< std::string > ("Photon");
-  muon_       = conf.getParameter< std::string > ("muon");
+  recjets_    = conf.getParameter<edm::InputTag> ("recjets");
+  genjets_    = conf.getParameter<edm::InputTag> ("genjets");
+  recmet_     = conf.getParameter<edm::InputTag> ("recmet");
+  genmet_     = conf.getParameter<edm::InputTag> ("genmet");
+  ht_         = conf.getParameter<edm::InputTag> ("ht");
+  calotowers_ = conf.getParameter<edm::InputTag> ("calotowers");
+  Electron_   = conf.getParameter<edm::InputTag> ("Electron");
+  Photon_     = conf.getParameter<edm::InputTag> ("Photon");
+  muon_       = conf.getParameter<edm::InputTag> ("muon");
 
-  mctruth_    = conf.getParameter< std::string > ("mctruth");
-  genEventScale_ = conf.getParameter< std::string > ("genEventScale");
+  mctruth_    = conf.getParameter<edm::InputTag> ("mctruth");
+  genEventScale_ = conf.getParameter<edm::InputTag> ("genEventScale");
 
-  l1extramc_  = conf.getParameter< std::string > ("l1extramc");
-  hltresults_ = conf.getParameter< std::string > ("hltresults");
-  gtReadoutRecord_ = conf.getParameter< std::string > ("l1GtReadoutRecord");
-  gtObjectMap_ = conf.getParameter< std::string > ("l1GtObjectMapRecord");
+  l1extramc_  = conf.getParameter<std::string> ("l1extramc");
+  hltresults_ = conf.getParameter<edm::InputTag> ("hltresults");
+  gtReadoutRecord_ = conf.getParameter<edm::InputTag> ("l1GtReadoutRecord");
+  gtObjectMap_ = conf.getParameter<edm::InputTag> ("l1GtObjectMapRecord");
 
   //ecalDigisLabel_ = conf.getParameter<std::string> ("ecalDigisLabel");
   //hcalDigisLabel_ = conf.getParameter<std::string> ("hcalDigisLabel");
 
-  gctCounts_ = conf.getParameter< std::string > ("l1GctCounts");
+  gctCounts_ = conf.getParameter<edm::InputTag> ("l1GctCounts");
 
-  MuCandTag2_ = conf.getParameter<std::string> ("MuCandTag2");
-  MuIsolTag2_ = conf.getParameter<std::string> ("MuIsolTag2");
-  MuCandTag3_ = conf.getParameter<std::string> ("MuCandTag3");
-  MuIsolTag3_ = conf.getParameter<std::string> ("MuIsolTag3");
-  MuLinkTag_ = conf.getParameter<std::string> ("MuLinkTag");
+  MuCandTag2_ = conf.getParameter<edm::InputTag> ("MuCandTag2");
+  MuIsolTag2_ = conf.getParameter<edm::InputTag> ("MuIsolTag2");
+  MuCandTag3_ = conf.getParameter<edm::InputTag> ("MuCandTag3");
+  MuIsolTag3_ = conf.getParameter<edm::InputTag> ("MuIsolTag3");
+  MuLinkTag_ = conf.getParameter<edm::InputTag> ("MuLinkTag");
 
   errCnt=0;
 
