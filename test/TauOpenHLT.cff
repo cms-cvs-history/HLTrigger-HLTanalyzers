@@ -1,0 +1,518 @@
+// /user/gennai/184HLT1/OpenHLT/V11  (CMSSW_1_8_4_HLT1)
+
+sequence HLTBeginSequence = { hlt2GetRaw & hltGtDigis & hltGctDigis & hltL1GtObjectMap & hltL1extraParticles & hltOfflineBeamSpot }
+sequence HLTCaloTausCreatorSequence = { HLTDoCaloSequence & hltCaloTowersTau1 & hltIcone5Tau1 & hltCaloTowersTau2 & hltIcone5Tau2 & hltCaloTowersTau3 & hltIcone5Tau3 & hltCaloTowersTau4 & hltIcone5Tau4 }
+sequence HLTDoCaloSequence = { hltEcalPreshowerDigis & hltEcalRegionalRestFEDs & hltEcalRegionalRestDigis & hltEcalRegionalRestWeightUncalibRecHit & hltEcalRegionalRestRecHitTmp & hltEcalRecHitAll & hltEcalPreshowerRecHit & HLTDoLocalHcalSequence & hltTowerMakerForAll & hltCaloTowers }
+sequence HLTDoLocalHcalSequence = { hltHcalDigis & hltHbhereco & hltHfreco & hltHoreco }
+sequence HLTDoLocalPixelSequence = { hltSiPixelDigis & hltSiPixelClusters & hltSiPixelRecHits }
+sequence HLTRecopixelvertexingSequence = { hltPixelTracks & hltPixelVertices }
+sequence HLTDoLocalStripSequence = { hltSiStripRawToClustersFacility & hltSiStripClusters }
+sequence HLTEndSequence = { hltBoolEnd }
+path OpenTauHLTFromL1Tau = { HLTBeginSequence & hltTauPrescaler & hltTauL1SeedFilter & HLTCaloTausCreatorSequence & hltMet & hltL2TauJets & hltL2TauIsolationProducer & hltL2TauIsolationSelector & HLTDoLocalPixelSequence & HLTRecopixelvertexingSequence & hltAssociatorL25Tau & hltConeIsolationL25Tau & hltIsolatedL25Tau & HLTDoLocalStripSequence & hltL3TauPixelSeeds & hltCkfTrackCandidatesL3Tau & hltCtfWithMaterialTracksL3Tau & hltAssociatorL3Tau & hltConeIsolationL3Tau & hltIsolatedL3Tau & TauOpenHLT & HLTEndSequence }
+
+  module hltGtDigis = L1GlobalTriggerRawToDigi {
+    untracked InputTag DaqGtInputTag = rawDataCollector
+    untracked int32 DaqGtFedId = 813
+    uint32 ActiveBoardsMask = 0x101
+    int32 UnpackBxInEvent = 1
+  }
+  module hltGctDigis = GctRawToDigi {
+    InputTag inputLabel = rawDataCollector
+    int32 gctFedId = 745
+    untracked bool unpackInternEm = false
+    untracked bool unpackFibres = false
+  }
+  module hltL1GtObjectMap = L1GlobalTrigger {
+    untracked InputTag GmtInputTag = hltGtDigis
+    untracked InputTag GctInputTag = hltGctDigis
+    untracked bool ProduceL1GtDaqRecord = false
+    untracked bool ProduceL1GtEvmRecord = false
+    untracked bool WritePsbL1GtDaqRecord = false
+  }
+  module hltL1extraParticles = L1ExtraParticlesProd {
+    bool produceMuonParticles = true
+    InputTag muonSource = hltGtDigis
+    bool produceCaloParticles = true
+    InputTag isolatedEmSource = hltGctDigis:isoEm
+    InputTag nonIsolatedEmSource = hltGctDigis:nonIsoEm
+    InputTag centralJetSource = hltGctDigis:cenJets
+    InputTag forwardJetSource = hltGctDigis:forJets
+    InputTag tauJetSource = hltGctDigis:tauJets
+    InputTag etTotalSource = hltGctDigis
+    InputTag etHadSource = hltGctDigis
+    InputTag etMissSource = hltGctDigis
+  }
+  module hltOfflineBeamSpot = BeamSpotProducer {}
+  module hltTauPrescaler = HLTPrescaler {
+    bool makeFilterObject = true
+    uint32 prescaleFactor = 1
+    uint32 eventOffset = 0
+  }
+  module hltTauL1SeedFilter = HLTLevel1GTSeed {
+    //string L1SeedsLogicalExpression = "L1_SingleTauJet30"
+    string L1SeedsLogicalExpression = "L1_SingleTauJet80"
+    InputTag L1GtReadoutRecordTag = hltGtDigis
+    InputTag L1GtObjectMapTag = hltL1GtObjectMap
+    InputTag L1CollectionsTag = hltL1extraParticles
+    InputTag L1MuonCollectionTag = hltL1extraParticles
+  }
+  module hltEcalPreshowerDigis = ESRawToDigi {
+    string Label = "rawDataCollector"
+    string InstanceES = ""
+    string ESdigiCollection = ""
+  }
+  module hltEcalRegionalRestFEDs = EcalListOfFEDSProducer {
+    untracked bool debug = false
+    untracked string OutputLabel = ""
+  }
+  module hltEcalRegionalRestDigis = EcalRawToDigiDev {
+    untracked bool syncCheck = false
+    untracked bool eventPut = true
+    untracked string InputLabel = "rawDataCollector"
+    untracked bool DoRegional = true
+    untracked string FedLabel = "hltEcalRegionalRestFEDs"
+    untracked vint32 orderedFedList = { 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654 }
+    untracked vint32 orderedDCCIdList = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54 }
+  }
+  module hltEcalRegionalRestWeightUncalibRecHit = EcalWeightUncalibRecHitProducer {
+    InputTag EBdigiCollection = hltEcalRegionalRestDigis:ebDigis
+    InputTag EEdigiCollection = hltEcalRegionalRestDigis:eeDigis
+    string EBhitCollection = "EcalUncalibRecHitsEB"
+    string EEhitCollection = "EcalUncalibRecHitsEE"
+  }
+  module hltEcalRegionalRestRecHitTmp = EcalRecHitProducer {
+    InputTag EBuncalibRecHitCollection = hltEcalRegionalRestWeightUncalibRecHit:EcalUncalibRecHitsEB
+    InputTag EEuncalibRecHitCollection = hltEcalRegionalRestWeightUncalibRecHit:EcalUncalibRecHitsEE
+    string EBrechitCollection = "EcalRecHitsEB"
+    string EErechitCollection = "EcalRecHitsEE"
+  }
+  module hltEcalRecHitAll = EcalRecHitsMerger {
+    untracked bool debug = false
+    untracked InputTag EgammaSource_EB = hltEcalRegionalEgammaRecHitTmp:EcalRecHitsEB
+    untracked InputTag MuonsSource_EB = hltEcalRegionalMuonsRecHitTmp:EcalRecHitsEB
+    untracked InputTag TausSource_EB = hltEcalRegionalTausRecHitTmp:EcalRecHitsEB
+    untracked InputTag JetsSource_EB = hltEcalRegionalJetsRecHitTmp:EcalRecHitsEB
+    untracked InputTag RestSource_EB = hltEcalRegionalRestRecHitTmp:EcalRecHitsEB
+    untracked InputTag EgammaSource_EE = hltEcalRegionalEgammaRecHitTmp:EcalRecHitsEE
+    untracked InputTag MuonsSource_EE = hltEcalRegionalMuonsRecHitTmp:EcalRecHitsEE
+    untracked InputTag TausSource_EE = hltEcalRegionalTausRecHitTmp:EcalRecHitsEE
+    untracked InputTag JetsSource_EE = hltEcalRegionalJetsRecHitTmp:EcalRecHitsEE
+    untracked InputTag RestSource_EE = hltEcalRegionalRestRecHitTmp:EcalRecHitsEE
+    untracked string OutputLabel_EB = "EcalRecHitsEB"
+    untracked string OutputLabel_EE = "EcalRecHitsEE"
+  }
+  module hltEcalPreshowerRecHit = ESRecHitProducer {
+    InputTag ESdigiCollection = hltEcalPreshowerDigis
+    string ESrechitCollection = "EcalRecHitsES"
+  }
+  module hltHcalDigis = HcalRawToDigi {
+    InputTag InputLabel = rawDataCollector
+    untracked bool UnpackCalib = true
+    untracked bool UnpackZDC = true
+    int32 firstSample = 0
+    int32 lastSample = 9
+    bool FilterDataQuality = true
+    untracked bool ExceptionEmptyData = false
+  }
+  module hltHbhereco = HcalSimpleReconstructor {
+    InputTag digiLabel = hltHcalDigis
+    string Subdetector = "HBHE"
+    int32 firstSample = 4
+    int32 samplesToAdd = 4
+    bool correctForTimeslew = true
+    bool correctForPhaseContainment = true
+    double correctionPhaseNS = 13.0
+  }
+  module hltHfreco = HcalSimpleReconstructor {
+    InputTag digiLabel = hltHcalDigis
+    string Subdetector = "HF"
+    int32 firstSample = 3
+    int32 samplesToAdd = 1
+    bool correctForTimeslew = false
+    bool correctForPhaseContainment = false
+    double correctionPhaseNS = 0.0
+  }
+  module hltHoreco = HcalSimpleReconstructor {
+    InputTag digiLabel = hltHcalDigis
+    string Subdetector = "HO"
+    int32 firstSample = 4
+    int32 samplesToAdd = 4
+    bool correctForTimeslew = true
+    bool correctForPhaseContainment = true
+    double correctionPhaseNS = 13.0
+  }
+  module hltTowerMakerForAll = CaloTowersCreator {
+    double EBThreshold = 0.09
+    double EEThreshold = 0.45
+    double HcalThreshold = -1000.0
+    double HBThreshold = 0.9
+    double HESThreshold = 1.4
+    double HEDThreshold = 1.4
+    double HOThreshold = 1.1
+    double HF1Threshold = 1.2
+    double HF2Threshold = 1.8
+    double EBWeight = 1.0
+    double EEWeight = 1.0
+    double HBWeight = 1.0
+    double HESWeight = 1.0
+    double HEDWeight = 1.0
+    double HOWeight = 1.0
+    double HF1Weight = 1.0
+    double HF2Weight = 1.0
+    double EcutTower = -1000.0
+    double EBSumThreshold = 0.2
+    double EESumThreshold = 0.45
+    InputTag hbheInput = hltHbhereco
+    InputTag hoInput = hltHoreco
+    InputTag hfInput = hltHfreco
+    VInputTag ecalInputs = { hltEcalRecHitAll:EcalRecHitsEB, hltEcalRecHitAll:EcalRecHitsEE }
+    bool UseHO = true
+  }
+  module hltCaloTowers = CaloTowerCandidateCreator {
+    InputTag src = hltTowerMakerForAll
+    double minimumEt = -1.0
+    double minimumE = -1.0
+  }
+  module hltCaloTowersTau1 = CaloTowerCreatorForTauHLT {
+    InputTag towers = hltTowerMakerForAll
+    double UseTowersInCone = 0.8
+    InputTag TauTrigger = hltL1extraParticles:Tau
+    double minimumEt = 0.5
+    double minimumE = 0.8
+    int32 TauId = 0
+  }
+  module hltIcone5Tau1 = IterativeConeJetProducer {
+    double seedThreshold = 1.0
+    double coneRadius = 0.5
+    untracked bool verbose = false
+    untracked string jetType = "CaloJet"
+    InputTag src = hltCaloTowersTau1
+    double inputEMin = 0.0
+    double inputEtMin = 0.5
+    untracked int32 debugLevel = 0
+    untracked string alias = "IC5CaloJet"
+  }
+  module hltCaloTowersTau2 = CaloTowerCreatorForTauHLT {
+    InputTag towers = hltTowerMakerForAll
+    double UseTowersInCone = 0.8
+    InputTag TauTrigger = hltL1extraParticles:Tau
+    double minimumEt = 0.5
+    double minimumE = 0.8
+    int32 TauId = 1
+  }
+  module hltIcone5Tau2 = IterativeConeJetProducer {
+    double seedThreshold = 1.0
+    double coneRadius = 0.5
+    untracked bool verbose = false
+    untracked string jetType = "CaloJet"
+    InputTag src = hltCaloTowersTau2
+    double inputEMin = 0.0
+    double inputEtMin = 0.5
+    untracked int32 debugLevel = 0
+    untracked string alias = "IC5CaloJet"
+  }
+  module hltCaloTowersTau3 = CaloTowerCreatorForTauHLT {
+    InputTag towers = hltTowerMakerForAll
+    double UseTowersInCone = 0.8
+    InputTag TauTrigger = hltL1extraParticles:Tau
+    double minimumEt = 0.5
+    double minimumE = 0.8
+    int32 TauId = 2
+  }
+  module hltIcone5Tau3 = IterativeConeJetProducer {
+    double seedThreshold = 1.0
+    double coneRadius = 0.5
+    untracked bool verbose = false
+    untracked string jetType = "CaloJet"
+    InputTag src = hltCaloTowersTau3
+    double inputEMin = 0.0
+    double inputEtMin = 0.5
+    untracked int32 debugLevel = 0
+    untracked string alias = "IC5CaloJet"
+  }
+  module hltCaloTowersTau4 = CaloTowerCreatorForTauHLT {
+    InputTag towers = hltTowerMakerForAll
+    double UseTowersInCone = 0.8
+    InputTag TauTrigger = hltL1extraParticles:Tau
+    double minimumEt = 0.5
+    double minimumE = 0.8
+    int32 TauId = 3
+  }
+  module hltIcone5Tau4 = IterativeConeJetProducer {
+    double seedThreshold = 1.0
+    double coneRadius = 0.5
+    untracked bool verbose = false
+    untracked string jetType = "CaloJet"
+    InputTag src = hltCaloTowersTau4
+    double inputEMin = 0.0
+    double inputEtMin = 0.5
+    untracked int32 debugLevel = 0
+    untracked string alias = "IC5CaloJet"
+  }
+  module hltMet = METProducer {
+    string src = "hltCaloTowers"
+    string InputType = "CandidateCollection"
+    string METType = "CaloMET"
+    string alias = "RawCaloMET"
+    double globalThreshold = 0.5
+  }
+  module hltL2TauJets = L2TauJetsProvider {
+    InputTag L1Particles = hltL1extraParticles:Tau
+    InputTag L1TauTrigger = hltTauL1SeedFilter
+    double EtMin = 5.0
+    VInputTag JetSrc = { hltIcone5Tau1, hltIcone5Tau2, hltIcone5Tau3, hltIcone5Tau4 }
+  }
+  module hltL2TauIsolationProducer = L2TauIsolationProducer {
+    InputTag L2TauJetCollection = hltL2TauJets
+    InputTag EBRecHits = hltEcalRecHitAll:EcalRecHitsEB
+    InputTag EERecHits = hltEcalRecHitAll:EcalRecHitsEE
+    double crystalThreshold = 0.1
+    double towerThreshold = 0.2
+    PSet ECALIsolation = {
+      bool runAlgorithm = true
+      double innerCone = 0.15
+      double outerCone = 0.5
+    }
+    PSet ECALClustering = {
+      bool runAlgorithm = true
+      double clusterRadius = 0.08
+    }
+    PSet TowerIsolation = {
+      bool runAlgorithm = true
+      double innerCone = 0.2
+      double outerCone = 0.5
+    }
+  }
+  module hltL2TauIsolationSelector = L2TauIsolationSelector {
+    InputTag L2InfoAssociation = hltL2TauIsolationProducer:L2TauIsolationInfoAssociator
+    double ECALIsolEt = 1000.0
+    double TowerIsolEt = 1000.0
+    double ClusterEtaRMS = 1000.0
+    double ClusterPhiRMS = 1000.0
+    double ClusterDRRMS = 1000.0
+    int32 ClusterNClusters = 1000
+    double MinJetEt = 0.0
+    double SeedTowerEt = -10.0
+  }
+  module hltSiPixelDigis = SiPixelRawToDigi {
+    untracked string InputLabel = "rawDataCollector"
+  }
+  module hltSiPixelClusters = SiPixelClusterProducer {
+    InputTag src = hltSiPixelDigis
+    int32 ChannelThreshold = 2500
+    int32 SeedThreshold = 3000
+    double ClusterThreshold = 5050.0
+    untracked bool MissCalibrate = true
+  }
+  module hltSiPixelRecHits = SiPixelRecHitConverter {
+    InputTag src = hltSiPixelClusters
+    string CPE = "Initial"
+    double TanLorentzAnglePerTesla = 0.106
+    bool Alpha2Order = true
+    int32 speed = 0
+  }
+  module hltPixelTracks = PixelTrackProducer {
+    PSet RegionFactoryPSet = {
+      string ComponentName = "GlobalRegionProducer"
+      PSet RegionPSet = {
+        double ptMin = 0.9
+        double originRadius = 0.2
+        double originHalfLength = 22.7
+        double originXPos = 0.0
+        double originYPos = 0.0
+        double originZPos = 0.0
+        bool precise = true
+      }
+    }
+    PSet OrderedHitsFactoryPSet = {
+      string ComponentName = "StandardHitTripletGenerator"
+      string SeedingLayers = "PixelLayerTriplets"
+      PSet GeneratorPSet = {
+        string ComponentName = "PixelTripletHLTGenerator"
+        bool useFixedPreFiltering = false
+        double phiPreFiltering = 0.3
+        double extraHitRZtolerance = 0.06
+        double extraHitRPhitolerance = 0.06
+        bool useBending = true
+        bool useMultScattering = true
+      }
+    }
+    PSet FitterPSet = {
+      string ComponentName = "PixelFitterByHelixProjections"
+      string TTRHBuilder = "PixelTTRHBuilderWithoutAngle"
+    }
+    PSet FilterPSet = {
+      string ComponentName = "PixelTrackFilterByKinematics"
+      double ptMin = 0.0
+      double tipMax = 1.0
+      double chi2 = 1000.0
+    }
+    PSet CleanerPSet = {
+      string ComponentName = "PixelTrackCleanerBySharedHits"
+    }
+  }
+  module hltPixelVertices = PixelVertexProducer {
+    int32 Verbosity = 0
+    string Finder = "DivisiveVertexFinder"
+    bool UseError = true
+    bool WtAverage = true
+    double ZOffset = 5.0
+    double ZSeparation = 0.05
+    int32 NTrkMin = 2
+    double PtMin = 1.0
+    string TrackCollection = "pixelTracks"
+    bool Method2 = true
+    InputTag beamSpot = hltOfflineBeamSpot
+  }
+  module hltAssociatorL25Tau = JetTracksAssociatorAtVertex {
+    InputTag jets = hltL2TauIsolationSelector:Isolated
+    InputTag tracks = hltPixelTracks
+    double coneSize = 0.5
+  }
+  module hltConeIsolationL25Tau = ConeIsolation {
+    InputTag JetTrackSrc = hltAssociatorL25Tau
+    InputTag vertexSrc = hltPixelVertices
+    bool useVertex = true
+    bool useBeamSpot = true
+    InputTag BeamSpotProducer = hltOfflineBeamSpot
+    int32 MinimumNumberOfPixelHits = 2
+    int32 MinimumNumberOfHits = 2
+    double MaximumTransverseImpactParameter = 300.0
+    double MinimumTransverseMomentum = 1.0
+    double MaximumChiSquared = 100.0
+    double DeltaZetTrackVertex = 0.2
+    double MatchingCone = 0.1
+    double SignalCone = 0.1
+    double IsolationCone = 0.1
+    double MinimumTransverseMomentumInIsolationRing = 1.0
+    double MinimumTransverseMomentumLeadingTrack = 1.0
+    int32 MaximumNumberOfTracksIsolationRing = 0
+    bool UseFixedSizeCone = true
+    double VariableConeParameter = 3.5
+    double VariableMaxCone = 0.17
+    double VariableMinCone = 0.05
+  }
+  module hltIsolatedL25Tau = IsolatedTauJetsSelector {
+    double MatchingCone = 0.5
+    double SignalCone = 0.5
+    double IsolationCone = 0.5
+    double MinimumTransverseMomentumInIsolationRing = 1.0
+    double MinimumTransverseMomentumLeadingTrack = 1.0
+    int32 MaximumNumberOfTracksIsolationRing = 0
+    double DeltaZetTrackVertex = 0.2
+    bool UseVertex = false
+    InputTag VertexSrc = hltPixelVertices
+    bool UseInHLTOpen = true
+    VInputTag JetSrc = { hltConeIsolationL25Tau }
+  }
+  module hltSiStripRawToClustersFacility = SiStripRawToClusters {
+    untracked string ProductLabel = "rawDataCollector"
+    untracked uint32 MaxHolesInCluster = 0
+    untracked double ClusterThreshold = 5.0
+    untracked double SeedThreshold = 3.0
+    untracked double ChannelThreshold = 2.0
+    untracked string ClusterizerAlgorithm = "ThreeThreshold"
+  }
+  module hltSiStripClusters = MeasurementTrackerSiStripRefGetterProducer {
+    InputTag InputModuleLabel = hltSiStripRawToClustersFacility
+    string measurementTrackerName = ""
+  }
+  module hltL3TauPixelSeeds = SeedGeneratorFromRegionHitsEDProducer {
+    PSet RegionFactoryPSet = {
+      string ComponentName = "TauRegionalPixelSeedGenerator"
+      PSet RegionPSet = {
+        double deltaEtaRegion = 0.1
+        double deltaPhiRegion = 0.1
+        double ptMin = 10.0
+        double originZPos = 0.0
+        double originRadius = 0.2
+        double originHalfLength = 0.2
+        bool precise = true
+        InputTag JetSrc = hltIsolatedL25Tau
+        InputTag vertexSrc = hltPixelVertices
+      }
+    }
+    PSet OrderedHitsFactoryPSet = {
+      string ComponentName = "StandardHitPairGenerator"
+      string SeedingLayers = "PixelLayerPairs"
+    }
+    PSet SeedComparitorPSet = {
+      string ComponentName = "none"
+    }
+    string TTRHBuilder = "WithTrackAngle"
+  }
+  module hltCkfTrackCandidatesL3Tau = CkfTrackCandidateMaker {
+    string SeedProducer = "hltL3TauPixelSeeds"
+    string SeedLabel = ""
+    string TrajectoryBuilder = "trajBuilderL3"
+    string TrajectoryCleaner = "TrajectoryCleanerBySharedHits"
+    string NavigationSchool = "SimpleNavigationSchool"
+    string RedundantSeedCleaner = "CachingSeedCleanerBySharedInput"
+    PSet TransientInitialStateEstimatorParameters = {
+      string propagatorAlongTISE = "PropagatorWithMaterial"
+      string propagatorOppositeTISE = "PropagatorWithMaterialOpposite"
+    }
+  }
+  module hltCtfWithMaterialTracksL3Tau = TrackProducer {
+    bool TrajectoryInEvent = true
+    string src = "hltCkfTrackCandidatesL3Tau"
+    string producer = ""
+    untracked string alias = "ctfWithMaterialTracks"
+    string Fitter = "FittingSmootherRK"
+    string Propagator = "RungeKuttaTrackerPropagator"
+    string TTRHBuilder = "WithTrackAngle"
+    bool useHitsSplitting = false
+  }
+  module hltAssociatorL3Tau = JetTracksAssociatorAtVertex {
+    InputTag jets = hltIsolatedL25Tau
+    InputTag tracks = hltCtfWithMaterialTracksL3Tau
+    double coneSize = 0.5
+  }
+  module hltConeIsolationL3Tau = ConeIsolation {
+    InputTag JetTrackSrc = hltAssociatorL3Tau
+    InputTag vertexSrc = hltPixelVertices
+    bool useVertex = true
+    bool useBeamSpot = true
+    InputTag BeamSpotProducer = hltOfflineBeamSpot
+    int32 MinimumNumberOfPixelHits = 2
+    int32 MinimumNumberOfHits = 5
+    double MaximumTransverseImpactParameter = 300.0
+    double MinimumTransverseMomentum = 1.0
+    double MaximumChiSquared = 100.0
+    double DeltaZetTrackVertex = 0.2
+    double MatchingCone = 0.1
+    double SignalCone = 0.1
+    double IsolationCone = 0.1
+    double MinimumTransverseMomentumInIsolationRing = 1.0
+    double MinimumTransverseMomentumLeadingTrack = 1.0
+    int32 MaximumNumberOfTracksIsolationRing = 0
+    bool UseFixedSizeCone = true
+    double VariableConeParameter = 3.5
+    double VariableMaxCone = 0.17
+    double VariableMinCone = 0.05
+  }
+  module hltIsolatedL3Tau = IsolatedTauJetsSelector {
+    double MatchingCone = 0.5
+    double SignalCone = 0.5
+    double IsolationCone = 0.5
+    double MinimumTransverseMomentumInIsolationRing = 1.0
+    double MinimumTransverseMomentumLeadingTrack = 1.0
+    int32 MaximumNumberOfTracksIsolationRing = 0
+    double DeltaZetTrackVertex = 0.2
+    bool UseVertex = false
+    InputTag VertexSrc = hltPixelVertices
+    bool UseInHLTOpen = true
+    VInputTag JetSrc = { hltConeIsolationL3Tau }
+  }
+  module TauOpenHLT = HLTTauProducer {
+    InputTag L2EcalIsoJets = hltL2TauIsolationProducer:L2TauIsolationInfoAssociator
+    InputTag L25TrackIsoJets = hltConeIsolationL25Tau
+    InputTag L3TrackIsoJets = hltConeIsolationL3Tau
+    double MatchingCone = 0.1
+    double SignalCone = 0.15
+    double IsolationCone = 0.5
+  }
+
+  module hltBoolEnd = HLTBool {
+    bool result = true
+  }

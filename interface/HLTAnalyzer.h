@@ -3,6 +3,7 @@
 #include "HLTrigger/HLTanalyzers/interface/HLTEgamma.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTInfo.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTJets.h"
+#include "HLTrigger/HLTanalyzers/interface/HLTBJet.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMCtruth.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMuon.h"
 #include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
@@ -47,6 +48,7 @@ private:
  
   HLTEgamma elm_analysis_;
   HLTJets jet_analysis_;
+  HLTBJet bjet_analysis_;
   HLTMCtruth mct_analysis_;
   HLTMuon muon_analysis_;
   HLTInfo hlt_analysis_;
@@ -57,9 +59,14 @@ private:
   std::string l1extramc_;
   edm::InputTag particleMapSource_,mctruth_; 
 /*   std::string ecalDigisLabel_,hcalDigisLabel_; */
+
   edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
+  edm::InputTag myHLT1Tau_/*,myHLT2Tau_*/;
   edm::InputTag gtReadoutRecord_,gtObjectMap_; 
   edm::InputTag gctCounts_;
+  edm::InputTag lifetimeBjetL2_, lifetimeBjetL25_, lifetimeBjetL3_;
+  edm::InputTag softmuonBjetL2_, softmuonBjetL25_, softmuonBjetL3_;
+  edm::InputTag performanceBjetL2_, performanceBjetL25_, performanceBjetL3_;
 
   int errCnt;
   const int errMax(){return 100;}

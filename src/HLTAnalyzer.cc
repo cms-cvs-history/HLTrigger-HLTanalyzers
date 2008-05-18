@@ -3,6 +3,7 @@
 // Date:  13-October-2006
 
 #include "HLTrigger/HLTanalyzers/interface/HLTAnalyzer.h"
+#include "HLTrigger/HLTanalyzers/interface/AnalyzeIfValid.h"
 
 // Boiler-plate constructor definition of an analyzer module:
 HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
@@ -46,6 +47,17 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   MuCandTag3_ = conf.getParameter<edm::InputTag> ("MuCandTag3");
   MuIsolTag3_ = conf.getParameter<edm::InputTag> ("MuIsolTag3");
   MuLinkTag_ = conf.getParameter<edm::InputTag> ("MuLinkTag");
+  myHLT1Tau_ = conf.getParameter<edm::InputTag> ("HLT1Tau");
+//   myHLT2Tau_ = conf.getParameter<edm::InputTag> ("HLT2Tau");
+  lifetimeBjetL2_     = conf.getParameter<edm::InputTag>("LifetimeBJetsL2");
+  lifetimeBjetL25_    = conf.getParameter<edm::InputTag>("LifetimeBJetsL25");
+  lifetimeBjetL3_     = conf.getParameter<edm::InputTag>("LifetimeBJetsL3");
+  softmuonBjetL2_     = conf.getParameter<edm::InputTag>("SoftmuonBJetsL2");
+  softmuonBjetL25_    = conf.getParameter<edm::InputTag>("SoftmuonBJetsL25");
+  softmuonBjetL3_     = conf.getParameter<edm::InputTag>("SoftmuonBJetsL3");
+  performanceBjetL2_  = conf.getParameter<edm::InputTag>("PerformanceBJetsL2");
+  performanceBjetL25_ = conf.getParameter<edm::InputTag>("PerformanceBJetsL25");
+  performanceBjetL3_  = conf.getParameter<edm::InputTag>("PerformanceBJetsL3");
 
   errCnt=0;
 
@@ -76,6 +88,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
 
   // Setup the different analysis
   jet_analysis_.setup(conf, HltTree);
+  bjet_analysis_.setup(conf, HltTree);
   elm_analysis_.setup(conf, HltTree);
   muon_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
@@ -123,6 +136,18 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<MuIsoAssociationMap> isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
   edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
 
+  edm::Handle<reco::HLTTauCollection> myHLT1Tau,myHLT1TauDummy;
+
+  edm::Handle<edm::View<reco::Jet> >  h_lifetimeBjetL2;
+  edm::Handle<reco::JetTagCollection> h_lifetimeBjetL25;
+  edm::Handle<reco::JetTagCollection> h_lifetimeBjetL3;
+  edm::Handle<edm::View<reco::Jet> >  h_softmuonBjetL2;
+  edm::Handle<reco::JetTagCollection> h_softmuonBjetL25;
+  edm::Handle<reco::JetTagCollection> h_softmuonBjetL3;
+  edm::Handle<edm::View<reco::Jet> >  h_performanceBjetL2;
+  edm::Handle<reco::JetTagCollection> h_performanceBjetL25;
+  edm::Handle<reco::JetTagCollection> h_performanceBjetL3;
+
   // Extract Data objects (event fragments)
   //Jets and Missing ET
   iEvent.getByLabel(recjets_,recjets);
@@ -158,44 +183,64 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(MuIsolTag2_,isoMap2);
   iEvent.getByLabel(MuIsolTag3_,isoMap3);
   iEvent.getByLabel(MuLinkTag_,mulinks);
+  iEvent.getByLabel(myHLT1Tau_,myHLT1Tau);
+  iEvent.getByLabel(lifetimeBjetL2_,  h_lifetimeBjetL2);
+  iEvent.getByLabel(lifetimeBjetL25_, h_lifetimeBjetL25);
+  iEvent.getByLabel(lifetimeBjetL3_,  h_lifetimeBjetL3);
+  iEvent.getByLabel(softmuonBjetL2_,  h_softmuonBjetL2);
+  iEvent.getByLabel(softmuonBjetL25_, h_softmuonBjetL25);
+  iEvent.getByLabel(softmuonBjetL3_,  h_softmuonBjetL3);
+  iEvent.getByLabel(performanceBjetL2_,  h_performanceBjetL2);
+  iEvent.getByLabel(performanceBjetL25_, h_performanceBjetL25);
+  iEvent.getByLabel(performanceBjetL3_,  h_performanceBjetL3);
 
   // check the objects...
   string errMsg("");
-  if (! recjets.isValid()    ) { errMsg=errMsg + "  -- No RecJets"; recjets = recjetsDummy;}
-  if (! genjets.isValid()    ) { errMsg=errMsg + "  -- No GenJets"; genjets=genjetsDummy;}
-  if (! recmet.isValid()     ) { errMsg=errMsg + "  -- No RecMET"; recmet = recmetDummy;}
-  if (! genmet.isValid()     ) { errMsg=errMsg + "  -- No GenMet"; genmet=genmetDummy;}
-  if (! caloTowers.isValid() ) { errMsg=errMsg + "  -- No CaloTowers"; caloTowers=caloTowersDummy;}
-  if (! ht.isValid()         ) { errMsg=errMsg + "  -- No HT"; ht = htDummy;}
-  if (! Electron.isValid()   ) { errMsg=errMsg + "  -- No Candidate Electrons"; Electron=ElectronDummy;}
-  if (! Photon.isValid()     ) { errMsg=errMsg + "  -- No Candidate Photons"; Photon=PhotonDummy;}
-  if (! muon.isValid()       ) { errMsg=errMsg + "  -- No Candidate Muons"; muon=muonDummy;}
+  if (! recjets.isValid()    ) { errMsg +="  -- No RecJets"; recjets = recjetsDummy;}
+  if (! genjets.isValid()    ) { errMsg +="  -- No GenJets"; genjets=genjetsDummy;}
+  if (! recmet.isValid()     ) { errMsg +="  -- No RecMET"; recmet = recmetDummy;}
+  if (! genmet.isValid()     ) { errMsg +="  -- No GenMet"; genmet=genmetDummy;}
+  if (! caloTowers.isValid() ) { errMsg +="  -- No CaloTowers"; caloTowers=caloTowersDummy;}
+  if (! ht.isValid()         ) { errMsg +="  -- No HT"; ht = htDummy;}
+  if (! Electron.isValid()   ) { errMsg +="  -- No Candidate Electrons"; Electron=ElectronDummy;}
+  if (! Photon.isValid()     ) { errMsg +="  -- No Candidate Photons"; Photon=PhotonDummy;}
+  if (! muon.isValid()       ) { errMsg +="  -- No Candidate Muons"; muon=muonDummy;}
 
-  if (! hltresults.isValid() ) { errMsg=errMsg + "  -- No HLTRESULTS"; hltresults=hltresultsDummy;}
+  if (! hltresults.isValid() ) { errMsg +="  -- No HLTRESULTS"; hltresults=hltresultsDummy;}
 
-  if (! l1extemi.isValid()   ) { errMsg=errMsg + "  -- No Isol. L1Em objects"; l1extemi = l1extemiDummy;}
-  if (! l1extemn.isValid()   ) { errMsg=errMsg + "  -- No Non-isol. L1Em objects"; l1extemn = l1extemnDummy;}
-  if (! l1extmu.isValid()    ) { errMsg=errMsg + "  -- No L1Mu objects"; l1extmu = l1extmuDummy;}
-  if (! l1extjetc.isValid()  ) { errMsg=errMsg + "  -- No central L1Jet objects"; l1extjetc = l1extjetcDummy;}
-  if (! l1extjetf.isValid()  ) { errMsg=errMsg + "  -- No forward L1Jet objects"; l1extjetf = l1extjetfDummy;}
-  if (! l1exttaujet.isValid()) { errMsg=errMsg + "  -- No L1Jet-Tau objects"; l1exttaujet = l1exttaujetDummy;}
-  if (! l1extmet.isValid()   ) { errMsg=errMsg + "  -- No L1EtMiss object"; l1extmet = l1extmetDummy;}
-  if (! l1GtRR.isValid()     ) { errMsg=errMsg + "  -- No L1 GT ReadouRecord";}
-  if (! l1GtOMRec.isValid()  ) { errMsg=errMsg + "  -- No L1 GT ObjectMap";}
-  if (! l1GctCounts.isValid()) { errMsg=errMsg + "  -- No L1 GctJetCounts object";}
+  if (! l1extemi.isValid()   ) { errMsg +="  -- No Isol. L1Em objects"; l1extemi = l1extemiDummy;}
+  if (! l1extemn.isValid()   ) { errMsg +="  -- No Non-isol. L1Em objects"; l1extemn = l1extemnDummy;}
+  if (! l1extmu.isValid()    ) { errMsg +="  -- No L1Mu objects"; l1extmu = l1extmuDummy;}
+  if (! l1extjetc.isValid()  ) { errMsg +="  -- No central L1Jet objects"; l1extjetc = l1extjetcDummy;}
+  if (! l1extjetf.isValid()  ) { errMsg +="  -- No forward L1Jet objects"; l1extjetf = l1extjetfDummy;}
+  if (! l1exttaujet.isValid()) { errMsg +="  -- No L1Jet-Tau objects"; l1exttaujet = l1exttaujetDummy;}
+  if (! l1extmet.isValid()   ) { errMsg +="  -- No L1EtMiss object"; l1extmet = l1extmetDummy;}
+  if (! l1GtRR.isValid()     ) { errMsg +="  -- No L1 GT ReadouRecord";}
+  if (! l1GtOMRec.isValid()  ) { errMsg +="  -- No L1 GT ObjectMap";}
+  if (! l1GctCounts.isValid()) { errMsg +="  -- No L1 GctJetCounts object";}
 
-  if (! mctruth.isValid()    ) { errMsg=errMsg + "  -- No Gen Particles"; mctruth = mctruthDummy;}
+  if (! mctruth.isValid()    ) { errMsg +="  -- No Gen Particles"; mctruth = mctruthDummy;}
 
-  if (! mucands2.isValid()   ) { errMsg=errMsg + "  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
-  if (! mucands3.isValid()   ) { errMsg=errMsg + "  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
-  if (! isoMap2.isValid()    ) { errMsg=errMsg + "  -- No L2 muon isolation map"; isoMap2 = isoMap2Dummy;}
-  if (! isoMap3.isValid()    ) { errMsg=errMsg + "  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
-  if (! mulinks.isValid()    ) { errMsg=errMsg + "  -- No L3 muon link"; mulinks = mulinksDummy;}
+  if (! mucands2.isValid()   ) { errMsg +="  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
+  if (! mucands3.isValid()   ) { errMsg +="  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
+  if (! isoMap2.isValid()    ) { errMsg +="  -- No L2 muon isolation map"; isoMap2 = isoMap2Dummy;}
+  if (! isoMap3.isValid()    ) { errMsg +="  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
+  if (! mulinks.isValid()    ) { errMsg +="  -- No L3 muon link"; mulinks = mulinksDummy;}
+  if (! myHLT1Tau.isValid()  ) { errMsg +="  -- No 1Tau candidates"; myHLT1Tau = myHLT1TauDummy;}
+  if (! h_lifetimeBjetL2.isValid()    ) { errMsg += "  --  No L2 lifetime b-jet candidates";}
+  if (! h_lifetimeBjetL25.isValid()   ) { errMsg += "  --  No L2.5 lifetime b-jet candidates";}
+  if (! h_lifetimeBjetL3.isValid()    ) { errMsg += "  --  No L3 lifetime b-jet candidates";}
+  if (! h_softmuonBjetL2.isValid()    ) { errMsg += "  --  No L2 soft mu b-jet candidates";}
+  if (! h_softmuonBjetL25.isValid()   ) { errMsg += "  --  No L2.5 soft mu b-jet candidates";}
+  if (! h_softmuonBjetL3.isValid()    ) { errMsg += "  --  No L3 soft mu b-jet candidates";}
+  if (! h_performanceBjetL2.isValid() ) { errMsg += "  --  No L2 b-jet perf. measurement candidates";}
+  if (! h_performanceBjetL25.isValid()) { errMsg += "  --  No L2.5 b-jet perf. measurement candidates";}
+  if (! h_performanceBjetL3.isValid() ) { errMsg += "  --  No L3 b-jet perf. measurement candidates";}
 
 
   if ((errMsg != "") && (errCnt < errMax())){
     errCnt=errCnt+1;
-    errMsg=errMsg + ".";
+    errMsg +=".";
     std::cout << "%HLTAnalyzer-Warning" << errMsg << std::endl;
     if (errCnt == errMax()){
       errMsg="%HLTAnalyzer-Warning -- Maximum error count reached -- No more messages will be printed.";
@@ -203,7 +248,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     }
   }
   // run the analysis, passing required event fragments
-  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, HltTree);
+  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *myHLT1Tau, *caloTowers, HltTree);
+  analyzeIfValid(
+      bjet_analysis_,
+      h_lifetimeBjetL2, h_lifetimeBjetL25, h_lifetimeBjetL3,
+      h_softmuonBjetL2, h_softmuonBjetL25, h_softmuonBjetL3,
+      h_performanceBjetL2, h_performanceBjetL25, h_performanceBjetL3,
+      ht, HltTree);
   elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);

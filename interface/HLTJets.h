@@ -22,6 +22,8 @@
 #include "DataFormats/METReco/interface/GenMETCollection.h"
 #include "DataFormats/METReco/interface/METCollection.h"
 
+#include"DataFormats/TauReco/interface/HLTTau.h"
+
 #include "DataFormats/CaloTowers/interface/CaloTowerCollection.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
@@ -49,6 +51,8 @@ public:
 	       const CaloMETCollection& rmets,
 	       const GenMETCollection& gmets,
 	       const METCollection& ht,
+	       const reco::HLTTauCollection& myHLT1Tau,
+/* 	       const reco::HLTTauCollection& myHLT2Tau, */
 	       const CaloTowerCollection& caloTowers,
 	       TTree* tree);
 
@@ -62,6 +66,12 @@ private:
   float htcalet,htcalphi,htcalsum;
   float mgenmet,mgenphi,mgensum;
   int njetcal,njetgen,ntowcal;
+
+  // Taus
+  float *l2t1emiso, *l25t1Pt, *l3t1Pt;
+  int *l25t1tckiso, *l3t1tckiso;
+  int nohtau1;
+  float *t1Eta, *t1Pt, *t1Phi;
 
   // input variables
   bool _Monte,_Debug;

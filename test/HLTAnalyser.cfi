@@ -45,13 +45,25 @@
         InputTag PixelSeedL1NonIso = l1NonIsoElectronPixelSeeds
         InputTag IsoEleTrackIsol = l1IsoElectronTrackIsol
         InputTag NonIsoEleTrackIsol = l1NonIsoElectronTrackIsol
-    
         InputTag IsoElectronsLargeWindows = pixelMatchElectronsL1IsoLargeWindowForHLT
         InputTag NonIsoElectronsLargeWindows = pixelMatchElectronsL1NonIsoLargeWindowForHLT
         InputTag PixelSeedL1IsoLargeWindows = l1IsoLargeWindowElectronPixelSeeds
         InputTag PixelSeedL1NonIsoLargeWindows = l1NonIsoLargeWindowElectronPixelSeeds
 	InputTag IsoEleTrackIsolLargeWindows = l1IsoLargeWindowElectronTrackIsol
         InputTag NonIsoEleTrackIsolLargeWindows = l1NonIsoLargeWindowElectronTrackIsol
+        ### Tau HLT related objects
+        InputTag HLT1Tau = TauOpenHLT
+        //InputTag HLT2Tau = TauOpenHLT
+        ### b-jet HLT related objects
+        InputTag LifetimeBJetsL2  = hltBLifetimeL25Jets
+        InputTag LifetimeBJetsL25 = hltBLifetimeL25BJetTags
+        InputTag LifetimeBJetsL3  = hltBLifetimeL3BJetTags
+        InputTag SoftmuonBJetsL2  = hltBSoftmuonL25Jets
+        InputTag SoftmuonBJetsL25 = hltBSoftmuonL25BJetTags
+        InputTag SoftmuonBJetsL3  = hltBSoftmuonL3BJetTags
+        InputTag PerformanceBJetsL2  = hltBSoftmuonL25Jets
+        InputTag PerformanceBJetsL25 = hltBSoftmuonL25BJetTags
+        InputTag PerformanceBJetsL3  = hltBSoftmuonL3BJetTagsByDR
 
 	PSet RunParameters =
 	{

@@ -10,6 +10,13 @@ class PtGreater {
   }
 };
 
+class GetPtGreater {
+  public:
+  template <typename T> bool operator () (const T& i, const T& j) {
+    return (i.getPt() > j.getPt());
+  }
+};
+
 class EtGreater {
   public:
   template <typename T> bool operator () (const T& i, const T& j) {

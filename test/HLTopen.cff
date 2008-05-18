@@ -3,7 +3,7 @@
   path DoHltMuon = { recoHLTMuIso }
 
 
-### Open-HLT inclues, modules and paths for Egamma
+### Open-HLT includes, modules and paths for Egamma
  include "HLTrigger/Egamma/data/EgammaHLTLocal_1e32.cff"
 # ECAL Super clusters
  include "RecoEgamma/EgammaHLTProducers/data/l1IsolatedEcalSuperClusters.cff"
@@ -81,7 +81,7 @@ path DoHltElectron = {hltBegin
 			& l1NonIsoElectronTrackIsol}
 
 
- path DoHltElectronLargeWindows = {hltBegin &
+path DoHltElectronLargeWindows = {hltBegin &
                                	    doRegionalEgammaEcal &
                                     l1IsolatedEcalClusters &
                                     l1NonIsolatedEcalClusters &
@@ -102,8 +102,86 @@ path DoHltElectron = {hltBegin
                                     l1NonIsoLargeWindowElectronTrackIsol  
                                    }
 
+
 ### Open-HLT includes, modules and paths for JetMET
 include "HLTrigger/Configuration/data/common/CaloTowers.cff"
 include "HLTrigger/Configuration/data/common/RecoJetMET.cff"
 sequence recoJetMETPath = {doCalo & (doHLTJetReco & doHLTMETReco & doHLTHTReco)}
 path DoHltJetMET = {recoJetMETPath}
+
+
+### Open-HLT includes, modules and paths for Tau
+include "HLTrigger/HLTanalyzers/test/TauOpenHLT.cff"
+
+
+### Open-HLT includes, modules and paths for b-jet
+
+## lifetime-based b-tag OpenHLT
+# L1 seeds
+include "HLTrigger/btau/data/jetTag/lifetimeL1Seeds.cff"
+# reconstruct calo jets and select those to be used for b tagging
+include "HLTrigger/btau/data/jetTag/jetReco.cff"
+include "HLTrigger/btau/data/jetTag/lifetimeJetReco.cff"
+# setup lifetime tagers
+include "HLTrigger/btau/data/jetTag/lifetimeTaggers.cff"
+# lifetime-based b HLT modules for Level 2.5 and 3
+include "HLTrigger/btau/data/jetTag/lifetimeL25.cff"
+include "HLTrigger/btau/data/jetTag/lifetimeL3.cff"
+# jet tracks associator at vertex running on L2.5 jets and pixel-only tracks (pixel triplets)
+module  hltBLifetimeL25Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
+replace hltBLifetimeL25Associator.tracks = pixelTracks
+replace hltBLifetimeL25Associator.jets   = hltBLifetimeL25Jets  # take jets b-tagged at L2.5
+# jet tracks associator at vertex running on jets passing L2.5 and regionally reconstructed tracks
+module  hltBLifetimeL3Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
+replace hltBLifetimeL3Associator.tracks = hltBLifetimeRegionalCtfWithMaterialTracks
+replace hltBLifetimeL3Associator.jets   = hltBLifetimeL25Jets  # take jets b-tagged at L2.5
+
+# define OpenHLT trigger path
+path openHltBLifetime = {
+    hltBegin & 
+    hltBLifetimeL1seeds &
+    hltBCommonL2reco &          # no L2 filter applied 
+    hltBLifetimeL25reco &       # no L2.5 filter applied
+    hltBLifetimeL3reco          # no L3 filter applied
+}
+
+## soft muon-based b-tag OpenHLT
+# L1 seeds
+module  openHltBSoftmuonL1seeds = hltLevel1GTSeed from "HLTrigger/HLTfilters/data/hltLevel1GTSeed.cfi"
+replace openHltBSoftmuonL1seeds.L1SeedsLogicalExpression = "L1_Mu5_Jet15 OR L1_HTT300"
+# reconstruct calo jets and select those to be used for b tagging
+include "HLTrigger/btau/data/jetTag/jetReco.cff"
+include "HLTrigger/btau/data/jetTag/softmuonJetReco.cff"
+# setup soft muon tagers
+include "HLTrigger/btau/data/jetTag/softmuonTaggers.cff"
+# soft muon-based b HLT modules for Level 2.5 and 3
+include "HLTrigger/btau/data/jetTag/softmuonL25.cff"
+include "HLTrigger/btau/data/jetTag/softmuonL3.cff"
+# define OpenHLT trigger path
+path openHltBSoftmuon = {
+    hltBegin & 
+    openHltBSoftmuonL1seeds &
+    hltBCommonL2reco &          # no L2 filter applied 
+    hltBSoftmuonL25reco &       # no L2.5 filter applied
+    hltBSoftmuonL3reco          # no L3 filter applied
+}
+
+## performance b-tag OpenHLT
+# L1 seeds
+include "HLTrigger/btau/data/jetTag/softmuonL1Seeds.cff"
+# reconstruct calo jets and select those to be used for b tagging
+include "HLTrigger/btau/data/jetTag/jetReco.cff"
+include "HLTrigger/btau/data/jetTag/softmuonJetReco.cff"
+# setup soft muon tagers for performance measurement
+include "HLTrigger/btau/data/jetTag/softmuonTaggers.cff"
+# b-tag performance HLT modules for Level 2.5 and 3
+include "HLTrigger/btau/data/jetTag/softmuonL25.cff"
+include "HLTrigger/btau/data/jetTag/softmuonL3.cff"
+# define OpenHLT trigger path
+path openHltBPerformance = {
+    hltBegin & 
+    hltBSoftmuonNjetL1seeds &
+    hltBCommonL2reco &          # no L2 filter applied 
+    hltBSoftmuonL25reco &       # no L2.5 filter applied
+    hltBSoftmuonL3reco          # no L3 filter applied
+} 
