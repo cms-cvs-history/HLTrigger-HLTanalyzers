@@ -124,7 +124,6 @@ void HLTBJet::analyze(
   if (m_lifetimeBJets > kMaxBJets) m_lifetimeBJets = kMaxBJets;
   // no filter is applied, so all collections *should* have the same number of elements
   for (int i = 0; i < m_lifetimeBJets; i++) {
-    std::cerr << '\t' << i << " L2.5 jet: " << lifetimeBjetL25[i].first.isNonnull() << " L3 jet: " << lifetimeBjetL3[i].first.isNonnull() << std::endl;
     m_lifetimeBJetL2Energy[i]         = lifetimeBjetL2[i].energy();
     m_lifetimeBJetL2ET[i]             = lifetimeBjetL2[i].et();
     m_lifetimeBJetL2Eta[i]            = lifetimeBjetL2[i].eta();
@@ -145,7 +144,6 @@ void HLTBJet::analyze(
   if (m_softmuonBJets > kMaxBJets) m_softmuonBJets = kMaxBJets;
   // no filter is applied, so all collections *should* have the same number of elements
   for (int i = 0; i < m_softmuonBJets; i++) {
-    std::cerr << '\t' << i << " L2.5 jet: " << softmuonBjetL25[i].first.isNonnull() << " L3 jet: " << softmuonBjetL3[i].first.isNonnull() << std::endl;
     m_softmuonBJetL2Energy[i]         = softmuonBjetL2[i].energy();
     m_softmuonBJetL2ET[i]             = softmuonBjetL2[i].et();
     m_softmuonBJetL2Eta[i]            = softmuonBjetL2[i].eta();
@@ -166,7 +164,6 @@ void HLTBJet::analyze(
   if (m_performanceBJets > kMaxBJets) m_performanceBJets = kMaxBJets;
   // no filter is applied, so all collections *should* have the same number of elements
   for (int i = 0; i < m_performanceBJets; i++) {
-    std::cerr << '\t' << i << " L2.5 jet: " << performanceBjetL25[i].first.isNonnull() << " L3 jet: " << performanceBjetL3[i].first.isNonnull() << std::endl;
     m_performanceBJetL2Energy[i]         = performanceBjetL2[i].energy();
     m_performanceBJetL2ET[i]             = performanceBjetL2[i].et();
     m_performanceBJetL2Eta[i]            = performanceBjetL2[i].eta();

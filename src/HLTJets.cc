@@ -102,8 +102,8 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("ohTau1Phi",t1Phi,"ohTau1Phi[NohTau1]/F");
   HltTree->Branch("ohTau1Pt",t1Pt,"ohTau1Pt[NohTau1]/F");
   HltTree->Branch("ohTau1Eiso",l2t1emiso,"ohTau1Eiso[NohTau1]/F");
-  HltTree->Branch("ohTau1L2Tpt",l25t1Pt,"ohTau1L2Tpt[NohTau1]/F");
-  HltTree->Branch("ohTau1L2Tiso",l25t1tckiso,"ohTau1L2Tiso[NohTau1]/I");
+  HltTree->Branch("ohTau1L25Tpt",l25t1Pt,"ohTau1L25Tpt[NohTau1]/F");
+  HltTree->Branch("ohTau1L25Tiso",l25t1tckiso,"ohTau1L25Tiso[NohTau1]/I");
   HltTree->Branch("ohTau1L3Tpt",l3t1Pt,"ohTau1L3Tpt[NohTau1]/F");
   HltTree->Branch("ohTau1L3Tiso",l3t1tckiso,"ohTau1L3Tiso[NohTau1]/I");
 
