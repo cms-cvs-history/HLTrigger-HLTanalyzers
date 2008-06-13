@@ -55,15 +55,17 @@
         InputTag HLT1Tau = TauOpenHLT
         //InputTag HLT2Tau = TauOpenHLT
         ### b-jet HLT related objects
-        InputTag LifetimeBJetsL2  = hltBLifetimeL25Jets
-        InputTag LifetimeBJetsL25 = hltBLifetimeL25BJetTags
-        InputTag LifetimeBJetsL3  = hltBLifetimeL3BJetTags
-        InputTag SoftmuonBJetsL2  = hltBSoftmuonL25Jets
-        InputTag SoftmuonBJetsL25 = hltBSoftmuonL25BJetTags
-        InputTag SoftmuonBJetsL3  = hltBSoftmuonL3BJetTags
-        InputTag PerformanceBJetsL2  = hltBSoftmuonL25Jets
-        InputTag PerformanceBJetsL25 = hltBSoftmuonL25BJetTags
-        InputTag PerformanceBJetsL3  = hltBSoftmuonL3BJetTagsByDR
+        InputTag LifetimeBJetsL2     = openHltBLifetimeL25Jets
+        InputTag LifetimeBJetsL25    = openHltBLifetimeL25BJetTags
+        InputTag LifetimeBJetsL3     = openHltBLifetimeL3BJetTags
+        InputTag LifetimeBJetsPixelTracks = pixelTracks
+        InputTag LifetimeBJetsRegionalTracks = openHltBLifetimeRegionalTracks
+        InputTag SoftmuonBJetsL2     = openHltBSoftmuonL25Jets
+        InputTag SoftmuonBJetsL25    = openHltBSoftmuonL25BJetTags
+        InputTag SoftmuonBJetsL3     = openHltBSoftmuonL3BJetTags
+        InputTag PerformanceBJetsL2  = openHltBPerformanceL25Jets
+        InputTag PerformanceBJetsL25 = openHltBPerformanceL25BJetTags
+        InputTag PerformanceBJetsL3  = openHltBPerformanceL3BJetTags
 
 	PSet RunParameters =
 	{

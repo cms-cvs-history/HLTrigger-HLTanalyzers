@@ -116,81 +116,337 @@ include "HLTrigger/HLTanalyzers/test/TauOpenHLT.cff"
 
 ### Open-HLT includes, modules and paths for b-jet
 
-## lifetime-based b-tag OpenHLT
-# L1 seeds
-include "HLTrigger/btau/data/jetTag/lifetimeL1Seeds.cff"
-# reconstruct calo jets and select those to be used for b tagging
-include "HLTrigger/btau/data/jetTag/jetReco.cff"
-include "HLTrigger/btau/data/jetTag/lifetimeJetReco.cff"
-# setup lifetime tagers
-include "HLTrigger/btau/data/jetTag/lifetimeTaggers.cff"
-# lifetime-based b HLT modules for Level 2.5 and 3
-include "HLTrigger/btau/data/jetTag/lifetimeL25.cff"
+# b-tagging services and configuration
+include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
+include "RecoBTau/JetTagComputer/data/jetTagRecord.cfi"
+include "RecoBTag/ImpactParameter/data/trackCounting3D2ndComputer.cfi"
+include "RecoBTag/ImpactParameter/data/trackCounting3D3rdComputer.cfi"
+include "RecoBTag/SoftLepton/data/softLeptonByDistanceES.cfi"
+include "RecoBTag/SoftLepton/data/softLeptonByPtES.cfi"
+
+# common HLT modules (jets)
+include "HLTrigger/Configuration/data/common/CaloTowers.cff"
+include "HLTrigger/Configuration/data/common/RecoJetMET.cff"
+sequence openHltBCommonL2reco = { doCalo & doHLTJetReco & doHLTHTReco }
+
+### lifetime-based b-tag OpenHLT ##############################################
+
+# L1 - choose the L1 trigger bits to use
+module  openHltBLifetimeL1seeds = hltLevel1GTSeed from "HLTrigger/HLTfilters/data/hltLevel1GTSeed.cfi"
+replace openHltBLifetimeL1seeds.L1SeedsLogicalExpression = "L1_SingleJet150 OR L1_DoubleJet100 OR L1_TripleJet50 OR L1_QuadJet40 OR L1_HTT300"
+
+# L2.5
+
+# select calo jets to be used for regional tracking and b-tagging
+module openHltBLifetimeHighestEtJets = LargestEtCaloJetSelector {
+    InputTag src     = iterativeCone5CaloJets   
+    bool filter      = false
+    uint32 maxNumber = 4    # Take only 4 highest Et jets...
+}
+
+module openHltBLifetimeL25Jets = EtMinCaloJetSelector {
+    InputTag src = openHltBLifetimeHighestEtJets 
+    bool filter  = false
+    double etMin = 35.0     # ...and require jet Et greater than 35 GeV
+}
+
+sequence openHltBLifetimeL25jetselection = { openHltBLifetimeHighestEtJets, openHltBLifetimeL25Jets } 
+
+# pixel primary vertices and tracks (used at L2.5 and L3)
+include "RecoPixelVertexing/Configuration/data/RecoPixelVertexing.cff"
+sequence openHltBLifetimeL25Tracking = { doLocalPixel & recopixelvertexing }
+
+# Include the following lines to switched from pixel-triplets to mixed pixel+strip triplets.
+# These perform worse, but are robust against dead pixels.
+# XXX this comment is probably old - need to check it out
+#include "RecoTracker/TkSeedingLayers/data/MixedLayerTriplets.cfi"
+#replace pixelTracks.OrderedHitsFactoryPSet.SeedingLayers="MixedLayerTriplets"
+
 # jet tracks associator at vertex running on L2.5 jets and pixel-only tracks (pixel triplets)
-module  hltBLifetimeL25Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
-replace hltBLifetimeL25Associator.tracks = pixelTracks
-replace hltBLifetimeL25Associator.jets   = hltBLifetimeL25Jets  # take jets b-tagged at L2.5
-# regional track reconstructor
-replace hltBLifetimeRegionalPixelSeedGenerator.RegionFactoryPSet.RegionPSet.JetSrc = hltBLifetimeL25Jets
+module  openHltBLifetimeL25Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
+replace openHltBLifetimeL25Associator.tracks = pixelTracks
+replace openHltBLifetimeL25Associator.jets   = openHltBLifetimeL25Jets  # take jets b-tagged at L2.5
+
+# L2.5 IP-based tag info
+module  openHltBLifetimeL25TagInfos = impactParameterTagInfos from "RecoBTag/ImpactParameter/data/impactParameter.cfi"
+replace openHltBLifetimeL25TagInfos.jetTracks            = "openHltBLifetimeL25Associator"
+replace openHltBLifetimeL25TagInfos.primaryVertex        = "pixelVertices"
+replace openHltBLifetimeL25TagInfos.computeProbabilities = false
+replace openHltBLifetimeL25TagInfos.minimumNumberOfHits  = 3
+
+# 3D impact parameter, 2nd track
+module  openHltBLifetimeL25BJetTags = trackCountingHighEffBJetTags from "RecoBTag/ImpactParameter/data/trackCountingHighEffBJetTags.cfi"
+# for 3rd track, use            = trackCountingHighPurBJetTags from "RecoBTag/ImpactParameter/data/trackCountingHighPurBJetTags.cfi"
+replace openHltBLifetimeL25BJetTags.tagInfo = openHltBLifetimeL25TagInfos
+
+# Reconstruction sequences needed before trigger.
+sequence openHltBLifetimeL25reco = { 
+    (openHltBLifetimeL25jetselection & openHltBLifetimeL25Tracking),
+    openHltBLifetimeL25Associator, 
+    openHltBLifetimeL25TagInfos,
+    openHltBLifetimeL25BJetTags
+}
+
+# L3
+
+# Define the standard hit and track reconstruction modules
+include "RecoTracker/Configuration/data/RecoTracker.cff"
+
+# Regional track seeding around L2-accepted jets
+module openHltBLifetimeRegionalPixelSeedGenerator = SeedGeneratorFromRegionHitsEDProducer {
+    PSet RegionFactoryPSet = {
+        string ComponentName = "TauRegionalPixelSeedGenerator"
+        PSet RegionPSet = {
+            InputTag JetSrc         = openHltBLifetimeL25Jets
+            string vertexSrc        = "pixelVertices"
+            bool   precise          = true
+            double ptMin            = 1.0
+            double originRadius     = 0.2
+            double originHalfLength = 0.2
+            double originZPos       = 0.0
+            double deltaEtaRegion   = 0.5       # 0.25 for ideal conditions
+            double deltaPhiRegion   = 0.5       # 0.25 for ideal conditions
+        }
+    }
+    PSet SeedComparitorPSet = {
+        string ComponentName = "none" 
+    }
+    PSet OrderedHitsFactoryPSet = {
+        string ComponentName = "StandardHitPairGenerator"
+        string SeedingLayers = "PixelLayerPairs"
+    }
+    string TTRHBuilder =  "WithTrackAngle"
+}
+
+# tell track trajectory builder to use regional track seeds,
+# and speed it up by only partially reconstructing tracks. 
+es_module openHltBJetRegionalTrajectoryFilter = trajectoryFilterESProducer from "TrackingTools/TrajectoryFiltering/data/TrajectoryFilterESProducer.cfi"
+  replace openHltBJetRegionalTrajectoryFilter.ComponentName = "openHltBJetRegionalTrajectoryFilter"
+  replace openHltBJetRegionalTrajectoryFilter.filterPset.minPt           = 1.0
+  replace openHltBJetRegionalTrajectoryFilter.filterPset.maxNumberOfHits = 8 
+
+es_module openHltBJetRegionalTrajectoryBuilder = CkfTrajectoryBuilder from "RecoTracker/CkfPattern/data/CkfTrajectoryBuilderESProducer.cfi"
+  replace openHltBJetRegionalTrajectoryBuilder.ComponentName        = "openHltBJetRegionalTrajectoryBuilder"
+  replace openHltBJetRegionalTrajectoryBuilder.trajectoryFilterName = "openHltBJetRegionalTrajectoryFilter"
+  replace openHltBJetRegionalTrajectoryBuilder.maxCand              = 1
+  replace openHltBJetRegionalTrajectoryBuilder.alwaysUseInvalidHits = false
+
+# form track candidates using the trajectory builder and seeds defined above.
+module  openHltBLifetimeRegionalTrackCandidates = ckfTrackCandidates from "RecoTracker/CkfPattern/data/CkfTrackCandidates.cfi"
+replace openHltBLifetimeRegionalTrackCandidates.SeedProducer      = "openHltBLifetimeRegionalPixelSeedGenerator"
+replace openHltBLifetimeRegionalTrackCandidates.TrajectoryBuilder = "openHltBJetRegionalTrajectoryBuilder"
+
+# Fit tracks using the track candidates defined above.
+module  openHltBLifetimeRegionalTracks = ctfWithMaterialTracks from "RecoTracker/TrackProducer/data/CTFFinalFitWithMaterial.cfi"
+replace openHltBLifetimeRegionalTracks.src = "openHltBLifetimeRegionalTrackCandidates"
+
+sequence openHltBLifetimeL3Tracking = {
+    (doLocalPixel & doLocalStrip),
+    openHltBLifetimeRegionalPixelSeedGenerator,
+    openHltBLifetimeRegionalTrackCandidates,
+    openHltBLifetimeRegionalTracks
+}
+
 # jet tracks associator at vertex running on jets passing L2.5 and regionally reconstructed tracks
-module  hltBLifetimeL3Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
-replace hltBLifetimeL3Associator.tracks = hltBLifetimeRegionalCtfWithMaterialTracks
-replace hltBLifetimeL3Associator.jets   = hltBLifetimeL25Jets  # take jets b-tagged at L2.5
+module  openHltBLifetimeL3Associator = ic5JetTracksAssociatorAtVertex from "RecoJets/JetAssociationProducers/data/ic5JetTracksAssociatorAtVertex.cfi"
+replace openHltBLifetimeL3Associator.tracks = openHltBLifetimeRegionalTracks
+replace openHltBLifetimeL3Associator.jets   = openHltBLifetimeL25Jets  # take jets b-tagged at L2.5
+
+# L3 IP-based tag info
+module  openHltBLifetimeL3TagInfos = impactParameterTagInfos from "RecoBTag/ImpactParameter/data/impactParameter.cfi"
+replace openHltBLifetimeL3TagInfos.jetTracks                 = "openHltBLifetimeL3Associator"
+replace openHltBLifetimeL3TagInfos.primaryVertex             = "pixelVertices"
+replace openHltBLifetimeL3TagInfos.computeProbabilities      = false
+replace openHltBLifetimeL3TagInfos.minimumNumberOfHits       = 8
+replace openHltBLifetimeL3TagInfos.maximumChiSquared         = 20.      # 5.0 for ideal conditions
+
+# 3D impact parameter, 2nd track
+module  openHltBLifetimeL3BJetTags = trackCountingHighEffBJetTags from "RecoBTag/ImpactParameter/data/trackCountingHighEffBJetTags.cfi"
+# for 3rd track, use               = trackCountingHighPurBJetTags from "RecoBTag/ImpactParameter/data/trackCountingHighPurBJetTags.cfi"
+replace openHltBLifetimeL3BJetTags.tagInfo = openHltBLifetimeL3TagInfos
 
 # Reconstruction sequences needed before each trigger.
 sequence openHltBLifetimeL3reco = {
-    hltBLifetimeL3tracking,
-    hltBLifetimeL3Associator,
-    hltBLifetimeL3TagInfos,
-    hltBLifetimeL3BJetTags
+    openHltBLifetimeL3Tracking,
+    openHltBLifetimeL3Associator,
+    openHltBLifetimeL3TagInfos,
+    openHltBLifetimeL3BJetTags
 }
 
 # define OpenHLT trigger path
 path openHltBLifetime = {
     hltBegin & 
-    hltBLifetimeL1seeds &
-    hltBCommonL2reco &          # no L2 filter applied 
-    hltBLifetimeL25reco &       # no L2.5 filter applied
-    openHltBLifetimeL3reco      # no L3 filter applied
+    openHltBLifetimeL1seeds &
+    openHltBCommonL2reco &          # no L2 filter applied 
+    openHltBLifetimeL25reco &       # no L2.5 filter applied
+    openHltBLifetimeL3reco          # no L3 filter applied
 }
 
-## soft muon-based b-tag OpenHLT
+### soft muon-based b-tag OpenHLT #############################################
+
 # L1 seeds
 module  openHltBSoftmuonL1seeds = hltLevel1GTSeed from "HLTrigger/HLTfilters/data/hltLevel1GTSeed.cfi"
 replace openHltBSoftmuonL1seeds.L1SeedsLogicalExpression = "L1_Mu5_Jet15 OR L1_HTT300"
-# reconstruct calo jets and select those to be used for b tagging
-include "HLTrigger/btau/data/jetTag/jetReco.cff"
-include "HLTrigger/btau/data/jetTag/softmuonJetReco.cff"
-# setup soft muon tagers
-include "HLTrigger/btau/data/jetTag/softmuonTaggers.cff"
-# soft muon-based b HLT modules for Level 2.5 and 3
-include "HLTrigger/btau/data/jetTag/softmuonL25.cff"
-include "HLTrigger/btau/data/jetTag/softmuonL3.cff"
+
+# select jets used for regional tracking & considered for b tagging
+module openHltBSoftmuonHighestEtJets = LargestEtCaloJetSelector {
+    InputTag src     = iterativeCone5CaloJets
+    bool filter      = false
+    uint32 maxNumber = 2    # take only 2 highest Et jets...
+}
+
+module openHltBSoftmuonL25Jets = EtMinCaloJetSelector {
+    InputTag src = openHltBSoftmuonHighestEtJets
+    bool filter  = false
+    double etMin = 20.0     # ...and require jet Et greater than 20 GeV
+}
+
+sequence openHltBSoftmuonL25jetselection = { openHltBSoftmuonHighestEtJets, openHltBSoftmuonL25Jets }
+
+# HLT muon reconstruction
+include "HLTrigger/Muon/data/CommonModules.cff"
+sequence openHltBSoftmuonL2Muons = { l2muonrecoNocand }
+sequence openHltBSoftmuonL3Muons = { l3muonrecoNocand }
+
+# SoftLeptonTagInfo producer for tagging L2 jets with L2 muons
+module openHltBSoftmuonL25TagInfos = SoftLepton {
+    InputTag jets             = openHltBSoftmuonL25Jets
+    uint32   refineJetAxis    = 0               # use calorimetric jet direction
+    InputTag primaryVertex    = nominal         # use the nominal beam spot and error
+    InputTag leptons          = hltL2Muons
+    double   leptonDeltaRCut  = 0.4             # lepton distance from jet axis
+    double   leptonChi2Cut    = 0.0             # no chi2/ndof cut
+    double   leptonQualityCut = 0.0             # used only for reco::Muons
+}
+
+# tag by DeltaR
+module openHltBSoftmuonL25BJetTags = JetTagProducer {
+    InputTag tagInfo        = openHltBSoftmuonL25TagInfos
+    string   jetTagComputer = "softLeptonByDistance"
+}
+
+# soft muon-based b HLT modules for L2.5
+sequence openHltBSoftmuonL25reco = {
+    openHltBSoftmuonL25jetselection &
+    openHltBSoftmuonL2Muons, 
+    openHltBSoftmuonL25TagInfos, 
+    openHltBSoftmuonL25BJetTags
+}
+
+# SoftLeptonTagInfo producer for tagging L2 jets with L3 muons
+module openHltBSoftmuonL3TagInfos = SoftLepton {
+    InputTag jets             = openHltBSoftmuonL25Jets
+    uint32   refineJetAxis    = 0               # use calorimetric jet direction
+    InputTag primaryVertex    = nominal         # use the nominal beam spot and error
+    InputTag leptons          = hltL3Muons
+    double   leptonDeltaRCut  = 0.4             # lepton distance from jet axis
+    double   leptonChi2Cut    = 0.0             # no chi2/ndof cut
+    double   leptonQualityCut = 0.0             # used only for reco::Muons
+}
+
+# tag by PtRel
+module openHltBSoftmuonL3BJetTags = JetTagProducer {
+    InputTag tagInfo        = openHltBSoftmuonL3TagInfos
+    string   jetTagComputer = "softLeptonByPt"
+}
+
+# soft muon-based b HLT modules for L3
+sequence openHltBSoftmuonL3reco  = { 
+    openHltBSoftmuonL3Muons, 
+    openHltBSoftmuonL3TagInfos, 
+    openHltBSoftmuonL3BJetTags 
+}
+
 # define OpenHLT trigger path
 path openHltBSoftmuon = {
     hltBegin & 
     openHltBSoftmuonL1seeds &
-    hltBCommonL2reco &          # no L2 filter applied 
-    hltBSoftmuonL25reco &       # no L2.5 filter applied
-    hltBSoftmuonL3reco          # no L3 filter applied
+    openHltBCommonL2reco &          # no L2 filter applied 
+    openHltBSoftmuonL25reco &       # no L2.5 filter applied
+    openHltBSoftmuonL3reco          # no L3 filter applied
 }
 
-## performance b-tag OpenHLT
+### performance b-tag OpenHLT #################################################
+
 # L1 seeds
-include "HLTrigger/btau/data/jetTag/softmuonL1Seeds.cff"
-# reconstruct calo jets and select those to be used for b tagging
-include "HLTrigger/btau/data/jetTag/jetReco.cff"
-include "HLTrigger/btau/data/jetTag/softmuonJetReco.cff"
-# setup soft muon tagers for performance measurement
-include "HLTrigger/btau/data/jetTag/softmuonTaggers.cff"
-# b-tag performance HLT modules for Level 2.5 and 3
-include "HLTrigger/btau/data/jetTag/softmuonL25.cff"
-include "HLTrigger/btau/data/jetTag/softmuonL3.cff"
+module  openHltBPerformanceL1seeds = hltLevel1GTSeed from "HLTrigger/HLTfilters/data/hltLevel1GTSeed.cfi"
+replace openHltBPerformanceL1seeds.L1SeedsLogicalExpression = "L1_Mu5_Jet15 OR L1_HTT300"
+
+# select jets used for regional tracking & considered for b tagging
+module openHltBPerformanceHighestEtJets = LargestEtCaloJetSelector {
+    InputTag src     = iterativeCone5CaloJets
+    bool filter      = false
+    uint32 maxNumber = 2    # take only 2 highest Et jets...
+}
+
+module openHltBPerformanceL25Jets = EtMinCaloJetSelector {
+    InputTag src = openHltBPerformanceHighestEtJets
+    bool filter  = false
+    double etMin = 20.0     # ...and require jet Et greater than 20 GeV
+}
+
+sequence openHltBPerformanceL25jetselection = { openHltBPerformanceHighestEtJets, openHltBPerformanceL25Jets }
+
+# HLT muon reconstruction
+include "HLTrigger/Muon/data/CommonModules.cff"
+sequence openHltBPerformanceL2Muons = { l2muonrecoNocand }
+sequence openHltBPerformanceL3Muons = { l3muonrecoNocand }
+
+# SoftLeptonTagInfo producer for tagging L2 jets with L2 muons
+module openHltBPerformanceL25TagInfos = SoftLepton {
+    InputTag jets             = openHltBPerformanceL25Jets
+    uint32   refineJetAxis    = 0               # use calorimetric jet direction
+    InputTag primaryVertex    = nominal         # use the nominal beam spot and error
+    InputTag leptons          = hltL2Muons
+    double   leptonDeltaRCut  = 0.4             # lepton distance from jet axis
+    double   leptonChi2Cut    = 0.0             # no chi2/ndof cut
+    double   leptonQualityCut = 0.0             # used only for reco::Muons
+}
+
+# tag by DeltaR
+module openHltBPerformanceL25BJetTags = JetTagProducer {
+    InputTag tagInfo        = openHltBPerformanceL25TagInfos
+    string   jetTagComputer = "softLeptonByDistance"
+}
+
+# soft muon-based b HLT modules for L2.5
+sequence openHltBPerformanceL25reco = {
+    openHltBPerformanceL25jetselection &
+    openHltBPerformanceL2Muons, 
+    openHltBPerformanceL25TagInfos, 
+    openHltBPerformanceL25BJetTags
+}
+
+# SoftLeptonTagInfo producer for tagging L2 jets with L3 muons
+module openHltBPerformanceL3TagInfos = SoftLepton {
+    InputTag jets             = openHltBPerformanceL25Jets
+    uint32   refineJetAxis    = 0               # use calorimetric jet direction
+    InputTag primaryVertex    = nominal         # use the nominal beam spot and error
+    InputTag leptons          = hltL3Muons
+    double   leptonDeltaRCut  = 0.4             # lepton distance from jet axis
+    double   leptonChi2Cut    = 0.0             # no chi2/ndof cut
+    double   leptonQualityCut = 0.0             # used only for reco::Muons
+}
+
+# tag by DeltaR
+module openHltBPerformanceL3BJetTags = JetTagProducer {
+    InputTag tagInfo        = openHltBPerformanceL3TagInfos
+    string   jetTagComputer = "softLeptonByDistance"
+}
+
+# soft muon-based b HLT modules for L3
+sequence openHltBPerformanceL3reco  = { 
+    openHltBPerformanceL3Muons, 
+    openHltBPerformanceL3TagInfos, 
+    openHltBPerformanceL3BJetTags 
+}
+
 # define OpenHLT trigger path
 path openHltBPerformance = {
     hltBegin & 
-    hltBSoftmuonNjetL1seeds &
-    hltBCommonL2reco &          # no L2 filter applied 
-    hltBSoftmuonL25reco &       # no L2.5 filter applied
-    hltBSoftmuonL3reco          # no L3 filter applied
-} 
+    openHltBPerformanceL1seeds &
+    openHltBCommonL2reco &          # no L2 filter applied 
+    openHltBPerformanceL25reco &    # no L2.5 filter applied
+    openHltBPerformanceL3reco       # no L3 filter applied
+}
+

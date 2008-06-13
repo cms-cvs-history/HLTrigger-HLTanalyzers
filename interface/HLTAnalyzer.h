@@ -46,13 +46,13 @@ private:
   //
   ///Default analyses
  
-  HLTEgamma elm_analysis_;
-  HLTJets jet_analysis_;
-  HLTBJet bjet_analysis_;
-  HLTMCtruth mct_analysis_;
-  HLTMuon muon_analysis_;
-  HLTInfo hlt_analysis_;
   EventHeader evt_header_;
+  HLTInfo     hlt_analysis_;
+  HLTEgamma   elm_analysis_;
+  HLTJets     jet_analysis_;
+  HLTBJet     bjet_analysis_;
+  HLTMCtruth  mct_analysis_;
+  HLTMuon     muon_analysis_;
 
   edm::InputTag recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltobj_,hltresults_,genEventScale_;
   edm::InputTag Electron_,Photon_,muon_;
@@ -65,11 +65,12 @@ private:
   edm::InputTag gtReadoutRecord_,gtObjectMap_; 
   edm::InputTag gctCounts_;
   edm::InputTag lifetimeBjetL2_, lifetimeBjetL25_, lifetimeBjetL3_;
+  edm::InputTag lifetimeBjetPixelTracks_, lifetimeBjetRegionalTracks_;
   edm::InputTag softmuonBjetL2_, softmuonBjetL25_, softmuonBjetL3_;
   edm::InputTag performanceBjetL2_, performanceBjetL25_, performanceBjetL3_;
 
   int errCnt;
-  const int errMax(){return 100;}
+  const int errMax() { return 100; }
 
   string _HistName; // Name of histogram file
   double _EtaMin,_EtaMax;

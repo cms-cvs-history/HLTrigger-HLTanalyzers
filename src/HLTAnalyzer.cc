@@ -3,7 +3,6 @@
 // Date:  13-October-2006
 
 #include "HLTrigger/HLTanalyzers/interface/HLTAnalyzer.h"
-#include "HLTrigger/HLTanalyzers/interface/AnalyzeIfValid.h"
 
 // Boiler-plate constructor definition of an analyzer module:
 HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
@@ -52,6 +51,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   lifetimeBjetL2_     = conf.getParameter<edm::InputTag>("LifetimeBJetsL2");
   lifetimeBjetL25_    = conf.getParameter<edm::InputTag>("LifetimeBJetsL25");
   lifetimeBjetL3_     = conf.getParameter<edm::InputTag>("LifetimeBJetsL3");
+  lifetimeBjetPixelTracks_    = conf.getParameter<edm::InputTag>("LifetimeBJetsPixelTracks");
+  lifetimeBjetRegionalTracks_ = conf.getParameter<edm::InputTag>("LifetimeBJetsRegionalTracks");
   softmuonBjetL2_     = conf.getParameter<edm::InputTag>("SoftmuonBJetsL2");
   softmuonBjetL25_    = conf.getParameter<edm::InputTag>("SoftmuonBJetsL25");
   softmuonBjetL3_     = conf.getParameter<edm::InputTag>("SoftmuonBJetsL3");
@@ -141,6 +142,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<edm::View<reco::Jet> >  h_lifetimeBjetL2;
   edm::Handle<reco::JetTagCollection> h_lifetimeBjetL25;
   edm::Handle<reco::JetTagCollection> h_lifetimeBjetL3;
+  edm::Handle<reco::TrackCollection>  h_lifetimeBjetPixelTracks;
+  edm::Handle<reco::TrackCollection>  h_lifetimeBjetRegionalTracks;
   edm::Handle<edm::View<reco::Jet> >  h_softmuonBjetL2;
   edm::Handle<reco::JetTagCollection> h_softmuonBjetL25;
   edm::Handle<reco::JetTagCollection> h_softmuonBjetL3;
@@ -187,6 +190,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(lifetimeBjetL2_,  h_lifetimeBjetL2);
   iEvent.getByLabel(lifetimeBjetL25_, h_lifetimeBjetL25);
   iEvent.getByLabel(lifetimeBjetL3_,  h_lifetimeBjetL3);
+  iEvent.getByLabel(lifetimeBjetPixelTracks_, h_lifetimeBjetPixelTracks);
+  iEvent.getByLabel(lifetimeBjetRegionalTracks_, h_lifetimeBjetRegionalTracks);
   iEvent.getByLabel(softmuonBjetL2_,  h_softmuonBjetL2);
   iEvent.getByLabel(softmuonBjetL25_, h_softmuonBjetL25);
   iEvent.getByLabel(softmuonBjetL3_,  h_softmuonBjetL3);
@@ -230,6 +235,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! h_lifetimeBjetL2.isValid()    ) { errMsg += "  --  No L2 lifetime b-jet candidates";}
   if (! h_lifetimeBjetL25.isValid()   ) { errMsg += "  --  No L2.5 lifetime b-jet candidates";}
   if (! h_lifetimeBjetL3.isValid()    ) { errMsg += "  --  No L3 lifetime b-jet candidates";}
+  if (! h_lifetimeBjetPixelTracks.isValid())    { errMsg += "  --  No b-jet pixel tracks"; }
+  if (! h_lifetimeBjetRegionalTracks.isValid()) { errMsg += "  --  No b-jet regional tracks"; }
   if (! h_softmuonBjetL2.isValid()    ) { errMsg += "  --  No L2 soft mu b-jet candidates";}
   if (! h_softmuonBjetL25.isValid()   ) { errMsg += "  --  No L2.5 soft mu b-jet candidates";}
   if (! h_softmuonBjetL3.isValid()    ) { errMsg += "  --  No L3 soft mu b-jet candidates";}
@@ -248,13 +255,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     }
   }
   // run the analysis, passing required event fragments
+  
   jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *myHLT1Tau, *caloTowers, HltTree);
-  analyzeIfValid(
-      bjet_analysis_,
-      h_lifetimeBjetL2, h_lifetimeBjetL25, h_lifetimeBjetL3,
-      h_softmuonBjetL2, h_softmuonBjetL25, h_softmuonBjetL3,
-      h_performanceBjetL2, h_performanceBjetL25, h_performanceBjetL3,
-      ht, HltTree);
   elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
@@ -262,6 +264,28 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
 			*l1GtRR.product(),*l1GtOMRec.product(),*l1GctCounts,HltTree);
   evt_header_.analyze(iEvent, HltTree);
 
+  bjet_analysis_.update(iSetup);
+  if (h_lifetimeBjetL2.isValid()            and 
+      h_lifetimeBjetL25.isValid()           and 
+      h_lifetimeBjetL3.isValid()            and 
+      h_lifetimeBjetPixelTracks.isValid()   and
+      h_lifetimeBjetRegionalTracks.isValid()
+  ) {
+    bjet_analysis_.analyzeLifetime(* h_lifetimeBjetL2, * h_lifetimeBjetL25, * h_lifetimeBjetL3, * h_lifetimeBjetPixelTracks, * h_lifetimeBjetRegionalTracks);
+  }
+  if (h_softmuonBjetL2.isValid()            and
+      h_softmuonBjetL25.isValid()           and
+      h_softmuonBjetL3.isValid()
+  ) {
+    bjet_analysis_.analyzeSoftmuon(* h_softmuonBjetL2, * h_softmuonBjetL25, * h_softmuonBjetL3);
+  }
+  if (h_performanceBjetL2.isValid()         and
+      h_performanceBjetL25.isValid()        and
+      h_performanceBjetL3.isValid()
+  ) {
+    bjet_analysis_.analyzePerformance(* h_performanceBjetL2, * h_performanceBjetL25, * h_performanceBjetL3);
+  }
+  
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
   m_file->cd();
