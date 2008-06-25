@@ -1,5 +1,0 @@
-//
-	module l1TrigReport = L1TrigReport {
-		InputTag L1GTReadoutRecord  = gtDigis
-	}
-//
