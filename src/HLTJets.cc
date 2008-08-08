@@ -111,7 +111,6 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
     CaloJetCollection mycalojets;
     mycalojets=calojets;
     std::sort(mycalojets.begin(),mycalojets.end(),PtGreater());
-//     njetcal = mycalojets.size();
     typedef CaloJetCollection::const_iterator cjiter;
     int jcal=0;
     for ( cjiter i=mycalojets.begin(); i!=mycalojets.end(); i++) {
@@ -170,7 +169,6 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
       GenJetCollection mygenjets;
       mygenjets=genjets;
       std::sort(mygenjets.begin(),mygenjets.end(),PtGreater());
-//       njetgen = mygenjets.size();
       typedef GenJetCollection::const_iterator gjiter;
       int jgen=0;
       for ( gjiter i=mygenjets.begin(); i!=mygenjets.end(); i++) {

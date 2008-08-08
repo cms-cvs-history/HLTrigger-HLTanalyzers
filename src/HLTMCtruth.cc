@@ -59,7 +59,6 @@ void HLTMCtruth::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
 /* **Analyze the event** */
 void HLTMCtruth::analyze(const CandidateView& mctruth,
-			 //const HepMC::GenEvent hepmc,
 			 const double pthat,
 			 TTree* HltTree) {
 
@@ -84,7 +83,6 @@ void HLTMCtruth::analyze(const CandidateView& mctruth,
 	mcpt[nmc] = p.pt();
 	mceta[nmc] = p.eta();
 	mcphi[nmc] = p.phi();
-// 	= p.mass();
 	mcvx[nmc] = p.vx();
 	mcvy[nmc] = p.vy();
 	mcvz[nmc] = p.vz();
