@@ -76,6 +76,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   muon_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
   hlt_analysis_.setup(conf, HltTree);
+  evt_header_.setup(HltTree);
 
 }
 
@@ -203,6 +204,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
   hlt_analysis_.analyze(*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,
 			*l1GtRR.product(),*l1GtOMRec.product(),*l1GctCounts,HltTree);
+  evt_header_.analyze(iEvent, HltTree);
 
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree

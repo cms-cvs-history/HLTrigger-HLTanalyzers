@@ -5,6 +5,7 @@
 #include "HLTrigger/HLTanalyzers/interface/HLTJets.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMCtruth.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMuon.h"
+#include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -42,6 +43,8 @@ private:
   // variables persistent across events should be declared here.
   //
   ///Default analyses
+
+  EventHeader evt_header_;
   HLTJets jet_analysis_;
   HLTMuon muon_analysis_;
   HLTEgamma elm_analysis_;
