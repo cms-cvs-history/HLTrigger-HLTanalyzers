@@ -15,6 +15,9 @@ DoHLTElectronStartUpWindows = cms.Path( HLTBeginSequence + HLTDoRegionalEgammaEc
 
 DoHLTElectronLargeWindows = cms.Path( HLTBeginSequence + HLTDoRegionalEgammaEcalSequence + HLTL1IsolatedEcalClustersSequence + HLTL1NonIsolatedEcalClustersSequence + hltL1IsoRecoEcalCandidate + hltL1NonIsoRecoEcalCandidate + HLTDoLocalHcalWithoutHOSequence + hltL1IsolatedElectronHcalIsol + hltL1NonIsolatedElectronHcalIsol + HLTDoLocalPixelSequence + HLTDoLocalStripSequence + HLTPixelMatchElectronL1IsoLargeWindowSequence + HLTPixelMatchElectronL1NonIsoLargeWindowSequence + HLTPixelMatchElectronL1IsoLargeWindowTrackingSequence + HLTPixelMatchElectronL1NonIsoLargeWindowTrackingSequence + HLTL1IsoLargeWindowElectronsRegionalRecoTrackerSequence + HLTL1NonIsoLargeWindowElectronsRegionalRecoTrackerSequence + hltL1IsoLargeWindowElectronTrackIsol + hltL1NonIsoLargeWindowElectronTrackIsol )
 
+# create the jetMET HLT reco path
+DoHLTJets = cms.Path(HLTBeginSequence + HLTRecoJetMETSequence + HLTDoHTRecoSequence)
+
 # create the tau HLT reco path
 
 # ...

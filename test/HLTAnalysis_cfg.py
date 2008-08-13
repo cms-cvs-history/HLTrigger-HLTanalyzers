@@ -53,5 +53,5 @@ process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
 process.analyzeThis = cms.Path( process.hltanalysis )
 
 # Schedule the whole thing
-process.schedule = cms.Schedule( process.DoHltMuon , process.DoHLTPhoton , process.DoHLTElectron , process.DoHLTElectronStartUpWindows , process.DoHLTElectronLargeWindows , process.analyzeThis )
+process.schedule = cms.Schedule( process.DoHltMuon , process.DoHLTJets, process.DoHLTPhoton , process.DoHLTElectron , process.DoHLTElectronStartUpWindows , process.DoHLTElectronLargeWindows , process.analyzeThis )
 
