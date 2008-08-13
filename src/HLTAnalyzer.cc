@@ -200,7 +200,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   // run the analysis, passing required event fragments
   jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, HltTree);
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
-  elm_analysis_.analyze(*Electron, *Photon, HltTree);
+  elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
   hlt_analysis_.analyze(*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,
 			*l1GtRR.product(),*l1GtOMRec.product(),*l1GctCounts,HltTree);

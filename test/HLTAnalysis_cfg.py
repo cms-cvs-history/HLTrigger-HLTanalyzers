@@ -9,7 +9,8 @@ process.options = cms.untracked.PSet(
 
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring( '/store/relval/CMSSW_2_1_0/RelValTTbar/GEN-SIM-RAW/IDEAL_V5_v3/0001/0408B08E-9162-DD11-B9D5-000423D6B358.root' )
+    #fileNames = cms.untracked.vstring( '/store/relval/CMSSW_2_1_0/RelValTTbar/GEN-SIM-RAW/IDEAL_V5_v3/0001/0408B08E-9162-DD11-B9D5-000423D6B358.root' )
+    fileNames = cms.untracked.vstring( '/store/relval/CMSSW_2_1_0/RelValZEE/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V4_v1/0000/0EF324BD-9160-DD11-B591-000423D944F8.root' )
 )
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(100)
@@ -52,4 +53,5 @@ process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
 process.analyzeThis = cms.Path( process.hltanalysis )
 
 # Schedule the whole thing
-process.schedule = cms.Schedule( process.DoHltMuon , process.analyzeThis )
+process.schedule = cms.Schedule( process.DoHltMuon , process.DoHLTPhoton , process.DoHLTElectron , process.DoHLTElectronStartUpWindows , process.DoHLTElectronLargeWindows , process.analyzeThis )
+
