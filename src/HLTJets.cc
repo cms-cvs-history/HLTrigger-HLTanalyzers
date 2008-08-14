@@ -39,13 +39,11 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   jcalpt = new float[kMaxJetCal];
   jcalphi = new float[kMaxJetCal];
   jcaleta = new float[kMaxJetCal];
-  jcalet = new float[kMaxJetCal];
   jcale = new float[kMaxJetCal];
   const int kMaxJetgen = 10000;
   jgenpt = new float[kMaxJetgen];
   jgenphi = new float[kMaxJetgen];
   jgeneta = new float[kMaxJetgen];
-  jgenet = new float[kMaxJetgen];
   jgene = new float[kMaxJetgen];
   const int kMaxTower = 10000;
   towet = new float[kMaxTower];
@@ -63,12 +61,10 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoJetCalPt",jcalpt,"recoJetCalPt[NrecoJetCal]/F");
   HltTree->Branch("recoJetCalPhi",jcalphi,"recoJetCalPhi[NrecoJetCal]/F");
   HltTree->Branch("recoJetCalEta",jcaleta,"recoJetCalEta[NrecoJetCal]/F");
-  HltTree->Branch("recoJetCalEt",jcalet,"recoJetCalEt[NrecoJetCal]/F");
   HltTree->Branch("recoJetCalE",jcale,"recoJetCalE[NrecoJetCal]/F");
   HltTree->Branch("recoJetGenPt",jgenpt,"recoJetGenPt[NrecoJetGen]/F");
   HltTree->Branch("recoJetGenPhi",jgenphi,"recoJetGenPhi[NrecoJetGen]/F");
   HltTree->Branch("recoJetGenEta",jgeneta,"recoJetGenEta[NrecoJetGen]/F");
-  HltTree->Branch("recoJetGenEt",jgenet,"recoJetGenEt[NrecoJetGen]/F");
   HltTree->Branch("recoJetGenE",jgene,"recoJetGenE[NrecoJetGen]/F");
   HltTree->Branch("recoTowEt",towet,"recoTowEt[NrecoTowCal]/F");
   HltTree->Branch("recoTowEta",toweta,"recoTowEta[NrecoTowCal]/F");
@@ -119,7 +115,6 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
 	jcalpt[jcal] = i->pt();
 	jcalphi[jcal] = i->phi();
 	jcaleta[jcal] = i->eta();
-	jcalet[jcal] = i->et();
 	jcale[jcal] = i->energy();
 	jcal++;
       }
@@ -177,7 +172,6 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
 	  jgenpt[jgen] = i->pt();
 	  jgenphi[jgen] = i->phi();
 	  jgeneta[jgen] = i->eta();
-	  jgenet[jgen] = i->et();
 	  jgene[jgen] = i->energy();
 	  jgen++;
 	}
