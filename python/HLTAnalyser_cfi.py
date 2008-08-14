@@ -2,7 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
 ### Generator objects
-    mctruth = cms.InputTag("genParticleCandidates"),
+    #mctruth = cms.InputTag("genParticleCandidates"),
+    mctruth = cms.InputTag("genParticles"),
     genEventScale = cms.InputTag("genEventScale"),
 ### Reconstructed objects
     genjets = cms.InputTag("iterativeCone5GenJets"),
@@ -13,12 +14,15 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     calotowers = cms.InputTag("towerMaker"),
     muon = cms.InputTag("muons"),
     Electron = cms.InputTag("pixelMatchGsfElectrons"),
-    Photon = cms.InputTag("correctedPhotons"),
+#    Photon = cms.InputTag("correctedPhotons"),
+    Photon = cms.InputTag("photons"),
 ### Trigger objects
-    l1GtObjectMapRecord = cms.InputTag("l1GtEmulDigis"),
 #    l1GctCounts = cms.InputTag("l1GctEmulDigis"),
     l1GctCounts = cms.InputTag("hltGctDigis"),
-    l1GtReadoutRecord = cms.InputTag("l1GmtEmulDigis"),
+#    l1GtObjectMapRecord = cms.InputTag("l1GtEmulDigis"),
+    l1GtObjectMapRecord = cms.InputTag("hltL1GtObjectMap"),
+#    l1GtReadoutRecord = cms.InputTag("l1GmtEmulDigis"),
+    l1GtReadoutRecord = cms.InputTag("hltGtDigis"),
     l1extramc = cms.string('hltL1extraParticles'),
     hltresults = cms.InputTag("TriggerResults"),
 ### Muon OpenHLT objects                             

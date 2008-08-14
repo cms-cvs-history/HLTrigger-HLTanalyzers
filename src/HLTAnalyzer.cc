@@ -97,7 +97,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<GenMETCollection> genmet,genmetDummy;
   edm::Handle<METCollection> ht,htDummy;
   edm::Handle<CandidateView> mctruth,mctruthDummy;
-  edm::Handle< double > genEventScale;
+  edm::Handle< double > genEventScale,genEventScaleDummy;
   edm::Handle<PixelMatchGsfElectronCollection> Electron, ElectronDummy;
   edm::Handle<PhotonCollection> Photon, PhotonDummy;
   edm::Handle<MuonCollection> muon,muonDummy;
@@ -179,6 +179,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! l1GctCounts.isValid()) { errMsg += "  -- No L1 GCT JetCount Digis"; l1GctCounts = l1GctCountsDummy;}
   
   if (! mctruth.isValid()    ) { errMsg += "  -- No Gen Particles"; mctruth = mctruthDummy;}
+  if (! genEventScale.isValid()) { errMsg += "  -- No Event Scale"; genEventScale = genEventScaleDummy;}
 
   if (! mucands2.isValid()   ) { errMsg += "  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
   if (! mucands3.isValid()   ) { errMsg += "  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
