@@ -43,6 +43,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   MuIsolTag3_ = conf.getParameter<edm::InputTag> ("MuIsolTag3");
   MuLinkTag_ = conf.getParameter<edm::InputTag> ("MuLinkTag");
 
+  myHLTTau_ = conf.getParameter<edm::InputTag> ("HLTTau");
+
   errCnt=0;
 
   edm::ParameterSet myAnaParams = conf.getParameter<edm::ParameterSet>("RunParameters") ;
@@ -115,7 +117,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<edm::ValueMap <bool> > isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
   edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
 
-
+  edm::Handle<reco::HLTTauCollection> myHLTTau,myHLTTauDummy;
+  
   // Extract objects (event fragments)
   // Reco Jets and Missing ET
   iEvent.getByLabel(recjets_,recjets);
@@ -153,7 +156,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(MuIsolTag3_,isoMap3);
   iEvent.getByLabel(MuLinkTag_,mulinks);
 
-
+  iEvent.getByLabel(myHLTTau_,myHLTTau);
+ 
   // check the objects...
   string errMsg("");
   if (! recjets.isValid()    ) { errMsg += "  -- No RecJets"; recjets = recjetsDummy;}
@@ -187,6 +191,9 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! isoMap3.isValid()    ) { errMsg += "  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
   if (! mulinks.isValid()    ) { errMsg += "  -- No L3 muon link"; mulinks = mulinksDummy;}
 
+  if (! myHLTTau.isValid()  ) { errMsg +="  -- No Tau candidates"; myHLTTau = myHLTTauDummy;}
+
+  
   if ((errMsg != "") && (errCnt < errMax())){
     errCnt=errCnt+1;
     errMsg=errMsg + ".";
@@ -199,7 +206,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
 
 
   // run the analysis, passing required event fragments
-  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *caloTowers, HltTree);
+  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *myHLTTau, *caloTowers, HltTree);
   muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
   elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);

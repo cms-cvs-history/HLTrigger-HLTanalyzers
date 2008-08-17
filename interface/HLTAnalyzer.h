@@ -59,6 +59,7 @@ private:
   edm::InputTag gctCounts_;
 
   edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
+  edm::InputTag myHLTTau_;
 
   int errCnt;
   const int errMax(){return 100;}

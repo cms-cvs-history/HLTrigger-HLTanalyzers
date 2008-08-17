@@ -62,6 +62,7 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     PixelSeedL1NonIsoLargeWindows =cms.InputTag("hltL1NonIsoLargeWindowElectronPixelSeeds"),
     IsoEleTrackIsolLargeWindows =cms.InputTag("hltL1IsoLargeWindowElectronTrackIsol"),
     NonIsoEleTrackIsolLargeWindows =cms.InputTag("hltL1NonIsoLargeWindowElectronTrackIsol"),
+    HLTTau =cms.InputTag("TauOpenHLT"),
     ########
     RunParameters = cms.PSet(
         GenJetMin = cms.double(0.0),
@@ -72,6 +73,7 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
         Debug = cms.bool(False),
         EtaMax = cms.double(5.2)
     )
+
 )
 
 

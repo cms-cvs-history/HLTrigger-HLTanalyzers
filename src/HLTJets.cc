@@ -53,7 +53,17 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   towem = new float[kMaxTower];
   towhd = new float[kMaxTower];
   towoe = new float[kMaxTower];
+  const int kMaxTau = 500;
+  l2tauemiso = new float[kMaxTau];
+  l25tauPt = new float[kMaxTau];
+  l25tautckiso = new int[kMaxTau];
+  l3tauPt = new float[kMaxTau];
+  l3tautckiso = new int[kMaxTau];
+  tauEta = new float[kMaxTau];
+  tauPt = new float[kMaxTau];
+  tauPhi = new float[kMaxTau];
 
+  
   // Jet- MEt-specific branches of the tree 
   HltTree->Branch("NrecoJetCal",&njetcal,"NrecoJetCal/I");
   HltTree->Branch("NrecoJetGen",&njetgen,"NrecoJetGen/I");
@@ -84,6 +94,18 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoHTCalSum",&htcalsum,"recoHTCalSum/F");
   //for(int ieta=0;ieta<NETA;ieta++){cout << " ieta " << ieta << " eta min " << CaloTowerEtaBoundries[ieta] <<endl;}
 
+
+  // Taus
+  HltTree->Branch("NohTau",&nohtau,"NohTau/I");
+  HltTree->Branch("ohTauEta",tauEta,"ohTauEta[NohTau]/F");
+  HltTree->Branch("ohTauPhi",tauPhi,"ohTauPhi[NohTau]/F");
+  HltTree->Branch("ohTauPt",tauPt,"ohTauPt[NohTau]/F");
+  HltTree->Branch("ohTauEiso",l2tauemiso,"ohTauEiso[NohTau]/F");
+  HltTree->Branch("ohTauL25Tpt",l25tauPt,"ohTauL25Tpt[NohTau]/F");
+  HltTree->Branch("ohTauL25Tiso",l25tautckiso,"ohTauL25Tiso[NohTau]/I");
+  HltTree->Branch("ohTauL3Tpt",l3tauPt,"ohTauL3Tpt[NohTau]/F");
+  HltTree->Branch("ohTauL3Tiso",l3tautckiso,"ohTauL3Tiso[NohTau]/I");
+
 }
 
 /* **Analyze the event** */
@@ -92,6 +114,7 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
 		      const CaloMETCollection& recmets,
 		      const GenMETCollection& genmets,
 		      const METCollection& ht,
+		      const reco::HLTTauCollection& myHLTTau,
 		      const CaloTowerCollection& caloTowers,
 		      TTree* HltTree) {
 
@@ -192,5 +215,35 @@ void HLTJets::analyze(const CaloJetCollection& calojets,
 
   }
 
+  
+  /////////////////////////////// Open-HLT Taus ///////////////////////////////
+
+    if (&myHLTTau){      
+      nohtau = myHLTTau.size();
+      HLTTauCollection mytaujets;
+      mytaujets=myHLTTau;
+      std::sort(mytaujets.begin(),mytaujets.end(),GetPtGreater());
+      typedef HLTTauCollection::const_iterator tauit;
+      int itau=0;
+      for(tauit i=mytaujets.begin(); i!=mytaujets.end(); i++){
+	//Ask for Eta,Phi and Et of the tau:
+	tauEta[itau] = i->getEta();
+	tauPhi[itau] = i->getPhi();
+	tauPt[itau] = i->getPt();
+	//Ask for L2 EMIsolation cut: Nominal cut : < 5
+	l2tauemiso[itau] = i->getEMIsolationValue();
+	//Get L25 LeadTrackPt : Nominal cut : > 20 GeV
+	l25tauPt[itau] = i->getL25LeadTrackPtValue();
+	//Get TrackIsolation response (returns 0 = failed or 1= passed)
+	l25tautckiso[itau] = i->getL25TrackIsolationResponse();
+	//Get L3 LeadTrackPt : Nominal cut : > 20 GeV
+	l3tauPt[itau] = i->getL3LeadTrackPtValue();
+	//Get TrackIsolation response (returns 0 = failed or 1= passed)
+	l3tautckiso[itau] = i->getL3TrackIsolationResponse();
+	//MET : > 65
+	itau++;
+      }      
+    }
+    else {nohtau = 0;}
 
 }
