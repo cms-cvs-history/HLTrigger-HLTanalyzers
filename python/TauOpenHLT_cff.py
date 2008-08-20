@@ -20,8 +20,7 @@ hltTauL1SeedFilter = cms.EDFilter("HLTLevel1GTSeed",
 
 hltL2TauJets = cms.EDFilter("L2TauJetsProvider",
     L1ParticlesJet = cms.InputTag("hltL1extraParticles","Central"),
-    JetSrc = cms.VInputTag(cms.InputTag("hltIcone5Tau1"), cms.InputTag("hltIcone5Tau2"), cms.InputTag("hltIcone5Tau3"), cms.InputTag("hltIcone5Tau4"), cms.InputTag("hltIcone5Cen1"), 
-        cms.InputTag("hltIcone5Cen2"), cms.InputTag("hltIcone5Cen3"), cms.InputTag("hltIcone5Cen4")),
+    JetSrc = cms.VInputTag(cms.InputTag("hltIcone5Tau1"), cms.InputTag("hltIcone5Tau2"), cms.InputTag("hltIcone5Tau3"), cms.InputTag("hltIcone5Tau4"), cms.InputTag("hltIcone5Cen1"),cms.InputTag("hltIcone5Cen2"), cms.InputTag("hltIcone5Cen3"), cms.InputTag("hltIcone5Cen4")),
     EtMin = cms.double(5.0),
     L1ParticlesTau = cms.InputTag("hltL1extraParticles","Tau"),
     L1TauTrigger = cms.InputTag("hltTauL1SeedFilter")
@@ -238,7 +237,7 @@ hltCkfTrackCandidatesL3Tau = cms.EDFilter("CkfTrackCandidateMaker",
 )
 
 hltCtfWithMaterialTracksL3Tau = cms.EDProducer("TrackProducer",
-    src = cms.string('hltCkfTrackCandidatesL3Tau'),
+    src = cms.InputTag('hltCkfTrackCandidatesL3Tau'),
     producer = cms.string(''),
     Fitter = cms.string('FittingSmootherRK'),
     useHitsSplitting = cms.bool(False),
