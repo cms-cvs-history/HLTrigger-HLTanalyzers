@@ -37,13 +37,13 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   gtObjectMap_ = conf.getParameter<edm::InputTag> ("l1GtObjectMapRecord");
   gctCounts_ = conf.getParameter< edm::InputTag >("l1GctCounts");
 
-  MuCandTag2_ = conf.getParameter<edm::InputTag> ("MuCandTag2");
-  MuIsolTag2_ = conf.getParameter<edm::InputTag> ("MuIsolTag2");
-  MuCandTag3_ = conf.getParameter<edm::InputTag> ("MuCandTag3");
-  MuIsolTag3_ = conf.getParameter<edm::InputTag> ("MuIsolTag3");
-  MuLinkTag_ = conf.getParameter<edm::InputTag> ("MuLinkTag");
+//   MuCandTag2_ = conf.getParameter<edm::InputTag> ("MuCandTag2");
+//   MuIsolTag2_ = conf.getParameter<edm::InputTag> ("MuIsolTag2");
+//   MuCandTag3_ = conf.getParameter<edm::InputTag> ("MuCandTag3");
+//   MuIsolTag3_ = conf.getParameter<edm::InputTag> ("MuIsolTag3");
+//   MuLinkTag_ = conf.getParameter<edm::InputTag> ("MuLinkTag");
 
-  myHLTTau_ = conf.getParameter<edm::InputTag> ("HLTTau");
+//   myHLTTau_ = conf.getParameter<edm::InputTag> ("HLTTau");
 
   errCnt=0;
 
@@ -113,11 +113,11 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<L1GlobalTriggerObjectMap> l1GtOM,l1GtOMDummy;
   edm::Handle<L1GctJetCountsCollection> l1GctCounts,l1GctCountsDummy;
   
-  edm::Handle<RecoChargedCandidateCollection> mucands2,mucands3,mucands2Dummy,mucands3Dummy;
-  edm::Handle<edm::ValueMap <bool> > isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
-  edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
+//   edm::Handle<RecoChargedCandidateCollection> mucands2,mucands3,mucands2Dummy,mucands3Dummy;
+//   edm::Handle<edm::ValueMap <bool> > isoMap2,isoMap3,isoMap2Dummy,isoMap3Dummy;
+//   edm::Handle<MuonTrackLinksCollection> mulinks,mulinksDummy;
 
-  edm::Handle<reco::HLTTauCollection> myHLTTau,myHLTTauDummy;
+//   edm::Handle<reco::HLTTauCollection> myHLTTau,myHLTTauDummy;
   
   // Extract objects (event fragments)
   // Reco Jets and Missing ET
@@ -150,13 +150,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   iEvent.getByLabel(genEventScale_, genEventScale );
   iEvent.getByLabel(mctruth_,mctruth);
   // OpenHLT info
-  iEvent.getByLabel(MuCandTag2_,mucands2);
-  iEvent.getByLabel(MuCandTag3_,mucands3);
-  iEvent.getByLabel(MuIsolTag2_,isoMap2);
-  iEvent.getByLabel(MuIsolTag3_,isoMap3);
-  iEvent.getByLabel(MuLinkTag_,mulinks);
+//   iEvent.getByLabel(MuCandTag2_,mucands2);
+//   iEvent.getByLabel(MuCandTag3_,mucands3);
+//   iEvent.getByLabel(MuIsolTag2_,isoMap2);
+//   iEvent.getByLabel(MuIsolTag3_,isoMap3);
+//   iEvent.getByLabel(MuLinkTag_,mulinks);
 
-  iEvent.getByLabel(myHLTTau_,myHLTTau);
+//   iEvent.getByLabel(myHLTTau_,myHLTTau);
  
   // check the objects...
   string errMsg("");
@@ -185,13 +185,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   if (! mctruth.isValid()    ) { errMsg += "  -- No Gen Particles"; mctruth = mctruthDummy;}
   if (! genEventScale.isValid()) { errMsg += "  -- No Event Scale"; genEventScale = genEventScaleDummy;}
 
-  if (! mucands2.isValid()   ) { errMsg += "  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
-  if (! mucands3.isValid()   ) { errMsg += "  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
-  if (! isoMap2.isValid()    ) { errMsg += "  -- No L2 muon isolation map"; isoMap2 = isoMap2Dummy;}
-  if (! isoMap3.isValid()    ) { errMsg += "  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
-  if (! mulinks.isValid()    ) { errMsg += "  -- No L3 muon link"; mulinks = mulinksDummy;}
+//   if (! mucands2.isValid()   ) { errMsg += "  -- No L2 muon candidates"; mucands2 = mucands2Dummy;}
+//   if (! mucands3.isValid()   ) { errMsg += "  -- No L3 muon candidates"; mucands3 = mucands3Dummy;}
+//   if (! isoMap2.isValid()    ) { errMsg += "  -- No L2 muon isolation map"; isoMap2 = isoMap2Dummy;}
+//   if (! isoMap3.isValid()    ) { errMsg += "  -- No L3 muon isolation map"; isoMap3 = isoMap3Dummy;}
+//   if (! mulinks.isValid()    ) { errMsg += "  -- No L3 muon link"; mulinks = mulinksDummy;}
 
-  if (! myHLTTau.isValid()  ) { errMsg +="  -- No Tau candidates"; myHLTTau = myHLTTauDummy;}
+//   if (! myHLTTau.isValid()  ) { errMsg +="  -- No Tau candidates"; myHLTTau = myHLTTauDummy;}
 
   
   if ((errMsg != "") && (errCnt < errMax())){
@@ -205,14 +205,14 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   }
 
 
-  // run the analysis, passing required event fragments
-  jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht, *myHLTTau, *caloTowers, HltTree);
-  muon_analysis_.analyze(*muon, *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks, HltTree);
-  elm_analysis_.analyze(iEvent, iSetup, *Electron, *Photon, HltTree);
-  mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
+//   // run the analysis, passing required event fragments
+//   jet_analysis_.analyze(*recjets,*genjets, *recmet,*genmet, *ht,/* *myHLTTau,*/ *caloTowers, HltTree);
+//   muon_analysis_.analyze(*muon,/* *mucands2, *isoMap2, *mucands3, *isoMap3, *mulinks,*/ HltTree);
+//   elm_analysis_.analyze(/*iEvent, iSetup,*/ *Electron, *Photon, HltTree);
+//   mct_analysis_.analyze(*mctruth,*genEventScale,HltTree);
   hlt_analysis_.analyze(*hltresults,*l1extemi,*l1extemn,*l1extmu,*l1extjetc,*l1extjetf,*l1exttaujet,*l1extmet,
 			*l1GtRR.product(),*l1GtOMRec.product(),*l1GctCounts,HltTree);
-  evt_header_.analyze(iEvent, HltTree);
+//   evt_header_.analyze(iEvent, HltTree);
 
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree

@@ -1,0 +1,34 @@
+    module hltanalysis = HLTAnalyzer{
+        ### Reconstructed objects
+	InputTag recjets = MCJetCorJetIcone5
+	InputTag genjets = hltMCJetCorIcone5
+	InputTag recmet  = hltMet
+	InputTag genmet  = genMet
+	InputTag ht      = hltHtMet
+	InputTag calotowers = towerMaker
+	InputTag Electron = pixelMatchGsfElectrons
+	InputTag Photon = photons
+	InputTag muon = muons
+        ### Trigger-related objects
+	string l1extramc = "hltL1extraParticles"
+	InputTag hltresults = TriggerResults
+        InputTag l1GtReadoutRecord = l1GmtEmulDigis
+        InputTag l1GtObjectMapRecord = l1GtEmulDigis
+        InputTag l1GctCounts = l1GctEmulDigis
+        ### MC truth object
+	InputTag mctruth = genParticleCandidates
+	InputTag genEventScale = genEventScale
+
+	PSet RunParameters =
+	{
+	    string HistogramFile = "TEST.root"
+	    bool Monte = true
+	    bool Debug = false
+	    double EtaMin   = -5.2
+	    double EtaMax   = 5.2
+	    double CalJetMin = 0.
+	    double GenJetMin = 0.
+	}
+    }
+
+
