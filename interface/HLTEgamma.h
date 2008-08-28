@@ -22,24 +22,6 @@
 #include "HLTrigger/HLTanalyzers/interface/CaloTowerBoundries.h"
 #include "DataFormats/METReco/interface/CaloMETCollection.h"
 
-/* #include "FWCore/Framework/interface/Event.h" */
-/* #include "FWCore/Framework/interface/EventSetup.h" */
-/* #include "DataFormats/Common/interface/Handle.h" */
-/* #include "DataFormats/L1Trigger/interface/L1EmParticle.h" */
-/* #include "DataFormats/L1Trigger/interface/L1EmParticleFwd.h" */
-/* #include "DataFormats/RecoCandidate/interface/RecoEcalCandidate.h" */
-/* #include "DataFormats/RecoCandidate/interface/RecoEcalCandidateFwd.h" */
-/* #include "DataFormats/RecoCandidate/interface/RecoEcalCandidateIsolation.h" */
-/* #include "DataFormats/Common/interface/RefToBase.h" */
-/* #include "DataFormats/Common/interface/Ref.h" */
-/* #include "DataFormats/Common/interface/RefProd.h" */
-/* #include "FWCore/Framework/interface/ESHandle.h" */
-/* #include "DataFormats/Common/interface/AssociationMap.h" */
-/* #include "DataFormats/RecoCandidate/interface/RecoCandidate.h" */
-/* #include "DataFormats/EgammaReco/interface/ElectronPixelSeed.h" */
-/* #include "DataFormats/EgammaReco/interface/ElectronPixelSeedFwd.h" */
-/* #include "DataFormats/EgammaReco/interface/SuperCluster.h" */
-
 #include "DataFormats/TrajectorySeed/interface/TrajectorySeedCollection.h"
 #include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
 #include "DataFormats/TrackReco/interface/Track.h"
@@ -66,17 +48,10 @@ public:
   void setup(const edm::ParameterSet& pSet, TTree* tree);
 
   /** Analyze the Data */
-  void analyze(/* edm::Event const& iEvent, edm::EventSetup const& iSetup, */
-	       const reco::PixelMatchGsfElectronCollection& electron,
+  void analyze(const reco::PixelMatchGsfElectronCollection& electron,
 	       const reco::PhotonCollection& photon,
 	       TTree* tree);
 
-/*   void MakeL1IsolatedPhotons(edm::Event const& e, edm::EventSetup const& iSetup); */
-/*   void MakeL1NonIsolatedPhotons(edm::Event const& e, edm::EventSetup const& iSetup); */
-/*   void MakeL1IsolatedElectrons(edm::Event const& e, edm::EventSetup const& iSetup); */
-/*   void MakeL1NonIsolatedElectrons(edm::Event const& e, edm::EventSetup const& iSetup); */
-/*   void MakeL1IsolatedElectronsLargeWindows(edm::Event const& e, edm::EventSetup const& iSetup); */
-/*   void MakeL1NonIsolatedElectronsLargeWindows(edm::Event const& e, edm::EventSetup const& iSetup); */
 
 private:
 
@@ -84,25 +59,6 @@ private:
   int nele, nphoton;
   float *elpt, *elphi, *eleta, *elet, *ele; 
   float *photonpt, *photonphi, *photoneta, *photonet, *photone; 
-/*   float *hphotet, *hphoteta, *hphotphi, *hphoteiso, *hphothiso, *hphottiso; */
-/*   float *heleet,*heleeta,*helephi,*heleE,*helep,*helehiso,*heletiso; */
-/*   float *heleetLW,*heleetaLW,*helephiLW,*heleELW,*helepLW,*helehisoLW,*heletisoLW; */
-/*   int *hphotl1iso,*helel1iso,*helePixelSeeds,*helel1isoLW,*helePixelSeedsLW; */
-/*   int *heleNewSC, *heleNewSCLW; */
-/*   int nele,nphoton,nhltgam,nhltele,nhlteleLW; */
-
-/*   edm::InputTag CandIso_,CandNonIso_,EcalNonIso_,EcalIso_,HcalIsoPho_,HcalNonIsoPho_,IsoPhoTrackIsol_,NonIsoPhoTrackIsol_; */
-/*   edm::InputTag IsoEleHcalTag_,NonIsoEleHcalTag_,IsoElectronTag_,NonIsoElectronTag_,IsoEleTrackIsolTag_,NonIsoEleTrackIsolTag_; */
-/*   edm::InputTag L1IsoPixelSeedsTag_; */
-/*   edm::InputTag L1NonIsoPixelSeedsTag_; */
-/*   edm::InputTag L1IsoPixelSeedsLargeWindowsTag_; */
-/*   edm::InputTag L1NonIsoPixelSeedsLargeWindowsTag_; */
-
-/*   //std::string L1NonIsoPixelSeedsTag_; */
-
-/*   edm::InputTag IsoElectronLargeWindowsTag_,NonIsoElectronLargeWindowsTag_,IsoEleTrackIsolLargeWindowsTag_,NonIsoEleTrackIsolLargeWindowsTag_; */
-/*   //  std::string L1IsoPixelSeedsLargeWindowsTag_,L1NonIsoPixelSeedsLargeWindowsTag_; */
-
 
   //get hold of the pixel seed - supercluster association map
   
@@ -134,8 +90,6 @@ private:
     float et() const {return Et;}
     bool newSC;
   };
-/*   std::vector<myHLTElectron>  theHLTElectrons; */
-/*   std::vector<myHLTElectron> theHLTElectronsLargeWindows; */
 // input variables
   bool _Monte,_Debug;
   int evtCounter;
