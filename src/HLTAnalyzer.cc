@@ -178,7 +178,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   jet_analysis_.analyze(*recjets, *genjets, *recmet, *genmet, *ht, *caloTowers, HltTree);
   elm_analysis_.analyze(*Electron, *Photon, HltTree);
   muon_analysis_.analyze(*muon, HltTree);
-  mct_analysis_.analyze(*mctruth, *genEventScale, HltTree);
+  mct_analysis_.analyze(*mctruth, /**genEventScale,*/ HltTree);
   hlt_analysis_.analyze(*hltresults, *l1extemi, *l1extemn, *l1extmu, *l1extjetc, *l1extjetf, *l1exttaujet, *l1extmet,
 			*l1GtRR.product(), *l1GtOMRec.product(), *l1GctCounts, HltTree);
   evt_header_.analyze(iEvent, HltTree);

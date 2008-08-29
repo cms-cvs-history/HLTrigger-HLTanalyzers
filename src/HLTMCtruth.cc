@@ -65,7 +65,7 @@ void HLTMCtruth::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
 /* **Analyze the event** */
 void HLTMCtruth::analyze(const CandidateView& mctruth,
-			 const double pthat,
+// 			 const double pthat,
 			 TTree* HltTree) {
 
   //std::cout << " Beginning HLTMCtruth " << std::endl;
@@ -83,7 +83,7 @@ void HLTMCtruth::analyze(const CandidateView& mctruth,
 
     ptEleMax=-999.0;
     ptMuMax=-999.0;    
-    pthatf=pthat;
+//     pthatf=pthat;
 
     if (&mctruth){
 

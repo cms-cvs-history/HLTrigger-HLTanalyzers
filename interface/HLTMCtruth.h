@@ -32,7 +32,7 @@ public:
 
   /** Analyze the Data */
   void analyze(const CandidateView& mctruth,
-	       const double pthat,
+/* 	       const double pthat, */
 	       TTree* tree);
 
 private:
