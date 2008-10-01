@@ -48,8 +48,8 @@ private:
       const reco::JetTagCollection & tagsL3);
 
   // labels for input HLT collections
-  edm::InputTag m_jets;
-  edm::InputTag m_correctedJets;
+  edm::InputTag m_rawBJets;
+  edm::InputTag m_correctedBJets;
   edm::InputTag m_lifetimeBJetsL25;
   edm::InputTag m_lifetimeBJetsL3;
   edm::InputTag m_lifetimeBJetsL25Relaxed;

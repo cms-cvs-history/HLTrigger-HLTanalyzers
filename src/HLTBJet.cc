@@ -85,8 +85,8 @@ HLTBJet::~HLTBJet()
 
 void HLTBJet::setup(const edm::ParameterSet & config, TTree * tree)
 {
-  m_jets                    = config.getParameter<edm::InputTag>("CommonBJetsL2");
-  m_correctedJets           = config.getParameter<edm::InputTag>("CorrectedBJetsL2");
+  m_rawBJets                = config.getParameter<edm::InputTag>("CommonBJetsL2");
+  m_correctedBJets          = config.getParameter<edm::InputTag>("CorrectedBJetsL2");
   m_lifetimeBJetsL25        = config.getParameter<edm::InputTag>("LifetimeBJetsL25");
   m_lifetimeBJetsL3         = config.getParameter<edm::InputTag>("LifetimeBJetsL3");
   m_lifetimeBJetsL25Relaxed = config.getParameter<edm::InputTag>("LifetimeBJetsL25Relaxed");
@@ -140,8 +140,8 @@ void HLTBJet::analyze(const edm::Event & event, const edm::EventSetup & setup, T
   edm::Handle<reco::JetTagCollection> h_performanceBJetsL25;
   edm::Handle<reco::JetTagCollection> h_performanceBJetsL3;
 
-  event.getByLabel(m_jets,                      h_jets);
-  event.getByLabel(m_correctedJets,             h_correctedJets);
+  event.getByLabel(m_rawBJets,                  h_jets);
+  event.getByLabel(m_correctedBJets,            h_correctedJets);
   event.getByLabel(m_lifetimeBJetsL25,          h_lifetimeBJetsL25);
   event.getByLabel(m_lifetimeBJetsL3,           h_lifetimeBJetsL3);
   event.getByLabel(m_lifetimeBJetsL25Relaxed,   h_lifetimeBJetsL25Relaxed);
@@ -153,8 +153,8 @@ void HLTBJet::analyze(const edm::Event & event, const edm::EventSetup & setup, T
 
   typedef std::pair<const char *, const edm::InputTag *> MissingCollectionInfo;
   std::vector<MissingCollectionInfo> missing;
-  if (not h_jets.isValid())                     missing.push_back(std::make_pair(kBTagJets,                     & m_jets));
-  if (not h_correctedJets.isValid())            missing.push_back(std::make_pair(kBTagCorrectedJets,            & m_correctedJets));
+  if (not h_jets.isValid())                     missing.push_back(std::make_pair(kBTagJets,                     & m_rawBJets));
+  if (not h_correctedJets.isValid())            missing.push_back(std::make_pair(kBTagCorrectedJets,            & m_correctedBJets));
   if (not h_lifetimeBJetsL25.isValid())         missing.push_back(std::make_pair(kBTagLifetimeBJetsL25,         & m_lifetimeBJetsL25));
   if (not h_lifetimeBJetsL3.isValid())          missing.push_back(std::make_pair(kBTagLifetimeBJetsL3,          & m_lifetimeBJetsL3));
   if (not h_lifetimeBJetsL25Relaxed.isValid())  missing.push_back(std::make_pair(kBTagLifetimeBJetsL25Relaxed,  & m_lifetimeBJetsL25Relaxed));
