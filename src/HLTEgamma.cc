@@ -21,29 +21,6 @@ HLTEgamma::HLTEgamma() {
 /*  Setup the analysis to put the branch-variables into the tree. */
 void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
-  CandIso_                              = pSet.getParameter<edm::InputTag> ("CandIso");
-  CandNonIso_                           = pSet.getParameter<edm::InputTag> ("CandNonIso");
-  EcalIso_                              = pSet.getParameter<edm::InputTag> ("EcalIso");
-  EcalNonIso_                           = pSet.getParameter<edm::InputTag> ("EcalNonIso");
-  HcalIsoPho_                           = pSet.getParameter<edm::InputTag> ("HcalIsoPho");
-  HcalNonIsoPho_                        = pSet.getParameter<edm::InputTag> ("HcalNonIsoPho");
-  IsoPhoTrackIsol_                      = pSet.getParameter<edm::InputTag> ("IsoPhoTrackIsol");
-  NonIsoPhoTrackIsol_                   = pSet.getParameter<edm::InputTag> ("NonIsoPhoTrackIsol");
-  IsoElectron_                       = pSet.getParameter<edm::InputTag> ("IsoElectrons");
-  NonIsoElectron_                    = pSet.getParameter<edm::InputTag> ("NonIsoElectrons");
-  IsoEleHcal_                        = pSet.getParameter<edm::InputTag> ("HcalIsoEle");
-  NonIsoEleHcal_                     = pSet.getParameter<edm::InputTag> ("HcalNonIsoEle");
-  IsoEleTrackIsol_                   = pSet.getParameter<edm::InputTag> ("IsoEleTrackIsol");
-  NonIsoEleTrackIsol_                = pSet.getParameter<edm::InputTag> ("NonIsoEleTrackIsol");
-  IsoElectronLW_           = pSet.getParameter<edm::InputTag> ("IsoElectronsLargeWindows");
-  NonIsoElectronLW_        = pSet.getParameter<edm::InputTag> ("NonIsoElectronsLargeWindows");
-  IsoEleTrackIsolLW_       = pSet.getParameter<edm::InputTag> ("IsoEleTrackIsolLargeWindows");
-  NonIsoEleTrackIsolLW_    = pSet.getParameter<edm::InputTag> ("NonIsoEleTrackIsolLargeWindows");
-  L1IsoPixelSeeds_                   = pSet.getParameter<edm::InputTag> ("PixelSeedL1Iso");
-  L1NonIsoPixelSeeds_                = pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
-  L1IsoPixelSeedsLW_       = pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
-  L1NonIsoPixelSeedsLW_    = pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
-
   const int kMaxEl = 10000;
   elpt              = new float[kMaxEl];
   elphi             = new float[kMaxEl];
@@ -133,79 +110,32 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 }
 
 /* **Analyze the event** */
-void HLTEgamma::analyze(const edm::Event & event, const edm::EventSetup & setup,
-                        const reco::GsfElectronCollection * electrons,
-                        const reco::PhotonCollection      * photons,
+void HLTEgamma::analyze(const reco::GsfElectronCollection         * electrons,
+                        const reco::PhotonCollection              * photons,
+                        const reco::ElectronCollection            * electronIsoHandle,
+                        const reco::ElectronCollection            * electronIsoHandleLW,
+                        const reco::ElectronCollection            * electronNonIsoHandle,
+                        const reco::ElectronCollection            * electronNonIsoHandleLW,
+                        const reco::ElectronIsolationMap          * NonIsoTrackEleIsolMap,
+                        const reco::ElectronIsolationMap          * NonIsoTrackEleIsolMapLW,
+                        const reco::ElectronIsolationMap          * TrackEleIsolMap,
+                        const reco::ElectronIsolationMap          * TrackEleIsolMapLW,
+                        const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMap,
+                        const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMapLW,
+                        const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMap,
+                        const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMapLW,
+                        const reco::RecoEcalCandidateCollection   * recoIsolecalcands,
+                        const reco::RecoEcalCandidateCollection   * recoNonIsolecalcands,
+                        const reco::RecoEcalCandidateIsolationMap * EcalIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * EcalNonIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * HcalEleNonIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * HcalIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * HcalNonIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * TrackIsolMap,
+                        const reco::RecoEcalCandidateIsolationMap * TrackNonIsolMap,
                         TTree* HltTree) {
 
-  edm::Handle<reco::ElectronCollection>             electronIsoHandle;
-  edm::Handle<reco::ElectronCollection>             electronIsoHandleLW;
-  edm::Handle<reco::ElectronCollection>             electronNonIsoHandle;
-  edm::Handle<reco::ElectronCollection>             electronNonIsoHandleLW;
-  edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMap;
-  edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapLW;
-  edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMap;
-  edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMapLW;
-  edm::Handle<reco::ElectronPixelSeedCollection>    L1IsoPixelSeedsMap;
-  edm::Handle<reco::ElectronPixelSeedCollection>    L1IsoPixelSeedsMapLW;
-  edm::Handle<reco::ElectronPixelSeedCollection>    L1NonIsoPixelSeedsMap;
-  edm::Handle<reco::ElectronPixelSeedCollection>    L1NonIsoPixelSeedsMapLW;
-  edm::Handle<reco::RecoEcalCandidateCollection>    recoIsolecalcands;
-  edm::Handle<reco::RecoEcalCandidateCollection>    recoNonIsolecalcands;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  EcalIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  EcalNonIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  HcalEleIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  HcalEleNonIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  HcalIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  HcalNonIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackIsolMap;
-  edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackNonIsolMap;
-
-  event.getByLabel(CandIso_,                recoIsolecalcands);
-  event.getByLabel(CandNonIso_,             recoNonIsolecalcands);
-  event.getByLabel(EcalIso_,                EcalIsolMap);
-  event.getByLabel(EcalNonIso_,             EcalNonIsolMap);
-  event.getByLabel(HcalIsoPho_,             HcalIsolMap);
-  event.getByLabel(HcalNonIsoPho_,          HcalNonIsolMap);
-  event.getByLabel(IsoElectronLW_,          electronIsoHandleLW);
-  event.getByLabel(IsoElectron_,            electronIsoHandle);
-  event.getByLabel(IsoEleHcal_,             HcalEleIsolMap);
-  event.getByLabel(IsoEleTrackIsolLW_,      TrackEleIsolMapLW);
-  event.getByLabel(L1IsoPixelSeedsLW_,      L1IsoPixelSeedsMapLW);
-  event.getByLabel(L1IsoPixelSeeds_,        L1IsoPixelSeedsMap);
-  event.getByLabel(L1NonIsoPixelSeedsLW_,   L1NonIsoPixelSeedsMapLW);
-  event.getByLabel(L1NonIsoPixelSeeds_,     L1NonIsoPixelSeedsMap);
-  event.getByLabel(NonIsoElectronLW_,       electronNonIsoHandleLW);
-  event.getByLabel(NonIsoElectron_,         electronNonIsoHandle);
-  event.getByLabel(NonIsoEleHcal_,          HcalEleNonIsolMap);
-  event.getByLabel(NonIsoEleTrackIsolLW_,   NonIsoTrackEleIsolMapLW);
-  event.getByLabel(NonIsoEleTrackIsol_,     NonIsoTrackEleIsolMap);
-  event.getByLabel(NonIsoPhoTrackIsol_,     TrackNonIsolMap);
-
-  string EGerrMsg;
-  if (not recoIsolecalcands.isValid())        EGerrMsg += kCandIso;
-  if (not recoNonIsolecalcands.isValid())     EGerrMsg += kCandNonIso;
-  if (not HcalEleIsolMap.isValid())           EGerrMsg += kIsoEleHcal;
-  if (not HcalEleNonIsolMap.isValid())        EGerrMsg += kNonIsoEleHcal;
-  if (not TrackEleIsolMap.isValid())          EGerrMsg += kIsoEleTrackIsol;
-  if (not TrackEleIsolMapLW.isValid())        EGerrMsg += kIsoEleTrackIsol;
-  if (not L1IsoPixelSeedsMap.isValid())       EGerrMsg += kL1IsoPixelSeeds;
-  if (not L1IsoPixelSeedsMapLW.isValid())     EGerrMsg += kL1IsoPixelSeeds;
-  if (not L1NonIsoPixelSeedsMap.isValid())    EGerrMsg += kL1NonIsoPixelSeeds;
-  if (not L1NonIsoPixelSeedsMapLW.isValid())  EGerrMsg += kL1NonIsoPixelSeeds;
-  if (not NonIsoTrackEleIsolMap.isValid())    EGerrMsg += kNonIsoEleTrackIsol;
-  if (not NonIsoTrackEleIsolMapLW.isValid())  EGerrMsg += kNonIsoEleTrackIsol;
-  if (not electronIsoHandle.isValid())        EGerrMsg += kIsoElectron;
-  if (not electronIsoHandleLW.isValid())      EGerrMsg += kIsoElectron;
-  if (not EcalIsolMap.isValid())              EGerrMsg += kEcalIso;
-  if (not EcalNonIsolMap.isValid())           EGerrMsg += kEcalNonIso;
-  if (not electronNonIsoHandle.isValid())     EGerrMsg += kNonIsoElectron;
-  if (not electronNonIsoHandleLW.isValid())   EGerrMsg += kNonIsoElectron;
-  if (not HcalIsolMap.isValid())              EGerrMsg += kHcalIsoPho;
-  if (not HcalNonIsolMap.isValid())           EGerrMsg += kHcalNonIsoPho;
-  if (not TrackIsolMap.isValid())             EGerrMsg += kIsoPhoTrackIsol;
-  if (not TrackNonIsolMap.isValid())          EGerrMsg += kNonIsoPhoTrackIsol;
-  
   if (electrons) {
     GsfElectronCollection myelectrons( electrons->begin(), electrons->end() );
     nele = myelectrons.size();
@@ -244,15 +174,15 @@ void HLTEgamma::analyze(const edm::Event & event, const edm::EventSetup & setup,
 
   theHLTPhotons.clear();
   MakeL1IsolatedPhotons(
-      recoIsolecalcands.product(), 
-      EcalIsolMap.product(), 
-      HcalIsolMap.product(), 
-      TrackIsolMap.product());
+      recoIsolecalcands, 
+      EcalIsolMap, 
+      HcalIsolMap, 
+      TrackIsolMap);
   MakeL1NonIsolatedPhotons(
-      recoNonIsolecalcands.product(), 
-      EcalNonIsolMap.product(), 
-      HcalNonIsolMap.product(), 
-      TrackNonIsolMap.product());
+      recoNonIsolecalcands, 
+      EcalNonIsolMap, 
+      HcalNonIsolMap, 
+      TrackNonIsolMap);
   std::sort(theHLTPhotons.begin(), theHLTPhotons.end(), EtGreater());
   nhltgam = theHLTPhotons.size();
   for (int u = 0; u < nhltgam; u++) {
@@ -267,17 +197,17 @@ void HLTEgamma::analyze(const edm::Event & event, const edm::EventSetup & setup,
 
   theHLTElectrons.clear();
   MakeL1IsolatedElectrons(
-      electronIsoHandle.product(), 
-      recoIsolecalcands.product(), 
-      HcalEleIsolMap.product(), 
-      L1IsoPixelSeedsMap.product(), 
-      TrackEleIsolMap.product());
+      electronIsoHandle, 
+      recoIsolecalcands, 
+      HcalEleIsolMap, 
+      L1IsoPixelSeedsMap, 
+      TrackEleIsolMap);
   MakeL1NonIsolatedElectrons(
-      electronNonIsoHandle.product(), 
-      recoNonIsolecalcands.product(), 
-      HcalEleNonIsolMap.product(), 
-      L1NonIsoPixelSeedsMap.product(), 
-      NonIsoTrackEleIsolMap.product());
+      electronNonIsoHandle, 
+      recoNonIsolecalcands, 
+      HcalEleNonIsolMap, 
+      L1NonIsoPixelSeedsMap, 
+      NonIsoTrackEleIsolMap);
   std::sort(theHLTElectrons.begin(), theHLTElectrons.end(), EtGreater());
   nhltele = theHLTElectrons.size();
   for (int u = 0; u < nhltele; u++) {
@@ -295,17 +225,17 @@ void HLTEgamma::analyze(const edm::Event & event, const edm::EventSetup & setup,
 
   theHLTElectronsLargeWindows.clear();
   MakeL1IsolatedElectronsLargeWindows(
-      electronIsoHandleLW.product(), 
-      recoIsolecalcands.product(), 
-      HcalEleIsolMap.product(), 
-      L1IsoPixelSeedsMapLW.product(), 
-      TrackEleIsolMapLW.product());
+      electronIsoHandleLW, 
+      recoIsolecalcands, 
+      HcalEleIsolMap, 
+      L1IsoPixelSeedsMapLW, 
+      TrackEleIsolMapLW);
   MakeL1NonIsolatedElectronsLargeWindows(
-      electronNonIsoHandleLW.product(), 
-      recoNonIsolecalcands.product(), 
-      HcalEleNonIsolMap.product(), 
-      L1NonIsoPixelSeedsMapLW.product(), 
-      NonIsoTrackEleIsolMapLW.product());
+      electronNonIsoHandleLW, 
+      recoNonIsolecalcands, 
+      HcalEleNonIsolMap, 
+      L1NonIsoPixelSeedsMapLW, 
+      NonIsoTrackEleIsolMapLW);
   std::sort(theHLTElectronsLargeWindows.begin(), theHLTElectronsLargeWindows.end(), EtGreater());
   nhlteleLW = theHLTElectronsLargeWindows.size();
   for (int u = 0; u < nhltele; u++) {

@@ -66,10 +66,32 @@ public:
   void setup(const edm::ParameterSet& pSet, TTree* tree);
 
   /** Analyze the Data */
-  void analyze(const edm::Event & event, const edm::EventSetup & setup, 
-               const reco::GsfElectronCollection * electrons, 
-               const reco::PhotonCollection      * photons, 
-               TTree* tree);
+  void analyze(
+      const reco::GsfElectronCollection         * electrons,
+      const reco::PhotonCollection              * photons,
+      const reco::ElectronCollection            * electronIsoHandle,
+      const reco::ElectronCollection            * electronIsoHandleLW,
+      const reco::ElectronCollection            * electronNonIsoHandle,
+      const reco::ElectronCollection            * electronNonIsoHandleLW,
+      const reco::ElectronIsolationMap          * NonIsoTrackEleIsolMap,
+      const reco::ElectronIsolationMap          * NonIsoTrackEleIsolMapLW,
+      const reco::ElectronIsolationMap          * TrackEleIsolMap,
+      const reco::ElectronIsolationMap          * TrackEleIsolMapLW,
+      const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMap,
+      const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMapLW,
+      const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMap,
+      const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMapLW,
+      const reco::RecoEcalCandidateCollection   * recoIsolecalcands,
+      const reco::RecoEcalCandidateCollection   * recoNonIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * EcalIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * EcalNonIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleNonIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalNonIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * TrackIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * TrackNonIsolMap,
+      TTree* tree);
 
 private:
 
@@ -123,31 +145,6 @@ private:
   int *heleNewSC, *heleNewSCLW;
   int nele, nphoton, nhltgam, nhltele, nhlteleLW;
 
-  edm::InputTag CandIso_;
-  edm::InputTag CandNonIso_;
-  edm::InputTag EcalNonIso_;
-  edm::InputTag EcalIso_;
-  edm::InputTag HcalIsoPho_;
-  edm::InputTag HcalNonIsoPho_;
-  edm::InputTag IsoPhoTrackIsol_;
-  edm::InputTag NonIsoPhoTrackIsol_;
-  edm::InputTag IsoEleHcal_;
-  edm::InputTag NonIsoEleHcal_;
-  edm::InputTag IsoElectron_;
-  edm::InputTag NonIsoElectron_;
-  edm::InputTag IsoEleTrackIsol_;
-  edm::InputTag NonIsoEleTrackIsol_;
-  edm::InputTag L1IsoPixelSeeds_;
-  edm::InputTag L1NonIsoPixelSeeds_;
-  edm::InputTag L1IsoPixelSeedsLW_;
-  edm::InputTag L1NonIsoPixelSeedsLW_;
-  edm::InputTag IsoElectronLW_;
-  edm::InputTag NonIsoElectronLW_;
-  edm::InputTag IsoEleTrackIsolLW_;
-  edm::InputTag NonIsoEleTrackIsolLW_;
-
-  //get hold of the pixel seed - supercluster association map
-  
   class myHLTPhoton {
   public:
     float Et;
