@@ -17,10 +17,6 @@
 
 HLTEgamma::HLTEgamma() {
   evtCounter=0;
-
-  //set parameter defaults 
-  _Monte=false;
-  _Debug=false;
 }
 
 /*  Setup the analysis to put the branch-variables into the tree. */
@@ -50,16 +46,6 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   L1NonIsoPixelSeedsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
   L1IsoPixelSeedsLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
   L1NonIsoPixelSeedsLargeWindowsTag_= pSet.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
-
-  edm::ParameterSet myEmParams = pSet.getParameter<edm::ParameterSet>("RunParameters") ;
-  vector<std::string> parameterNames = myEmParams.getParameterNames() ;
-  
-  for ( vector<std::string>::iterator iParam = parameterNames.begin();
-	iParam != parameterNames.end(); iParam++ ){
-    if  ( (*iParam) == "Monte" ) _Monte =  myEmParams.getParameter<bool>( *iParam );
-    else if ( (*iParam) == "Debug" ) _Debug =  myEmParams.getParameter<bool>( *iParam );
-  }
-  
 
   const int kMaxEl = 10000;
   elpt = new float[kMaxEl];

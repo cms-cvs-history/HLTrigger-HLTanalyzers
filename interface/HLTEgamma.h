@@ -113,7 +113,7 @@ private:
     float ecalIsol;
     float hcalIsol;
     float trackIsol;
-    bool L1Isolated;
+    bool  L1Isolated;
 
     float et() const { return Et; } // Function defined as such to be compatible with EtGreater()
   };
@@ -128,15 +128,16 @@ private:
     float p;
     float hcalIsol;
     float trackIsol;
-    bool L1Isolated;
-    int pixelSeeds;
-    float et() const {return Et;}
-    bool newSC;
+    bool  L1Isolated;
+    int   pixelSeeds;
+    bool  newSC;
+
+    float et() const { return Et; } // Function defined as such to be compatible with EtGreater()
   };
-  std::vector<myHLTElectron>  theHLTElectrons;
+  std::vector<myHLTElectron> theHLTElectrons;
   std::vector<myHLTElectron> theHLTElectronsLargeWindows;
-// input variables
-  bool _Monte,_Debug;
+
+  // input variables
   int evtCounter;
   const float etaBarrel() {return 1.4;}
 
