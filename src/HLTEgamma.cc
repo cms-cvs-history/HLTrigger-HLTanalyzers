@@ -15,7 +15,6 @@
 #include "HLTMessages.h"
 
 HLTEgamma::HLTEgamma() {
-  evtCounter = 0;
 }
 
 /*  Setup the analysis to put the branch-variables into the tree. */

@@ -1,5 +1,5 @@
-#ifndef HLTEGAMMA_H
-#define HLTEGAMMA_H
+#ifndef HLTrigger_HLTanalyzers_HLTEgamma_h
+#define HLTrigger_HLTanalyzers_HLTEgamma_h
 
 #include "TH1.h"
 #include "TH2.h"
@@ -177,10 +177,6 @@ private:
   std::vector<myHLTElectron> theHLTElectrons;
   std::vector<myHLTElectron> theHLTElectronsLargeWindows;
 
-  // input variables
-  int evtCounter;
-  const float etaBarrel() {return 1.4;}
-
 };
 
-#endif
+#endif // HLTrigger_HLTanalyzers_HLTEgamma_h
