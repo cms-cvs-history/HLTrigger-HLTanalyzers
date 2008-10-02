@@ -131,20 +131,20 @@ private:
   edm::InputTag HcalNonIsoPho_;
   edm::InputTag IsoPhoTrackIsol_;
   edm::InputTag NonIsoPhoTrackIsol_;
-  edm::InputTag IsoEleHcalTag_;
-  edm::InputTag NonIsoEleHcalTag_;
-  edm::InputTag IsoElectronTag_;
-  edm::InputTag NonIsoElectronTag_;
-  edm::InputTag IsoEleTrackIsolTag_;
-  edm::InputTag NonIsoEleTrackIsolTag_;
-  edm::InputTag L1IsoPixelSeedsTag_;
-  edm::InputTag L1NonIsoPixelSeedsTag_;
-  edm::InputTag L1IsoPixelSeedsLargeWindowsTag_;
-  edm::InputTag L1NonIsoPixelSeedsLargeWindowsTag_;
-  edm::InputTag IsoElectronLargeWindowsTag_;
-  edm::InputTag NonIsoElectronLargeWindowsTag_;
-  edm::InputTag IsoEleTrackIsolLargeWindowsTag_;
-  edm::InputTag NonIsoEleTrackIsolLargeWindowsTag_;
+  edm::InputTag IsoEleHcal_;
+  edm::InputTag NonIsoEleHcal_;
+  edm::InputTag IsoElectron_;
+  edm::InputTag NonIsoElectron_;
+  edm::InputTag IsoEleTrackIsol_;
+  edm::InputTag NonIsoEleTrackIsol_;
+  edm::InputTag L1IsoPixelSeeds_;
+  edm::InputTag L1NonIsoPixelSeeds_;
+  edm::InputTag L1IsoPixelSeedsLW_;
+  edm::InputTag L1NonIsoPixelSeedsLW_;
+  edm::InputTag IsoElectronLW_;
+  edm::InputTag NonIsoElectronLW_;
+  edm::InputTag IsoEleTrackIsolLW_;
+  edm::InputTag NonIsoEleTrackIsolLW_;
 
   //get hold of the pixel seed - supercluster association map
   
