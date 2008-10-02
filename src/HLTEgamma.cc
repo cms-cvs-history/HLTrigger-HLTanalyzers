@@ -132,7 +132,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 }
 
 /* **Analyze the event** */
-void HLTEgamma::analyze(edm::Event const& event, edm::EventSetup const& iSetup,
+void HLTEgamma::analyze(const edm::Event & event, const edm::EventSetup & setup,
                         const reco::GsfElectronCollection * electrons,
                         const reco::PhotonCollection      * photons,
                         TTree* HltTree) {

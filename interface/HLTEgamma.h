@@ -66,7 +66,7 @@ public:
   void setup(const edm::ParameterSet& pSet, TTree* tree);
 
   /** Analyze the Data */
-  void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup, 
+  void analyze(const edm::Event & event, const edm::EventSetup & setup, 
                const reco::GsfElectronCollection * electrons, 
                const reco::PhotonCollection      * photons, 
                TTree* tree);
