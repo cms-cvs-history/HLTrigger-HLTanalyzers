@@ -132,9 +132,9 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 }
 
 /* **Analyze the event** */
-void HLTEgamma::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup,
+void HLTEgamma::analyze(edm::Event const& event, edm::EventSetup const& iSetup,
                         const reco::GsfElectronCollection * electrons,
-                        const reco::PhotonCollection * photons,
+                        const reco::PhotonCollection      * photons,
                         TTree* HltTree) {
 
   edm::Handle<reco::ElectronCollection>                 electronIsoHandle;
@@ -159,28 +159,28 @@ void HLTEgamma::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup,
   edm::Handle<reco::RecoEcalCandidateIsolationMap>      TrackIsolMap;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>      TrackNonIsolMap;
 
-  iEvent.getByLabel(CandIso_,                           recoIsolecalcands);
-  iEvent.getByLabel(CandNonIso_,                        recoNonIsolecalcands);
-  iEvent.getByLabel(EcalIso_,                           EcalIsolMap);
-  iEvent.getByLabel(EcalNonIso_,                        EcalNonIsolMap);
-  iEvent.getByLabel(HcalIsoPho_,                        HcalIsolMap);
-  iEvent.getByLabel(HcalNonIsoPho_,                     HcalNonIsolMap);
-  iEvent.getByLabel(IsoElectronLargeWindowsTag_,        electronIsoHandleLW);
-  iEvent.getByLabel(IsoElectronTag_,                    electronIsoHandle);
-  iEvent.getByLabel(IsoEleHcalTag_,                     HcalEleIsolMap);
-  iEvent.getByLabel(IsoEleTrackIsolLargeWindowsTag_,    TrackEleIsolMapLW);
-  iEvent.getByLabel(IsoEleTrackIsolTag_,                TrackEleIsolMap);
-  iEvent.getByLabel(IsoPhoTrackIsol_,                   TrackIsolMap);
-  iEvent.getByLabel(L1IsoPixelSeedsLargeWindowsTag_,    L1IsoPixelSeedsMapLW);
-  iEvent.getByLabel(L1IsoPixelSeedsTag_,                L1IsoPixelSeedsMap);
-  iEvent.getByLabel(L1NonIsoPixelSeedsLargeWindowsTag_, L1NonIsoPixelSeedsMapLW);
-  iEvent.getByLabel(L1NonIsoPixelSeedsTag_,             L1NonIsoPixelSeedsMap);
-  iEvent.getByLabel(NonIsoElectronLargeWindowsTag_,     electronNonIsoHandleLW);
-  iEvent.getByLabel(NonIsoElectronTag_,                 electronNonIsoHandle);
-  iEvent.getByLabel(NonIsoEleHcalTag_,                  HcalEleIsolMap);
-  iEvent.getByLabel(NonIsoEleTrackIsolLargeWindowsTag_, NonIsoTrackEleIsolMapLW);
-  iEvent.getByLabel(NonIsoEleTrackIsolTag_,             NonIsoTrackEleIsolMap);
-  iEvent.getByLabel(NonIsoPhoTrackIsol_,                TrackNonIsolMap);
+  event.getByLabel(CandIso_,                           recoIsolecalcands);
+  event.getByLabel(CandNonIso_,                        recoNonIsolecalcands);
+  event.getByLabel(EcalIso_,                           EcalIsolMap);
+  event.getByLabel(EcalNonIso_,                        EcalNonIsolMap);
+  event.getByLabel(HcalIsoPho_,                        HcalIsolMap);
+  event.getByLabel(HcalNonIsoPho_,                     HcalNonIsolMap);
+  event.getByLabel(IsoElectronLargeWindowsTag_,        electronIsoHandleLW);
+  event.getByLabel(IsoElectronTag_,                    electronIsoHandle);
+  event.getByLabel(IsoEleHcalTag_,                     HcalEleIsolMap);
+  event.getByLabel(IsoEleTrackIsolLargeWindowsTag_,    TrackEleIsolMapLW);
+  event.getByLabel(IsoEleTrackIsolTag_,                TrackEleIsolMap);
+  event.getByLabel(IsoPhoTrackIsol_,                   TrackIsolMap);
+  event.getByLabel(L1IsoPixelSeedsLargeWindowsTag_,    L1IsoPixelSeedsMapLW);
+  event.getByLabel(L1IsoPixelSeedsTag_,                L1IsoPixelSeedsMap);
+  event.getByLabel(L1NonIsoPixelSeedsLargeWindowsTag_, L1NonIsoPixelSeedsMapLW);
+  event.getByLabel(L1NonIsoPixelSeedsTag_,             L1NonIsoPixelSeedsMap);
+  event.getByLabel(NonIsoElectronLargeWindowsTag_,     electronNonIsoHandleLW);
+  event.getByLabel(NonIsoElectronTag_,                 electronNonIsoHandle);
+  event.getByLabel(NonIsoEleHcalTag_,                  HcalEleIsolMap);
+  event.getByLabel(NonIsoEleTrackIsolLargeWindowsTag_, NonIsoTrackEleIsolMapLW);
+  event.getByLabel(NonIsoEleTrackIsolTag_,             NonIsoTrackEleIsolMap);
+  event.getByLabel(NonIsoPhoTrackIsol_,                TrackNonIsolMap);
 
   if (electrons) {
     GsfElectronCollection myelectrons( electrons->begin(), electrons->end() );
