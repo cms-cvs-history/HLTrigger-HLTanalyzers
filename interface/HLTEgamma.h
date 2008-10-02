@@ -66,9 +66,9 @@ public:
   void setup(const edm::ParameterSet& pSet, TTree* tree);
 
   /** Analyze the Data */
-  void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup,
-	       const reco::GsfElectronCollection * electrons,
-	       const reco::PhotonCollection * photons,
+  void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup, 
+	       const reco::GsfElectronCollection * electrons, 
+	       const reco::PhotonCollection * photons, 
 	       TTree* tree);
 
   void MakeL1IsolatedPhotons(edm::Event const& e, edm::EventSetup const& iSetup);
@@ -84,14 +84,14 @@ private:
   float *elpt, *elphi, *eleta, *elet, *ele; 
   float *photonpt, *photonphi, *photoneta, *photonet, *photone; 
   float *hphotet, *hphoteta, *hphotphi, *hphoteiso, *hphothiso, *hphottiso;
-  float *heleet,*heleeta,*helephi,*heleE,*helep,*helehiso,*heletiso;
-  float *heleetLW,*heleetaLW,*helephiLW,*heleELW,*helepLW,*helehisoLW,*heletisoLW;
-  int *hphotl1iso,*helel1iso,*helePixelSeeds,*helel1isoLW,*helePixelSeedsLW;
+  float *heleet, *heleeta, *helephi, *heleE, *helep, *helehiso, *heletiso;
+  float *heleetLW, *heleetaLW, *helephiLW, *heleELW, *helepLW, *helehisoLW, *heletisoLW;
+  int *hphotl1iso, *helel1iso, *helePixelSeeds, *helel1isoLW, *helePixelSeedsLW;
   int *heleNewSC, *heleNewSCLW;
-  int nele,nphoton,nhltgam,nhltele,nhlteleLW;
+  int nele, nphoton, nhltgam, nhltele, nhlteleLW;
 
-  edm::InputTag CandIso_,CandNonIso_,EcalNonIso_,EcalIso_,HcalIsoPho_,HcalNonIsoPho_,IsoPhoTrackIsol_,NonIsoPhoTrackIsol_;
-  edm::InputTag IsoEleHcalTag_,NonIsoEleHcalTag_,IsoElectronTag_,NonIsoElectronTag_,IsoEleTrackIsolTag_,NonIsoEleTrackIsolTag_;
+  edm::InputTag CandIso_, CandNonIso_, EcalNonIso_, EcalIso_, HcalIsoPho_, HcalNonIsoPho_, IsoPhoTrackIsol_, NonIsoPhoTrackIsol_;
+  edm::InputTag IsoEleHcalTag_, NonIsoEleHcalTag_, IsoElectronTag_, NonIsoElectronTag_, IsoEleTrackIsolTag_, NonIsoEleTrackIsolTag_;
   edm::InputTag L1IsoPixelSeedsTag_;
   edm::InputTag L1NonIsoPixelSeedsTag_;
   edm::InputTag L1IsoPixelSeedsLargeWindowsTag_;
@@ -99,8 +99,8 @@ private:
 
   //std::string L1NonIsoPixelSeedsTag_;
 
-  edm::InputTag IsoElectronLargeWindowsTag_,NonIsoElectronLargeWindowsTag_,IsoEleTrackIsolLargeWindowsTag_,NonIsoEleTrackIsolLargeWindowsTag_;
-  //  std::string L1IsoPixelSeedsLargeWindowsTag_,L1NonIsoPixelSeedsLargeWindowsTag_;
+  edm::InputTag IsoElectronLargeWindowsTag_, NonIsoElectronLargeWindowsTag_, IsoEleTrackIsolLargeWindowsTag_, NonIsoEleTrackIsolLargeWindowsTag_;
+  //  std::string L1IsoPixelSeedsLargeWindowsTag_, L1NonIsoPixelSeedsLargeWindowsTag_;
 
 
   //get hold of the pixel seed - supercluster association map
