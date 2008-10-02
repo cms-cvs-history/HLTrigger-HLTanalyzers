@@ -36,8 +36,6 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   genmet_           = conf.getParameter<edm::InputTag> ("genmet");
   ht_               = conf.getParameter<edm::InputTag> ("ht");
   calotowers_       = conf.getParameter<edm::InputTag> ("calotowers");
-  Electron_         = conf.getParameter<edm::InputTag> ("Electron");
-  Photon_           = conf.getParameter<edm::InputTag> ("Photon");
   muon_             = conf.getParameter<edm::InputTag> ("muon");
   mctruth_          = conf.getParameter<edm::InputTag> ("mctruth");
   genEventScale_    = conf.getParameter<edm::InputTag> ("genEventScale");
@@ -87,6 +85,32 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   m_performanceBJetsL25     = conf.getParameter<edm::InputTag>("PerformanceBJetsL25");
   m_performanceBJetsL3      = conf.getParameter<edm::InputTag>("PerformanceBJetsL3");
 
+  // egamma OpenHLT input collections
+  Electron_                             = conf.getParameter<edm::InputTag> ("Electron");
+  Photon_                               = conf.getParameter<edm::InputTag> ("Photon");
+  CandIso_                              = conf.getParameter<edm::InputTag> ("CandIso");
+  CandNonIso_                           = conf.getParameter<edm::InputTag> ("CandNonIso");
+  EcalIso_                              = conf.getParameter<edm::InputTag> ("EcalIso");
+  EcalNonIso_                           = conf.getParameter<edm::InputTag> ("EcalNonIso");
+  HcalIsoPho_                           = conf.getParameter<edm::InputTag> ("HcalIsoPho");
+  HcalNonIsoPho_                        = conf.getParameter<edm::InputTag> ("HcalNonIsoPho");
+  IsoPhoTrackIsol_                      = conf.getParameter<edm::InputTag> ("IsoPhoTrackIsol");
+  NonIsoPhoTrackIsol_                   = conf.getParameter<edm::InputTag> ("NonIsoPhoTrackIsol");
+  IsoElectronTag_                       = conf.getParameter<edm::InputTag> ("IsoElectrons");
+  NonIsoElectronTag_                    = conf.getParameter<edm::InputTag> ("NonIsoElectrons");
+  IsoEleHcalTag_                        = conf.getParameter<edm::InputTag> ("HcalIsoEle");
+  NonIsoEleHcalTag_                     = conf.getParameter<edm::InputTag> ("HcalNonIsoEle");
+  IsoEleTrackIsolTag_                   = conf.getParameter<edm::InputTag> ("IsoEleTrackIsol");
+  NonIsoEleTrackIsolTag_                = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsol");
+  IsoElectronLargeWindowsTag_           = conf.getParameter<edm::InputTag> ("IsoElectronsLargeWindows");
+  NonIsoElectronLargeWindowsTag_        = conf.getParameter<edm::InputTag> ("NonIsoElectronsLargeWindows");
+  IsoEleTrackIsolLargeWindowsTag_       = conf.getParameter<edm::InputTag> ("IsoEleTrackIsolLargeWindows");
+  NonIsoEleTrackIsolLargeWindowsTag_    = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsolLargeWindows");
+  L1IsoPixelSeedsTag_                   = conf.getParameter<edm::InputTag> ("PixelSeedL1Iso");
+  L1NonIsoPixelSeedsTag_                = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
+  L1IsoPixelSeedsLargeWindowsTag_       = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
+  L1NonIsoPixelSeedsLargeWindowsTag_    = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
+  
   m_file = 0;   // set to null
   errCnt = 0;
 

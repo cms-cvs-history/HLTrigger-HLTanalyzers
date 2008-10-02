@@ -54,7 +54,7 @@ private:
   HLTInfo     hlt_analysis_;
 
   edm::InputTag recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltresults_,genEventScale_;
-  edm::InputTag Electron_,Photon_,muon_;
+  edm::InputTag muon_;
   std::string l1extramc_, l1extramu_;
   edm::InputTag m_l1extramu;
   edm::InputTag m_l1extraemi;
@@ -82,6 +82,32 @@ private:
   edm::InputTag m_softmuonBJetsL3;
   edm::InputTag m_performanceBJetsL25;
   edm::InputTag m_performanceBJetsL3;
+
+  // egamma OpenHLT input collections
+  edm::InputTag Electron_;
+  edm::InputTag Photon_;
+  edm::InputTag CandIso_;
+  edm::InputTag CandNonIso_;
+  edm::InputTag EcalIso_;
+  edm::InputTag EcalNonIso_;
+  edm::InputTag HcalIsoPho_;
+  edm::InputTag HcalNonIsoPho_;
+  edm::InputTag IsoPhoTrackIsol_;
+  edm::InputTag NonIsoPhoTrackIsol_;
+  edm::InputTag IsoElectronTag_;
+  edm::InputTag NonIsoElectronTag_;
+  edm::InputTag IsoEleHcalTag_;
+  edm::InputTag NonIsoEleHcalTag_;
+  edm::InputTag IsoEleTrackIsolTag_;
+  edm::InputTag NonIsoEleTrackIsolTag_;
+  edm::InputTag IsoElectronLargeWindowsTag_;
+  edm::InputTag NonIsoElectronLargeWindowsTag_;
+  edm::InputTag IsoEleTrackIsolLargeWindowsTag_;
+  edm::InputTag NonIsoEleTrackIsolLargeWindowsTag_;
+  edm::InputTag L1IsoPixelSeedsTag_;
+  edm::InputTag L1NonIsoPixelSeedsTag_;
+  edm::InputTag L1IsoPixelSeedsLargeWindowsTag_;
+  edm::InputTag L1NonIsoPixelSeedsLargeWindowsTag_;
 
   int errCnt;
   const int errMax(){return 100;}
