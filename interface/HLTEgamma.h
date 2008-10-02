@@ -67,18 +67,51 @@ public:
 
   /** Analyze the Data */
   void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup, 
-	       const reco::GsfElectronCollection * electrons, 
-	       const reco::PhotonCollection * photons, 
-	       TTree* tree);
-
-  void MakeL1IsolatedPhotons(edm::Event const& e, edm::EventSetup const& iSetup);
-  void MakeL1NonIsolatedPhotons(edm::Event const& e, edm::EventSetup const& iSetup);
-  void MakeL1IsolatedElectrons(edm::Event const& e, edm::EventSetup const& iSetup);
-  void MakeL1NonIsolatedElectrons(edm::Event const& e, edm::EventSetup const& iSetup);
-  void MakeL1IsolatedElectronsLargeWindows(edm::Event const& e, edm::EventSetup const& iSetup);
-  void MakeL1NonIsolatedElectronsLargeWindows(edm::Event const& e, edm::EventSetup const& iSetup);
+               const reco::GsfElectronCollection * electrons, 
+               const reco::PhotonCollection      * photons, 
+               TTree* tree);
 
 private:
+
+  void MakeL1IsolatedPhotons(
+      const reco::RecoEcalCandidateCollection   * recoIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * EcalIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * TrackIsolMap);
+
+  void MakeL1NonIsolatedPhotons(
+      const reco::RecoEcalCandidateCollection   * recoNonIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * EcalNonIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * HcalNonIsolMap,
+      const reco::RecoEcalCandidateIsolationMap * TrackNonIsolMap);
+
+  void MakeL1IsolatedElectrons(
+      const reco::ElectronCollection            * electronIsoHandle,
+      const reco::RecoEcalCandidateCollection   * recoIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+      const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMap,
+      const reco::ElectronIsolationMap          * TrackEleIsolMap);
+
+  void MakeL1NonIsolatedElectrons(
+      const reco::ElectronCollection            * electronNonIsoHandle,
+      const reco::RecoEcalCandidateCollection   * recoNonIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+      const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMap,
+      const reco::ElectronIsolationMap          * TrackEleIsolMap);
+
+  void MakeL1IsolatedElectronsLargeWindows(
+      const reco::ElectronCollection            * electronIsoHandle,
+      const reco::RecoEcalCandidateCollection   * recoIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+      const reco::ElectronPixelSeedCollection   * L1IsoPixelSeedsMap,
+      const reco::ElectronIsolationMap          * TrackEleIsolMap);
+
+  void MakeL1NonIsolatedElectronsLargeWindows(
+      const reco::ElectronCollection            * electronNonIsoHandle,
+      const reco::RecoEcalCandidateCollection   * recoNonIsolecalcands,
+      const reco::RecoEcalCandidateIsolationMap * HcalEleIsolMap,
+      const reco::ElectronPixelSeedCollection   * L1NonIsoPixelSeedsMap,
+      const reco::ElectronIsolationMap          * TrackEleIsolMap);
 
   // Tree variables
   float *elpt, *elphi, *eleta, *elet, *ele; 
