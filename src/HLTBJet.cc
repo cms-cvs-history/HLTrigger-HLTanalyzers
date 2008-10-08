@@ -59,25 +59,25 @@ void HLTBJet::clear()
 {
   NohBJetL2          = 0;
   NohBJetL2Corrected = 0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Energy[i]          = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Et[i]              = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Et[i]              = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Pt[i]              = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Eta[i]             = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2Phi[i]             = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2CorrectedEnergy[i] = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2CorrectedEt[i]     = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2CorrectedPt[i]     = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2CorrectedEta[i]    = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetL2CorrectedPhi[i]    = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetIPL25Tag[i]          = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetIPL3Tag[i]           = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetIPLooseL25Tag[i]     = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetIPLooseL3Tag[i]      = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetMuL25Tag[i]          = 0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetMuL3Tag[i]           = 0.0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetPerfL25Tag[i]        = 0;
-  for (size_t i = 0; i < kMaxBJets; ++i) ohBJetPerfL3Tag[i]         = 0;
+  std::memset(ohBJetL2Energy,            '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2Et,                '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2Et,                '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2Pt,                '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2Eta,               '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2Phi,               '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2CorrectedEnergy,   '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2CorrectedEt,       '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2CorrectedPt,       '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2CorrectedEta,      '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetL2CorrectedPhi,      '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetIPL25Tag,            '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetIPL3Tag,             '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetIPLooseL25Tag,       '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetIPLooseL3Tag,        '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetMuL25Tag,            '\0', kMaxBJets * sizeof(int));
+  std::memset(ohBJetMuL3Tag,             '\0', kMaxBJets * sizeof(float));
+  std::memset(ohBJetPerfL25Tag,          '\0', kMaxBJets * sizeof(int));
+  std::memset(ohBJetPerfL3Tag,           '\0', kMaxBJets * sizeof(int));
 }
 
 HLTBJet::~HLTBJet() 
@@ -113,38 +113,38 @@ void HLTBJet::setup(const edm::ParameterSet & config, TTree * tree)
 }
 
 void HLTBJet::analyze(
-        const edm::View<reco::Jet> *   rawBJets,
-        const edm::View<reco::Jet> *   correctedBJets,
-        const reco::JetTagCollection * lifetimeBJetsL25,
-        const reco::JetTagCollection * lifetimeBJetsL3,
-        const reco::JetTagCollection * lifetimeBJetsL25Relaxed,
-        const reco::JetTagCollection * lifetimeBJetsL3Relaxed,
-        const reco::JetTagCollection * softmuonBJetsL25,
-        const reco::JetTagCollection * softmuonBJetsL3,
-        const reco::JetTagCollection * performanceBJetsL25,
-        const reco::JetTagCollection * performanceBJetsL3,
+        const edm::Handle<edm::View<reco::Jet> >  & rawBJets,
+        const edm::Handle<edm::View<reco::Jet> >  & correctedBJets,
+        const edm::Handle<reco::JetTagCollection> & lifetimeBJetsL25,
+        const edm::Handle<reco::JetTagCollection> & lifetimeBJetsL3,
+        const edm::Handle<reco::JetTagCollection> & lifetimeBJetsL25Relaxed,
+        const edm::Handle<reco::JetTagCollection> & lifetimeBJetsL3Relaxed,
+        const edm::Handle<reco::JetTagCollection> & softmuonBJetsL25,
+        const edm::Handle<reco::JetTagCollection> & softmuonBJetsL3,
+        const edm::Handle<reco::JetTagCollection> & performanceBJetsL25,
+        const edm::Handle<reco::JetTagCollection> & performanceBJetsL3,
         TTree * tree) 
 {
   // reset the tree variables
   clear();
   
   // if the required collections are available, fill the corresponding tree branches
-  if (rawBJets)
+  if (rawBJets.isValid())
     analyseJets(* rawBJets);
 
-  if (correctedBJets)
+  if (correctedBJets.isValid())
     analyseCorrectedJets(* correctedBJets);
  
-  if (rawBJets and lifetimeBJetsL25 and lifetimeBJetsL3)
+  if (rawBJets.isValid() and lifetimeBJetsL25.isValid() and lifetimeBJetsL3.isValid())
     analyseLifetime(* rawBJets, * lifetimeBJetsL25, * lifetimeBJetsL3);
 
-  if (rawBJets and lifetimeBJetsL25Relaxed and lifetimeBJetsL3Relaxed)
+  if (rawBJets.isValid() and lifetimeBJetsL25Relaxed.isValid() and lifetimeBJetsL3Relaxed.isValid())
     analyseLifetimeLoose(* rawBJets, * lifetimeBJetsL25Relaxed, * lifetimeBJetsL3Relaxed);
 
-  if (rawBJets and softmuonBJetsL25 and softmuonBJetsL3)
+  if (rawBJets.isValid() and softmuonBJetsL25.isValid() and softmuonBJetsL3.isValid())
     analyseSoftmuon(* rawBJets, * softmuonBJetsL25, * softmuonBJetsL3);
   
-  if (rawBJets and performanceBJetsL25 and performanceBJetsL3)
+  if (rawBJets.isValid() and performanceBJetsL25.isValid() and performanceBJetsL3.isValid())
     analysePerformance(* rawBJets, * performanceBJetsL25, * performanceBJetsL3);
 }
 
