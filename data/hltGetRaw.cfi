@@ -1,3 +1,0 @@
-module hltGetRaw = HLTGetRaw {
-   InputTag RawDataCollection = rawDataCollector
-}
