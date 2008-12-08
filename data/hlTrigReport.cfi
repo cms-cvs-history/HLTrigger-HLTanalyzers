@@ -1,5 +1,0 @@
-//
-	module hlTrigReport = HLTrigReport {
-		InputTag HLTriggerResults = TriggerResults::HLT
-	}
-//
