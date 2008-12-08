@@ -31,6 +31,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
 
   recjets_          = conf.getParameter<edm::InputTag> ("recjets");
+  reccorjets_       = conf.getParameter<edm::InputTag> ("reccorjets");
   genjets_          = conf.getParameter<edm::InputTag> ("genjets");
   recmet_           = conf.getParameter<edm::InputTag> ("recmet");
   genmet_           = conf.getParameter<edm::InputTag> ("genmet");
@@ -149,6 +150,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   // These declarations create handles to the types of records that you want
   // to retrieve from event "iEvent".
   edm::Handle<CaloJetCollection>                    recjets;
+  edm::Handle<CaloJetCollection>                    reccorjets;
   edm::Handle<GenJetCollection>                     genjets;
   edm::Handle<CaloTowerCollection>                  caloTowers;
   edm::Handle<CaloMETCollection>                    recmet;
@@ -213,6 +215,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   std::vector<MissingCollectionInfo> missing;
 
   getCollection( iEvent, missing, recjets,         recjets_,           kRecjets );
+  getCollection( iEvent, missing, reccorjets,      reccorjets_,        kRecCorjets );
   getCollection( iEvent, missing, genjets,         genjets_,           kGenjets );
   getCollection( iEvent, missing, recmet,          recmet_,            kRecmet );
   getCollection( iEvent, missing, genmet,          genmet_,            kGenmet );
@@ -288,6 +291,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   // run the analysis, passing required event fragments
   jet_analysis_.analyze(
     recjets,
+    reccorjets,
     genjets,
     recmet,
     genmet,
