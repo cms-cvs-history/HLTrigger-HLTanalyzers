@@ -1770,8 +1770,21 @@ void BookMenu_SmallMenu8E29(OHltMenu*  menu, double &iLumi, double &nBunches) {
   //menu->AddHlt("OpenHLT_L2Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0);  
   menu->AddHlt("HLT_Mu3","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_Mu3","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0);  
-  menu->AddHlt("HLT_Mu5","L1_SingleMu5","1",1,"","",1.5,0,0,1,0,0); 
+  //  menu->AddHlt("HLT_Mu5","L1_SingleMu5","1",1,"","",1.5,0,0,1,0,0); 
   menu->AddHlt("HLT_DoubleMu3","L1_DoubleMu3","1",1,"","",1.5,0,0,2,0,0); //SAK
+
+  menu->AddHlt("OpenHLT_IsoMu3","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0);
+  menu->AddHlt("OpenHLT_L2Mu11","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0);
+  menu->AddHlt("OpenHLT_L1Mu20","L1_SingleMu20","1",1,"","",1.5,0,0,1,0,0); 
+  menu->AddHlt("HLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0);
+  //  menu->AddHlt("OpenHLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
+
+  // JH. Here we use the L1/L2/L3 thresholds 3/4/5, consistent with requested changes 
+  // from the muon POG.
+  menu->AddHlt("OpenHLT_Mu5","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0);
+
+  menu->AddHlt("OpenHLT_L1DoubleMuOpen","L1_DoubleMuOpen","1",1,"","",1.5,0,0,1,0,0); 
+  menu->AddHlt("OpenHLT_DoubleMu0","L1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0);
 
   /* *** */
 
@@ -2603,6 +2616,20 @@ void BookMenu_SmallMenu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddHlt("HLT_DoubleMu3","L1_DoubleMu3","1",1,"","",1.5,0,0,2,0,0);
   //menu->AddHlt("OpenHLT_DoubleMu3","L1_DoubleMu3","1",1,"","",1.5,0,0,2,0,0);
 
+  menu->AddHlt("OpenHLT_IsoMu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
+  menu->AddHlt("OpenHLT_L2Mu11","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
+  menu->AddHlt("OpenHLT_L1Mu20","L1_SingleMu20","1",1,"","",1.5,0,0,1,0,0);  
+  menu->AddHlt("HLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
+  //  menu->AddHlt("OpenHLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0);  
+ 
+  // JH. Here we use the L1/L2/L3 thresholds 3/4/5, consistent with requested changes  
+  // from the muon POG. 
+  menu->AddHlt("OpenHLT_Mu5","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0); 
+ 
+  menu->AddHlt("OpenHLT_L1DoubleMuOpen","L1_DoubleMuOpen","1",1,"","",1.5,0,0,1,0,0);  
+  menu->AddHlt("OpenHLT_DoubleMu0","L1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0); 
+
+
   /* *** */  
 
   //menu->AddHlt("OpenHLT_Ele5_LW_L1R","L1_SingleEG5","1000",10,"","",1.5,1,0,0,0,0); 
@@ -2647,7 +2674,7 @@ void BookMenu_SmallMenu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   //menu->AddHlt("OpenHLT_L1Jet15","L1_SingleJet15","500",20,"","",1.5,0,0,0,1,0);  
   menu->AddHlt("HLT_Jet30","L1_SingleJet15","500",5,"","",1.5,0,0,0,1,0); 
   //menu->AddHlt("OpenHLT_Jet30","L1_SingleJet15","500",5,"","",1.5,0,0,0,1,0);  
-  //menu->AddHlt("HLT_Jet50","L1_SingleJet30","50",1,"","",1.5,0,0,0,1,0); 
+  menu->AddHlt("HLT_Jet50","L1_SingleJet30","50",1,"","",1.5,0,0,0,1,0); 
   //menu->AddHlt("OpenHLT_Jet50","L1_SingleJet30","50",1,"","",1.5,0,0,0,1,0);  
   menu->AddHlt("HLT_Jet80","L1_SingleJet50","5",2,"","",1.5,0,0,0,1,0); 
   //menu->AddHlt("OpenHLT_Jet80","L1_SingleJet50","5",2,"","",1.5,0,0,0,1,0);  
