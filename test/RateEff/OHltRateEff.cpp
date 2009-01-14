@@ -409,9 +409,7 @@ int main(int argc, char *argv[]){
 #ifdef USE_SAMPLES_AT_FNAL    //SAK
       //PPEX_DIR = inputStore + "OpenHLT212/ppex/";
 #endif //USE_SAMPLES_AT_FNAL
-      //TString PPEX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT184/ppex/";
-      TString PPEX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/ppex/";
-      //TString PPEX_DIR="dcache:/pnfs/cms/WAX/resilient/jjhollar/OpenHLT212/ppex/";
+      TString PPEX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/ppexfinal/";
       ProcFil.clear();
       ProcFil.push_back(PPEX_DIR+"ppex*");
 
@@ -435,9 +433,7 @@ int main(int argc, char *argv[]){
 #ifdef USE_SAMPLES_AT_FNAL    //SAK
       //PPMUX_DIR = inputStore + "OpenHLT212/ppmux/";
 #endif //USE_SAMPLES_AT_FNAL
-      //TString PPMUX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT184/ppmux/";
-      TString PPMUX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/ppmux/";
-      //TString PPMUX_DIR="dcache:/pnfs/cms/WAX/resilient/jjhollar/OpenHLT212/ppmux/";
+      TString PPMUX_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/ppmuxfinal/";
       ProcFil.clear();
       ProcFil.push_back(PPMUX_DIR+"ppmux*");
  
@@ -457,13 +453,10 @@ int main(int argc, char *argv[]){
       hltDatasets.addSample("ppMuX", RATE_SAMPLE);   //SAK
 
       // Minbias
-      //TString MB_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/minbiasnewnew/";
 #ifdef USE_SAMPLES_AT_FNAL    //SAK
       //MB_DIR = inputStore + "OpenHLT212/minbiasnewnew/";
 #endif //USE_SAMPLES_AT_FNAL
-      //    TString MB_DIR="rfio:/castor/cern.ch/user/a/apana/OpenHLT184/MinBias/";
-      TString MB_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/minbiasnewnew/";
-      //TString MB_DIR="dcache:/pnfs/cms/WAX/resilient/chinhan/datasets/RatesAndPrescales/OpenHLT212/minbias/";
+      TString MB_DIR="rfio:/castor/cern.ch/user/j/jjhollar/OpenHLT212/minbiasfinal/";
 
       ProcFil.clear();
       ProcFil.push_back(MB_DIR+"minbias*");
@@ -1529,6 +1522,8 @@ void BookMenu_L1Menu8E29(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddL1("L1_DoubleMu3", 1);  
   menu->AddL1("L1_TripleMu3", 1);  
 
+  menu->AddL1("OpenL1_DoubleMuOpen", 1);   
+
   menu->AddL1("L1_SingleIsoEG5", 1); 
   menu->AddL1("L1_SingleIsoEG8", 1); 
   menu->AddL1("L1_SingleIsoEG10", 1); 
@@ -1607,6 +1602,8 @@ void BookMenu_L1Menu8E29(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddHlt("L1_SingleMu10","L1_SingleMu10","1",1,"-","",1.,0,0,1,0,0);  
   menu->AddHlt("L1_DoubleMu3","L1_DoubleMu3","1",1,"-","",1.,0,0,1,0,0);  
   menu->AddHlt("L1_TripleMu3","L1_TripleMu3","1",1,"-","",1.,0,0,1,0,0);  
+
+  menu->AddHlt("OpenL1_DoubleMuOpen","OpenL1_DoubleMuOpen","1",1,"-","",1.,0,0,1,0,0);  
 
   menu->AddHlt("L1_SingleIsoEG5","L1_SingleIsoEG5","1",1,"-","",1.,0,0,1,0,0); 
   menu->AddHlt("L1_SingleIsoEG8","L1_SingleIsoEG8","1",1,"-","",1.,0,0,1,0,0); 
@@ -1690,6 +1687,8 @@ void BookMenu_SmallMenu8E29(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddL1("L1_SingleMu10", 1);  
   menu->AddL1("L1_DoubleMu3", 1);  
   menu->AddL1("L1_TripleMu3", 1);  
+
+  menu->AddL1("OpenL1_DoubleMuOpen", 1);   
 
   menu->AddL1("L1_SingleIsoEG5", 1); 
   menu->AddL1("L1_SingleIsoEG8", 1); 
@@ -1783,8 +1782,8 @@ void BookMenu_SmallMenu8E29(OHltMenu*  menu, double &iLumi, double &nBunches) {
   // from the muon POG.
   menu->AddHlt("OpenHLT_Mu5","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0);
 
-  menu->AddHlt("OpenHLT_L1DoubleMuOpen","L1_DoubleMuOpen","1",1,"","",1.5,0,0,1,0,0); 
-  menu->AddHlt("OpenHLT_DoubleMu0","L1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0);
+  menu->AddHlt("OpenHLT_L1DoubleMuOpen","OpenL1_DoubleMuOpen","1",1,"","",1.5,0,0,1,0,0);   
+  menu->AddHlt("OpenHLT_DoubleMu0","OpenL1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0);
 
   /* *** */
 
@@ -2361,6 +2360,8 @@ void BookMenu_L1Menu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddL1("L1_DoubleMu3", 1); 
   menu->AddL1("L1_TripleMu3", 1); 
 
+  menu->AddL1("OpenL1_DoubleMuOpen", 1);   
+
   menu->AddL1("L1_SingleIsoEG5", 5); 
   menu->AddL1("L1_SingleIsoEG8", 1); 
   menu->AddL1("L1_SingleIsoEG10", 1); 
@@ -2441,6 +2442,8 @@ void BookMenu_L1Menu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddHlt("L1_SingleMu10","L1_SingleMu10","1",1,"-","",1.,0,0,1,0,0); 
   menu->AddHlt("L1_DoubleMu3","L1_DoubleMu3","1",1,"-","",1.,0,0,1,0,0); 
   menu->AddHlt("L1_TripleMu3","L1_TripleMu3","1",1,"-","",1.,0,0,1,0,0); 
+
+  menu->AddHlt("OpenL1_DoubleMuOpen","OpenL1_DoubleMuOpen","1",1,"-","",1.,0,0,1,0,0);     
 
   menu->AddHlt("L1_SingleIsoEG5","L1_SingleIsoEG5","5",1,"-","",1.,0,0,1,0,0); 
   menu->AddHlt("L1_SingleIsoEG8","L1_SingleIsoEG8","1",1,"-","",1.,0,0,1,0,0); 
@@ -2523,8 +2526,11 @@ void BookMenu_SmallMenu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddL1("L1_SingleMu5", 25); 
   menu->AddL1("L1_SingleMu7", 1); 
   menu->AddL1("L1_SingleMu10", 1); 
+  menu->AddL1("L1_SingleMu20", 1);  
   menu->AddL1("L1_DoubleMu3", 1); 
   menu->AddL1("L1_TripleMu3", 1); 
+
+  menu->AddL1("OpenL1_DoubleMuOpen", 1);  
 
   menu->AddL1("L1_SingleIsoEG5", 5); 
   menu->AddL1("L1_SingleIsoEG8", 1); 
@@ -2601,11 +2607,11 @@ void BookMenu_SmallMenu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   //menu->AddHlt("OpenHLT_L1MuOpen","L1_SingleMuOpen OR L1_SingleMu3 OR L1_SingleMu5","1500,250,25",5,"","",1.5,0,0,1,0,0);  
   menu->AddHlt("HLT_L1Mu","L1_SingleMu7 OR L1_DoubleMu3","1,1",100,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_L1Mu","L1_SingleMu7 OR L1_DoubleMu3","1,1",100,"","",1.5,0,0,1,0,0);  
-  //menu->AddHlt("HLT_L2Mu9","L1_SingleMu7","1",10,"","",1.5,0,0,1,0,0); 
+  menu->AddHlt("HLT_L2Mu9","L1_SingleMu7","1",10,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_L2Mu9","L1_SingleMu7","1",10,"","",1.5,0,0,1,0,0);  
   //menu->AddHlt("HLT_Mu3","L1_SingleMu3","250",1,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_Mu3","L1_SingleMu3","250",1,"","",1.5,0,0,1,0,0);  
-  menu->AddHlt("HLT_Mu5","L1_SingleMu5","25",1,"","",1.5,0,0,1,0,0); 
+  //  menu->AddHlt("HLT_Mu5","L1_SingleMu5","25",1,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_Mu5","L1_SingleMu3","250",1,"","",1.5,0,0,1,0,0);  
   //menu->AddHlt("HLT_Mu7","L1_SingleMu7","1",5,"","",1.5,0,0,1,0,0); 
   //menu->AddHlt("OpenHLT_Mu7","L1_SingleMu7","1",5,"","",1.5,0,0,1,0,0);  
@@ -2619,16 +2625,13 @@ void BookMenu_SmallMenu1E31(OHltMenu*  menu, double &iLumi, double &nBunches) {
   menu->AddHlt("OpenHLT_IsoMu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
   menu->AddHlt("OpenHLT_L2Mu11","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
   menu->AddHlt("OpenHLT_L1Mu20","L1_SingleMu20","1",1,"","",1.5,0,0,1,0,0);  
-  menu->AddHlt("HLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0); 
-  //  menu->AddHlt("OpenHLT_Mu9","L1_SingleMu7","1",1,"","",1.5,0,0,1,0,0);  
  
   // JH. Here we use the L1/L2/L3 thresholds 3/4/5, consistent with requested changes  
   // from the muon POG. 
   menu->AddHlt("OpenHLT_Mu5","L1_SingleMu3","1",1,"","",1.5,0,0,1,0,0); 
  
-  menu->AddHlt("OpenHLT_L1DoubleMuOpen","L1_DoubleMuOpen","1",1,"","",1.5,0,0,1,0,0);  
-  menu->AddHlt("OpenHLT_DoubleMu0","L1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0); 
-
+  menu->AddHlt("OpenHLT_L1DoubleMuOpen","OpenL1_DoubleMuOpen","1",10,"","",1.5,0,0,1,0,0);  
+  menu->AddHlt("OpenHLT_DoubleMu0","OpenL1_DoubleMuOpen","1",1,"","",1.5,0,0,2,0,0); 
 
   /* *** */  
 

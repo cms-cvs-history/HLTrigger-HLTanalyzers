@@ -694,6 +694,9 @@ public :
   Int_t	L1_SingleJetCountsHFRing0Sum6;
   Int_t	L1_DoubleJetCountsHFRing0Sum6;
 
+  // L1 bits approved after initial trigger reviews
+  Int_t OpenL1_DoubleMuOpen;
+
   // List of branches
   TBranch        *b_NrecoJetCal;   //!
   TBranch        *b_NrecoJetGen;   //!
@@ -2513,6 +2516,8 @@ void OHltTree::SetMapBitOfStandardHLTPath() {
   map_BitOfStandardHLTPath["L1_DoubleMu3"] = L1_DoubleMu3;             
   map_BitOfStandardHLTPath["L1_TripleMu3"] = L1_TripleMu3;             
 
+  map_BitOfStandardHLTPath["OpenL1_DoubleMuOpen"] = OpenL1_DoubleMuOpen;              
+
   map_BitOfStandardHLTPath["L1_SingleIsoEG5"] = L1_SingleIsoEG5;       
   map_BitOfStandardHLTPath["L1_SingleIsoEG8"] = L1_SingleIsoEG8;       
   map_BitOfStandardHLTPath["L1_SingleIsoEG10"] = L1_SingleIsoEG10;       
@@ -2937,6 +2942,8 @@ void OHltTree::SetMapL1BitOfStandardHLTPath() {
   map_L1BitOfStandardHLTPath["L1_SingleMuBeamHalo"] = L1_SingleMuBeamHalo; 
   map_L1BitOfStandardHLTPath["L1_DoubleMu3"] = L1_DoubleMu3;             
   map_L1BitOfStandardHLTPath["L1_TripleMu3"] = L1_TripleMu3;             
+
+  map_L1BitOfStandardHLTPath["OpenL1_DoubleMuOpen"] = OpenL1_DoubleMuOpen;              
 
   map_L1BitOfStandardHLTPath["L1_SingleIsoEG5"] = L1_SingleIsoEG5;       
   map_L1BitOfStandardHLTPath["L1_SingleIsoEG8"] = L1_SingleIsoEG8;       

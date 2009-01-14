@@ -66,6 +66,10 @@ void OHltTree::Loop( vector<int> * iCount, vector<int> * sPureCount, vector<int>
 
     if (jentry%10000 == 0) cout<<"Processing entry "<<jentry<<"/"<<nentries<<"\r"<<flush<<endl;
 
+    // Here we can emulate new L1 trigger selections so they can be used to calculate L1 rates. 
+    // This *must* be done before applying the L1 prescale!
+    OpenL1_DoubleMuOpen =  (L1MuPt[0] > 0) && (L1MuPt[1] > 0); 
+
     // We're running on unskimmed, unprescaled MC. _After_ getting the event but _before_ setting the 
     // L1->HLT association with SetMapL1BitOfStandardHLTPath, apply prescales to L1.
     // Leave room for a switch in case we don't want to do prescaling (i.e. for data).
@@ -1073,6 +1077,27 @@ void OHltTree::Loop( vector<int> * iCount, vector<int> * sPureCount, vector<int>
 	} 
       }
 
+      else if (trignames[it].CompareTo("OpenHLT_L2Mu9_1Jet30") == 0){ // SGL - example lepton+jet cross-trigger
+        if((L1_Mu5_Jet15==1)) {      // L1 Seed  
+          L1AssHLTBit[it] = true;   
+          int rc = 0; 
+          if(OpenHlt1CorJetPassed(30)>=1){ // Require 1 corrected jet above threshold
+            for(int i = 0; i < NohMuL2; i++) { 
+              if(ohMuL2Pt[i] > 9.) { // Count L2 muons above threshold
+                rc++; 
+              } 
+            } 
+          } 
+          if(rc>0) { 
+            triggerBitNoPrescale[it] = true;            
+            if ((iCountNoPrescale[it]) % map_pathHLTPrescl.find(trignames[it])->second == 0) {            
+              triggerBit[it] = true;          
+            }           
+          }           
+        } 
+      } 
+
+
 
       //------------------Triggers approved in winter 2008 reviews----------------------------   
       //-------- https://hypernews.cern.ch/HyperNews/CMS/get/online-selection/662.html--------
@@ -1097,13 +1122,14 @@ void OHltTree::Loop( vector<int> * iCount, vector<int> * sPureCount, vector<int>
     
     
       else if(trignames[it].CompareTo("OpenHLT_DoubleMu0") == 0) {     
-	int rc = 0;
-	for(int i = 0; i < NL1OpenMu; i++) {    
-	  if(L1MuPt[i] > -1.) { // L1 seed
-	    rc++;
-	  }
-	}
-	if(rc > 1) {
+	//	int rc = 0;
+	//	for(int i = 0; i < NL1OpenMu; i++) {    
+	//	  if(L1MuPt[i] > -1.) { // L1 seed
+	//	    rc++;
+	//	  }
+	//	}
+	//	if(rc > 1) {
+	if(OpenL1_DoubleMuOpen==1) { // L1 seed
 	  L1AssHLTBit[it] = true;     
 	  if(OpenHlt2MuonPassed(0.,0.,0.,2.,0)>=2) {     
 	    triggerBitNoPrescale[it] = true;      
