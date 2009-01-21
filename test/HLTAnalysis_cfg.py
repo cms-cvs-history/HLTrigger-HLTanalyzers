@@ -37,7 +37,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 100 )
+    input = cms.untracked.int32( 500 )
 )
 
 process.load("Configuration.StandardSequences.GeometryPilot2_cff")
@@ -46,7 +46,8 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # Conditions: fake or frontier
 # process.load("Configuration.StandardSequences.FakeConditions_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = 'IDEAL_V9::All'
+# process.GlobalTag.globaltag = 'IDEAL_V9::All'
+process.GlobalTag.globaltag = 'STARTUP_V5::All'
 
 process.load("Configuration.StandardSequences.L1Emulator_cff")
 # Choose a menu/prescale/mask from one of the choices
