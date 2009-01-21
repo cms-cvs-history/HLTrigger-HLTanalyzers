@@ -111,6 +111,13 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   L1NonIsoPixelSeeds_       = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
   L1IsoPixelSeedsLW_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
   L1NonIsoPixelSeedsLW_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
+
+  // AlCa OpenHLT input collections  
+  EERecHitTag_              = conf.getParameter<edm::InputTag> ("EERecHits"); 
+  EBRecHitTag_              = conf.getParameter<edm::InputTag> ("EBRecHits"); 
+  HBHERecHitTag_            = conf.getParameter<edm::InputTag> ("HBHERecHits");  
+  HORecHitTag_              = conf.getParameter<edm::InputTag> ("HORecHits");  
+  HFRecHitTag_              = conf.getParameter<edm::InputTag> ("HFRecHits");  
   
   m_file = 0;   // set to null
   errCnt = 0;
@@ -136,6 +143,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   elm_analysis_.setup(conf, HltTree);
   muon_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
+  alca_analysis_.setup(conf, HltTree); 
   hlt_analysis_.setup(conf, HltTree);
   evt_header_.setup(HltTree);
 }
@@ -211,6 +219,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  HcalNonIsolMap;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackIsolMap;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackNonIsolMap;
+
+  // AlCa OpenHLT input collections  
+  edm::Handle<EBRecHitCollection>             ebrechits; 
+  edm::Handle<EERecHitCollection>             eerechits;  
+  edm::Handle<HBHERecHitCollection>           hbherechits;  
+  edm::Handle<HORecHitCollection>             horechits;  
+  edm::Handle<HFRecHitCollection>             hfrechits;  
   
   // new stuff for the egamma EleId
   edm::InputTag ecalRechitEBTag (string("hltEcalRegionalEgammaRecHit:EcalRecHitsEB"));
@@ -310,6 +325,11 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, TrackNonIsolMap,          NonIsoPhoTrackIsol_,        kNonIsoPhoTrackIsol);
   getCollection( iEvent, missing, TrackEleIsolMap,          IsoEleTrackIsol_,           kIsoEleTrackIsol);
   getCollection( iEvent, missing, TrackIsolMap,             IsoPhoTrackIsol_,           kIsoPhoTrackIsol);
+  getCollection( iEvent, missing, eerechits,                EERecHitTag_,               kEErechits ); 
+  getCollection( iEvent, missing, ebrechits,                EBRecHitTag_,               kEBrechits );  
+  getCollection( iEvent, missing, hbherechits,              HBHERecHitTag_,             kHBHErechits );   
+  getCollection( iEvent, missing, horechits,                HORecHitTag_,               kHOrechits );   
+  getCollection( iEvent, missing, hfrechits,                HFRecHitTag_,               kHFrechits );   
 
   // print missing collections
   if (not missing.empty() and (errCnt < errMax())) {
@@ -380,6 +400,14 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     mctruth,
     genEventScale,
     HltTree);
+
+  alca_analysis_.analyze( 
+    ebrechits, 
+    eerechits, 
+    hbherechits, 
+    horechits, 
+    hfrechits, 
+    HltTree); 
   
   hlt_analysis_.analyze(
     hltresults,
