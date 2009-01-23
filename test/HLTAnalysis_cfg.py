@@ -37,7 +37,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 500 )
+    input = cms.untracked.int32( 50 )
 )
 
 process.load("Configuration.StandardSequences.GeometryPilot2_cff")
@@ -73,6 +73,13 @@ process.load("Configuration.StandardSequences.L1Emulator_cff")
 # Define the HLT reco paths
 process.load("HLTrigger.HLTanalyzers.HLTopen_cff")
 
+# AlCa OpenHLT specific settings
+process.hltEcalRegionalRestFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalJetsFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalEgammaFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalMuonsFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalTausFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
 process.analyzeThis = cms.Path( process.hltanalysis )
@@ -87,5 +94,6 @@ process.schedule = cms.Schedule(
     process.DoHLTElectronLargeWindows, 
     process.DoHLTTau, 
     process.DoHLTBTag,
+    process.DoHLTAlCaPi0,
     process.analyzeThis )
 

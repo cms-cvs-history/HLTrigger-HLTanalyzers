@@ -64,3 +64,5 @@ const char * kEBrechits                   = "ECAL Barrel RecHits";
 const char * kHBHErechits                 = "HCAL Endcap-Barrel RecHits"; 
 const char * kHOrechits                   = "HCAL HO RecHits";  
 const char * kHFrechits                   = "HCAL HF RecHits"; 
+const char * kpi0EErechits                = "ECAL pi0 Endcap RecHits"; 
+const char * kpi0EBrechits                = "ECAL pi0 Barrel RecHits";  
