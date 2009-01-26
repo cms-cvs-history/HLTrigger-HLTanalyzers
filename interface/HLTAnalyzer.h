@@ -6,6 +6,7 @@
 #include "HLTrigger/HLTanalyzers/interface/HLTBJet.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMCtruth.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTMuon.h"
+#include "HLTrigger/HLTanalyzers/interface/HLTAlCa.h"  
 #include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -14,7 +15,12 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
+#include "Geometry/CaloEventSetup/interface/CaloTopologyRecord.h"  
+#include "Geometry/CaloEventSetup/interface/CaloTopologyRecord.h"  
+
+#include "CondFormats/DataRecord/interface/L1CaloGeometryRecord.h"  
 
 #include "DataFormats/Common/interface/Handle.h"
 
@@ -51,9 +57,10 @@ private:
   HLTMuon     muon_analysis_;
   HLTEgamma   elm_analysis_;
   HLTMCtruth  mct_analysis_;
+  HLTAlCa     alca_analysis_; 
   HLTInfo     hlt_analysis_;
 
-  edm::InputTag recjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltresults_,genEventScale_;
+  edm::InputTag recjets_,reccorjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltresults_,genEventScale_;
   edm::InputTag muon_;
   std::string l1extramc_, l1extramu_;
   edm::InputTag m_l1extramu;
@@ -64,11 +71,11 @@ private:
   edm::InputTag m_l1extrataujet;
   edm::InputTag m_l1extramet;
 
-  edm::InputTag particleMapSource_,mctruth_; 
+  edm::InputTag particleMapSource_,mctruth_,simhits_; 
   edm::InputTag gtReadoutRecord_,gtObjectMap_; 
   edm::InputTag gctCounts_;
 
-  edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;//,MuLinkTag_;
+  edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_,MuLinkTag_;
   edm::InputTag HLTTau_;
 
   // btag OpenHLT input collections
@@ -108,6 +115,15 @@ private:
   edm::InputTag L1NonIsoPixelSeeds_;
   edm::InputTag L1IsoPixelSeedsLW_;
   edm::InputTag L1NonIsoPixelSeedsLW_;
+
+  // AlCa OpenHLT input collections  
+  edm::InputTag EERecHitTag_; 
+  edm::InputTag EBRecHitTag_;  
+  edm::InputTag pi0EERecHitTag_;  
+  edm::InputTag pi0EBRecHitTag_;   
+  edm::InputTag HBHERecHitTag_;   
+  edm::InputTag HORecHitTag_;   
+  edm::InputTag HFRecHitTag_;   
 
   int errCnt;
   const int errMax(){return 100;}

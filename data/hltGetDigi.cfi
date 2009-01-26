@@ -1,0 +1,64 @@
+module hltGetDigi = HLTGetDigi {
+   
+
+   # Define which digis we want to "get"
+
+   untracked bool getEcal   = true
+   untracked bool getEcalES = true
+   untracked bool getHcal   = true
+   untracked bool getPixels = true
+   untracked bool getStrips = true
+   untracked bool getCSC    = true
+   untracked bool getDT     = true
+   untracked bool getRPC    = true
+
+   untracked bool getGctEm           = true
+   untracked bool getGctJet          = true
+   untracked bool getGctJetCounts    = true
+   untracked bool getGctEt           = true
+   untracked bool getL1Calo          = false
+   untracked bool getGtEvmRR         = true
+   untracked bool getGtObjectMap     = true
+   untracked bool getGtReadoutRecord = true
+   untracked bool getGmtCands        = true
+   untracked bool getGmtReadout      = true
+
+   InputTag EBdigiCollection = ecalDigis:ebDigis
+   InputTag EEdigiCollection = ecalDigis:eeDigis
+   InputTag ESdigiCollection = ecalPreshowerDigis
+
+   InputTag HBHEdigiCollection = hcalDigis
+   InputTag HOdigiCollection   = hcalDigis
+   InputTag HFdigiCollection   = hcalDigis
+
+   InputTag SiPixeldigiCollection = siPixelDigis
+   InputTag SiStripdigiCollection = siStripDigis
+
+   InputTag CSCStripdigiCollection = muonCSCDigis:MuonCSCStripDigi
+   InputTag CSCWiredigiCollection  = muonCSCDigis:MuonCSCWireDigi
+   InputTag DTdigiCollection       = muonDTDigis
+   InputTag RPCdigiCollection      = muonRPCDigis
+
+   InputTag L1CaloEmCollection = rctDigis
+   InputTag L1CaloRegionCollection = rctDigis
+
+   InputTag GctIsoEmCollection = gctDigis:isoEm
+   InputTag GctNonIsoEmCollection = gctDigis:nonIsoEm
+
+   InputTag GctCenJetCollection = gctDigis:cenJets
+   InputTag GctForJetCollection = gctDigis:tauJets
+   InputTag GctTauJetCollection = gctDigis:tauJets
+   InputTag GctJetCounts = gctDigis
+
+   InputTag GctEtHadCollection = gctDigis
+   InputTag GctEtMissCollection = gctDigis
+   InputTag GctEtTotalCollection = gctDigis
+
+   InputTag GtEvmReadoutRecord = gtDigis
+   InputTag GtObjectMapRecord = gtDigis
+   InputTag GtReadoutRecord = gtDigis
+
+   InputTag GmtCands = gmtDigis
+   InputTag GmtReadoutCollection = gmtDigis
+
+}

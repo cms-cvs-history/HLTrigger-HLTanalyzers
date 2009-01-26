@@ -34,10 +34,15 @@
 <use name=Geometry/CaloGeometry>
 <use name=Geometry/CommonDetUnit>
 <use name=Geometry/Records>
+<use name=Geometry/EcalMapping> 
 <use name=L1Trigger/RegionalCaloTrigger>
 <use name=MagneticField/Engine>
 <use name=MagneticField/Records>
-<use name=SimDataFormats/GeneratorProducts>
+<use name=SimDataFormats/HepMCProduct>
+<use name=SimDataFormats/Track>
+<use name=SimDataFormats/Vertex>
 <use name=TrackingTools/TrajectoryState>
+<use name=RecoEcal/EgammaCoreTools>
+<use name=RecoEgamma/EgammaTools>
 <use name=rootcore>
 <flags EDM_PLUGIN=1>

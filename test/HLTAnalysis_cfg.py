@@ -8,17 +8,7 @@ process.options = cms.untracked.PSet(
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-        # /RelValTTbar/CMSSW_2_2_0_IDEAL_V9_v1/GEN-SIM-RECO
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/28C21C98-18B9-DD11-A601-001617E30D00.root',
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/6262739A-17B9-DD11-BEE0-001617E30D00.root',
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/82E7934A-B5B9-DD11-A0A1-001617E30CA4.root',
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/8655C9E9-14B9-DD11-B733-000423D99264.root',
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/AA8D34FF-19B9-DD11-87E8-000423D9A212.root',
-        '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-RECO/IDEAL_V9_v1/0000/C660BDA3-16B9-DD11-8E6B-000423D98800.root'
-    ),
-    secondaryFileNames = cms.untracked.vstring(
-        # /RelValTTbar/CMSSW_2_2_0_IDEAL_V9_v1/GEN-SIM-DIGI-RAW-HLTDEBUG 
+    fileNames = cms.untracked.vstring( 
         '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/0428C69F-16B9-DD11-B9F5-000423D98868.root',
         '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/0E58A24A-14B9-DD11-A323-000423D6CA42.root',
         '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/1A3BB17F-18B9-DD11-BD3F-000423D99BF2.root',
@@ -46,9 +36,8 @@ process.source = cms.Source("PoolSource",
         '/store/relval/CMSSW_2_2_0/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_V9_v1/0000/EAC854C4-18B9-DD11-B0A0-000423D94524.root'
     )
 )
-
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 50 )
 )
 
 process.load("Configuration.StandardSequences.GeometryPilot2_cff")
@@ -57,7 +46,8 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # Conditions: fake or frontier
 # process.load("Configuration.StandardSequences.FakeConditions_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-#process.GlobalTag.globaltag = 'IDEAL_V9::All'
+# process.GlobalTag.globaltag = 'IDEAL_V9::All'
+process.GlobalTag.globaltag = 'STARTUP_V5::All'
 
 process.load("Configuration.StandardSequences.L1Emulator_cff")
 # Choose a menu/prescale/mask from one of the choices
@@ -83,6 +73,13 @@ process.load("Configuration.StandardSequences.L1Emulator_cff")
 # Define the HLT reco paths
 process.load("HLTrigger.HLTanalyzers.HLTopen_cff")
 
+# AlCa OpenHLT specific settings
+process.hltEcalRegionalRestFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalJetsFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalEgammaFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalMuonsFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+process.hltEcalRegionalTausFEDs.Pi0ListToIgnore =  cms.InputTag("hltEcalRegionalPi0FEDs")
+
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
 process.analyzeThis = cms.Path( process.hltanalysis )
@@ -97,4 +94,6 @@ process.schedule = cms.Schedule(
     process.DoHLTElectronLargeWindows, 
     process.DoHLTTau, 
     process.DoHLTBTag,
+    process.DoHLTAlCaPi0,
     process.analyzeThis )
+
