@@ -199,5 +199,6 @@ DoHLTAlCaECALPhiSym = cms.Path(
     hltEcalWeightUncalibRecHit +
     hltEcalRecHit +
     hltAlCaPhiSymStream +
+    HLTDoLocalHcalSequence +
     HLTEndSequence
     )
