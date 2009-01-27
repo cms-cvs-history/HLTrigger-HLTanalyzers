@@ -86,10 +86,8 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     PerformanceBJetsL3              = cms.InputTag("openHltBPerfMeasL3BJetTags"),
 
     ### AlCa OpenHLT related objects
-    EERecHits                   = cms.InputTag("hltAlCaPhiSymStream","phiSymEcalRecHitsEE"),
-    EBRecHits                   = cms.InputTag("hltAlCaPhiSymStream","phiSymEcalRecHitsEB"),
-#    pi0EBRecHits                = cms.InputTag("hltAlCaPi0RegRecHits","pi0EcalRecHitsEB"), 
-#    pi0EERecHits                = cms.InputTag("hltAlCaPi0RegRecHits","pi0EcalRecHitsEE"),               
+    EERecHits                   = cms.InputTag("hltEcalRecHit","EcalRecHitsEE"),
+    EBRecHits                   = cms.InputTag("hltEcalRecHit","EcalRecHitsEB"),
     pi0EBRecHits                = cms.InputTag("hltEcalRegionalPi0RecHit","EcalRecHitsEB"),
     pi0EERecHits                = cms.InputTag("hltEcalRegionalPi0RecHit","EcalRecHitsEE"),
     HBHERecHits                 = cms.InputTag("hbhereco"),

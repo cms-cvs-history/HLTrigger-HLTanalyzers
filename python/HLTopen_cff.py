@@ -190,3 +190,14 @@ HLTDoRegionalPi0EcalSequence = cms.Sequence( hltEcalPreshowerDigis + hltEcalRegi
 DoHLTAlCaPi0 = cms.Path(
     HLTDoRegionalPi0EcalSequence
     )
+
+DoHLTAlCaECALPhiSym = cms.Path(
+    HLTBeginSequence +
+    hltL1sAlCaEcalPhiSym +
+    hltPreAlCaEcalPhiSym +
+    hltEcalDigis +
+    hltEcalWeightUncalibRecHit +
+    hltEcalRecHit +
+    hltAlCaPhiSymStream +
+    HLTEndSequence
+    )

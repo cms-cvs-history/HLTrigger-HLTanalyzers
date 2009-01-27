@@ -94,6 +94,7 @@ process.schedule = cms.Schedule(
     process.DoHLTElectronLargeWindows, 
     process.DoHLTTau, 
     process.DoHLTBTag,
+    process.DoHLTAlCaECALPhiSym,
     process.DoHLTAlCaPi0,
     process.analyzeThis )
 
