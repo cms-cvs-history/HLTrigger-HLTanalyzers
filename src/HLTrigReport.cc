@@ -2,8 +2,8 @@
  *
  * See header file for documentation
  *
- *  $Date: 2007/07/30 14:06:35 $
- *  $Revision: 1.3 $
+ *  $Date: 2009/03/05 15:12:34 $
+ *  $Revision: 1.6 $
  *
  *  \author Martin Grunewald
  *
@@ -105,20 +105,21 @@ HLTrigReport::endJob()
   // final printout of accumulated statistics
 
   using namespace std;
+  using namespace edm;
   const unsigned int n(hlNames_.size());
 
-    cout << dec << endl;
-    cout << "HLT-Report " << "---------- Event  Summary ------------\n";
-    cout << "HLT-Report"
+    LogVerbatim("") << dec << endl;
+    LogVerbatim("") << "HLT-Report " << "---------- Event  Summary ------------\n";
+    LogVerbatim("") << "HLT-Report"
 	 << " Events total = " << nEvents_
 	 << " wasrun = " << nWasRun_
 	 << " passed = " << nAccept_
 	 << " errors = " << nErrors_
 	 << "\n";
 
-    cout << endl;
-    cout << "HLT-Report " << "---------- HLTrig Summary ------------\n";
-    cout << "HLT-Report "
+    LogVerbatim("") << endl;
+    LogVerbatim("") << "HLT-Report " << "---------- HLTrig Summary ------------\n";
+    LogVerbatim("") << "HLT-Report "
 	 << right << setw(10) << "HLT  Bit#" << " "
 	 << right << setw(10) << "WasRun" << " "
 	 << right << setw(10) << "Passed" << " "
@@ -127,7 +128,7 @@ HLTrigReport::endJob()
 
   if (init_) {
     for (unsigned int i=0; i!=n; ++i) {
-      cout << "HLT-Report "
+      LogVerbatim("") << "HLT-Report "
 	   << right << setw(10) << i << " "
 	   << right << setw(10) << hlWasRun_[i] << " "
 	   << right << setw(10) << hlAccept_[i] << " "
@@ -135,12 +136,12 @@ HLTrigReport::endJob()
 	   << hlNames_[i] << "\n";
     }
   } else {
-    cout << "HLT-Report - No HL TriggerResults found!" << endl;
+    LogVerbatim("") << "HLT-Report - No HL TriggerResults found!" << endl;
   }
 
-    cout << endl;
-    cout << "HLT-Report end!" << endl;
-    cout << endl;
+    LogVerbatim("") << endl;
+    LogVerbatim("") << "HLT-Report end!" << endl;
+    LogVerbatim("") << endl;
 
     return;
 }
