@@ -9,10 +9,8 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     simhits                         = cms.InputTag("g4SimHits"),
 
     ### Trigger objects
-   #l1GctCounts                     = cms.InputTag("l1GctEmulDigis"),
-   #l1GtObjectMapRecord             = cms.InputTag("l1GtEmulDigis"),
-   #l1GtReadoutRecord               = cms.InputTag("l1GmtEmulDigis"),
-    l1GctCounts                     = cms.InputTag("hltGctDigis"),
+    l1GctHFBitCounts                 = cms.InputTag("hltGctDigis"),
+    l1GctHFRingSums                  = cms.InputTag("hltGctDigis")
     l1GtObjectMapRecord             = cms.InputTag("hltL1GtObjectMap::HLT"),
     l1GtReadoutRecord               = cms.InputTag("hltGtDigis::HLT"),
     l1extramc                       = cms.string('hltL1extraParticles'),

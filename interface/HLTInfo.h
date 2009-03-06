@@ -21,6 +21,8 @@
 #include "DataFormats/L1Trigger/interface/L1JetParticleFwd.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticle.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticleFwd.h"
+# include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFRingEtSums.h"
+# include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFBitCounts.h"
 #include "DataFormats/L1GlobalMuonTrigger/interface/L1MuGMTExtendedCand.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 
@@ -75,7 +77,8 @@ public:
 //	       const edm::Handle<l1extra::L1ParticleMapCollection>    & l1mapcoll,
 	       const edm::Handle<L1GlobalTriggerReadoutRecord>        & l1GTRR,
 	       const edm::Handle<L1GlobalTriggerObjectMapRecord>      & l1GTOMRec,
-	       const edm::Handle<L1GctJetCountsCollection>            & L1GctCounts,
+	       const edm::Handle<L1GctHFBitCountsCollection>          & gctBitCounts,
+	       const edm::Handle<L1GctHFRingEtSumsCollection>         & gctRingSums,	       
 	       TTree* tree);
 
 private:
@@ -91,10 +94,11 @@ private:
   float met, metphi, mettot, methad;
   int L1EvtCnt,HltEvtCnt,nhltpart,nl1extiem,nl1extnem,nl1extmu,nl1extjetc,nl1extjetf,nl1extjt,nl1exttau;
   int *trigflag, *l1flag, *l1extmuiso, *l1extmumip, *l1extmufor, *l1extmurpc, *l1extmuqul;
-  int l1hfRing0EtSumNegativeEta,l1hfRing1EtSumNegativeEta;
-  int l1hfRing0EtSumPositiveEta,l1hfRing1EtSumPositiveEta;
-  int l1hfTowerCountPositiveEta,l1hfTowerCountNegativeEta;
-  
+  int l1hfRing1EtSumNegativeEta,l1hfRing2EtSumNegativeEta;
+  int l1hfRing1EtSumPositiveEta,l1hfRing2EtSumPositiveEta;
+  int l1hfTowerCountPositiveEtaRing1,l1hfTowerCountNegativeEtaRing1;
+  int l1hfTowerCountPositiveEtaRing2,l1hfTowerCountNegativeEtaRing2;
+
   // input variables
   bool _Debug;
 
