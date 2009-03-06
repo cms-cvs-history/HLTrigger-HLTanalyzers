@@ -181,6 +181,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<L1GlobalTriggerObjectMapRecord>       l1GtOMRec;
   edm::Handle<L1GlobalTriggerObjectMap>             l1GtOM;
   edm::Handle<L1GctJetCountsCollection>             l1GctCounts;
+  edm::Handle<L1GctHFBitCounts>                     l1GctHFBitCounts;
+  edm::Handle<L1GctHFRingEtSums>                    l1GctHFRingEtSums;
   edm::Handle<RecoChargedCandidateCollection>       mucands2, mucands3;
   edm::Handle<edm::ValueMap<bool> >                 isoMap2,  isoMap3;
   edm::Handle<MuonTrackLinksCollection>             mulinks;
@@ -452,6 +454,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     l1GtRR,
     l1GtOMRec,
     l1GctCounts,
+    l1GctHFBitCounts,
+    l1GctHFRingEtSums,
     HltTree);
   
   bjet_analysis_.analyze(
