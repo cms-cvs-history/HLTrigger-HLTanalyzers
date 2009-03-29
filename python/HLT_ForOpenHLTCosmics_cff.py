@@ -609,7 +609,11 @@ hltL1extraParticles = cms.EDProducer( "L1ExtraParticlesProd",
     etTotalSource = cms.InputTag( "hltGctDigis" ),
     etHadSource = cms.InputTag( "hltGctDigis" ),
     etMissSource = cms.InputTag( "hltGctDigis" ),
-    centralBxOnly = cms.bool( True )
+    centralBxOnly = cms.bool( True ),
+    htMissSource = cms.InputTag('hltGctDigis'),
+    hfRingEtSumsSource = cms.InputTag('hltGctDigis'),
+    hfRingBitCountsSource = cms.InputTag('hltGctDigis'),
+    ignoreHtMiss = cms.bool(False)
 )
 hltOfflineBeamSpot = cms.EDProducer( "BeamSpotProducer" )
 hltBoolFirst = cms.EDFilter( "HLTBool",
@@ -5349,8 +5353,7 @@ hltL3TrajectorySeed = cms.EDProducer( "TSGFromL2Muon",
 )
 hltL3TrackCandidateFromL2 = cms.EDProducer( "CkfTrajectoryMaker",
     trackCandidateAlso = cms.bool( True ),
-    SeedProducer = cms.string( "hltL3TrajectorySeed" ),
-    SeedLabel = cms.string( "" ),
+    src = cms.InputTag( "hltL3TrajectorySeed" ),
     TrajectoryBuilder = cms.string( "muonCkfTrajectoryBuilder" ),
     TrajectoryCleaner = cms.string( "TrajectoryCleanerBySharedHits" ),
     NavigationSchool = cms.string( "SimpleNavigationSchool" ),
