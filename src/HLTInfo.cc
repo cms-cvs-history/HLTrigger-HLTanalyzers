@@ -383,6 +383,9 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_Debug) std::cout << "%HLTInfo -- No L1 GT ReadoutRecord or ObjectMapRecord" << std::endl;
   }
 
+
+  /* Obsolete now: */
+
   // Minbias triggers from GCT
   // Jet Count   Quantity
   //   6        HFTowerCountPositiveEta
@@ -394,20 +397,9 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   //
   // LSB for feature bits = 0.125 GeV.
   // The default LSB for the ring sums is 0.5 GeV.
-  
-  if (L1GctCounts.isValid()) {
-    /*
-    for (int i=6;i<=11;i++) {
-      std::cout<<i<<" "<<L1GctCounts->count(i)<<std::endl;
-    }
-    std::cout<<"A "<<L1GctCounts->hfTowerCountPositiveEta()<<std::endl;
-    std::cout<<"B "<<L1GctCounts->hfTowerCountNegativeEta()<<std::endl;
-    std::cout<<"C "<<L1GctCounts->hfRing0EtSumPositiveEta()<<std::endl;
-    std::cout<<"D "<<L1GctCounts->hfRing0EtSumNegativeEta()<<std::endl;
-    std::cout<<"E "<<L1GctCounts->hfRing1EtSumPositiveEta()<<std::endl;
-    std::cout<<"F "<<L1GctCounts->hfRing1EtSumNegativeEta()<<std::endl;
-    */
 
+  /*  
+  if (L1GctCounts.isValid()) {
     
     for (L1GctJetCountsCollection::const_iterator jbx=L1GctCounts->begin(); jbx!=L1GctCounts->end(); jbx++) {
       l1hfTowerCountPositiveEta = (int)(* jbx).hfTowerCountPositiveEta();
@@ -420,5 +412,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   } else {
     if (_Debug) std::cout << "%HLTInfo -- No L1 GctJetCounts" << std::endl;
   }
+*/
 
 }
