@@ -53,10 +53,19 @@ del process.PrescaleService
 
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
-process.analyzeThis = cms.Path( process.hltanalysis )
+
+# Events passing HLT_Random do not store L1 GT information, so 
+# add the hltTriggerType filter to select events passing physics triggers.
+# This is already added through HLTBeginSequence for the OpenHLT paths.
+#
+process.analyzeThis = cms.Path( process.hltTriggerType + process.hltanalysis )
+##process.analyzeThis = cms.Path( process.hltanalysis )
+
 
 # pdt
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+
+
 
 # Schedule the whole thing
 process.schedule = cms.Schedule( 
