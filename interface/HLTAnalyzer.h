@@ -63,7 +63,10 @@ private:
   HLTMCtruth  mct_analysis_;
   HLTAlCa     alca_analysis_; 
   HLTTrack    track_analysis_;
+
   HLTInfo     hlt_analysis_;
+
+  double xSection_, skimEff_;
 
   edm::InputTag recjets_,reccorjets_,genjets_,recmet_,genmet_,ht_, calotowers_,hltresults_,genEventInfo_;
   edm::InputTag muon_;

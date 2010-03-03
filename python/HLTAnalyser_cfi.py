@@ -9,6 +9,9 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     ### SIM objects
     simhits                         = cms.InputTag("g4SimHits"),
 
+    xSection                        = cms.double(-999.),
+    skimEff                         = cms.double(-999.),
+                             
     ### Trigger objects
     l1GctHFBitCounts                 = cms.InputTag("hltGctDigis"),
     l1GctHFRingSums                  = cms.InputTag("hltGctDigis"),

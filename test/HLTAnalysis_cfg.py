@@ -1,38 +1,24 @@
 import FWCore.ParameterSet.Config as cms
 
+
+OUTPUTHIST="Summer09_MinBias_900GeV_hltanalyzer_Startup31X_V2.root"
+
 process = cms.Process("ANALYSIS")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(False)
 )
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/E4C24E91-CD57-DE11-90DE-001D09F2532F.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/E469F214-C857-DE11-A950-001D09F252E9.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/DE489DF6-C657-DE11-ABCA-001D09F28D54.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/D4CBC4D7-CC57-DE11-924E-001D09F29619.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/CA9880CE-AC57-DE11-B891-001D09F25208.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/B67BD00F-F257-DE11-95E5-001D09F2B2CF.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/B66C0FD8-CC57-DE11-9593-001D09F297EF.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/B0863555-CA57-DE11-B198-000423D94534.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/98DD9243-B357-DE11-82B4-00304879FBB2.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/906F7F83-C557-DE11-BF54-000423D99AAA.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/4EC4DD37-CD57-DE11-8F88-0019B9F705A3.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/4ADD5FD0-BB57-DE11-B8F0-001617DBD5AC.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/4A2A45E1-AA57-DE11-82AA-0030487A1990.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/404DF239-C357-DE11-849D-001D09F241F0.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/3CB939FA-B757-DE11-BFB5-001D09F24448.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/36647208-C757-DE11-94B1-001D09F24763.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/3447A45D-CD57-DE11-9396-001D09F24489.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/124FFE86-CD57-DE11-92D7-001D09F24259.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/124CD9B7-C457-DE11-87D4-001D09F25393.root',
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG/IDEAL_31X_v1/0008/081FA023-C457-DE11-BAC8-0019B9F704D6.root'
-    )
+   fileNames = cms.untracked.vstring("file:xxx.root")
 )
-
-process.maxEvents = cms.untracked.PSet(   input = cms.untracked.int32( 100 )   )
+process.maxEvents = cms.untracked.PSet(
+   input = cms.untracked.int32(-1),
+   skipBadFiles = cms.bool(True)
+)
 
 process.load('Configuration/StandardSequences/GeometryExtended_cff')
 process.load('Configuration/StandardSequences/MagneticField_38T_cff')
@@ -48,7 +34,8 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 # * CRAFT_31X_V1P, CRAFT_31X_V1H - initial conditions for 2009 cosmic data taking - as CRAFT08_31X_V1 but with different
 #   tag names to allow append IOV, and DT cabling map corresponding to 2009 configuration (10 FEDs).
 # Meanwhile...:
-process.GlobalTag.globaltag = 'MC_31X_V2::All'
+# process.GlobalTag.globaltag = 'MC_31X_V2::All'
+process.GlobalTag.globaltag = 'STARTUP31X_V2::All'
 
 
 process.load('Configuration/StandardSequences/SimL1Emulator_cff')
@@ -64,14 +51,47 @@ del process.PrescaleService
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
 process.analyzeThis = cms.Path( process.hltanalysis )
-process.hltanalysis.RunParameters.HistogramFile='openhlt.root'
+process.hltanalysis.RunParameters.HistogramFile=OUTPUTHIST
+process.hltanalysis.xSection=7.126E10
+process.hltanalysis.skimEff=1.
 
+# get the objects associated with the 8e29 menu
+process.hltanalysis.l1GtObjectMapRecord = "hltL1GtObjectMap::HLT8E29"
+process.hltanalysis.l1GtReadoutRecord = "hltGtDigis::ANALYSIS"
+process.hltanalysis.hltresults = "TriggerResults::HLT8E29"
+process.hltanalysis.IsoPixelTracksL3 = "hltHITIPTCorrector8E29"
+process.hltanalysis.IsoPixelTracksL2 = "hltIsolPixelTrackProd8E29"
+process.hltanalysis.recjets = "hltMCJetCorJetIcone5HF07"
+process.hltanalysis.genmet = "genMetTrue"
+process.hltanalysis.ht = "hltJet15UHt"
+#
+process.hltGetRaw.RawDataCollection = "rawDataCollector::HLT8E29"
+process.hltSiStripRawToClustersFacility.ProductLabel = "rawDataCollector::HLT8E29"
+process.hltGtDigis.DaqGtInputTag = "rawDataCollector::HLT8E29"
+process.hltMuonCSCDigis.InputObjects = "rawDataCollector::HLT8E29"
+process.hltGctDigis.inputLabel = "rawDataCollector::HLT8E29"
+process.hltMuonDTDigis.inputLabel = "rawDataCollector::HLT8E29"
+process.hltEcalCalibrationRaw.rawInputLabel = "rawDataCollector::HLT8E29"
+process.hltEcalRawToRecHitFacility.sourceTag = "rawDataCollector::HLT8E29"
+process.hltMuonRPCDigis.InputLabel = "rawDataCollector::HLT8E29"
+process.hltSiPixelDigis.InputLabel = "rawDataCollector::HLT8E29"
+process.hltESRawToRecHitFacility.sourceTag = "rawDataCollector::HLT8E29"
+process.hltHcalDigis.InputLabel = "rawDataCollector::HLT8E29"
+process.hltAlCaHcalFEDSelector.rawInputLabel = "rawDataCollector::HLT8E29"
+process.hltPixelFEDSizeFilter.rawData = "rawDataCollector::HLT8E29"
+#
+process.hltTrigReport.HLTriggerResults = "TriggerResults::HLT8e29"
+
+#
+
+#
 # pdt
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
 # Schedule the whole thing
 process.schedule = cms.Schedule( 
-    process.DoHLTJets, 
+    ## process.DoHLTJets,
+    process.DoHLTJetsU, 
     process.DoHltMuon, 
     process.DoHLTPhoton, 
 ##    process.DoHLTElectron, 
@@ -81,7 +101,9 @@ process.schedule = cms.Schedule(
     process.DoHLTTau, 
     process.DoHLTBTag,
     process.DoHLTAlCaECALPhiSym,
-    process.DoHLTAlCaPi0Eta1E31,
-    process.DoHLTIsoTrack,
+    # process.DoHLTAlCaPi0Eta1E31,
+    process.DoHLTAlCaPi0Eta8E29,
+    # process.DoHLTIsoTrack,
+    process.DoHLTIsoTrack8E29,
     process.DoHLTMinBiasPixelTracks,
     process.analyzeThis )

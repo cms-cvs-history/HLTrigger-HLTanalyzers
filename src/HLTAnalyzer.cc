@@ -41,6 +41,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   mctruth_          = conf.getParameter<edm::InputTag> ("mctruth");
   genEventInfo_     = conf.getParameter<edm::InputTag> ("genEventInfo");
   simhits_          = conf.getParameter<edm::InputTag> ("simhits");
+  xSection_         = conf.getParameter<double> ("xSection");
+  skimEff_          = conf.getParameter<double> ("skimEff");
 
   // keep this separate from l1extramc_ as needed by FastSim:
   //    This is purposefully done this way to allow FastSim to run with OpenHLT: 
@@ -414,6 +416,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   
   muon_analysis_.analyze(
     muon,
+    l1extmu,
     mucands2,
     isoMap2,
     mucands3,
@@ -533,6 +536,8 @@ void HLTAnalyzer::endJob() {
 
   if (m_file)
     m_file->cd();
+
+  HltTree->SetWeight(xSection_*skimEff_);
 
   HltTree->Write();
   delete HltTree;

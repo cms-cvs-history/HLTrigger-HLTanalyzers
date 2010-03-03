@@ -8,7 +8,13 @@ from HLTrigger.Configuration.HLT_FULL_cff import *
 # create the jetMET HLT reco path
 DoHLTJets = cms.Path(HLTBeginSequence + 
     HLTRecoJetMETSequence + 
-    HLTDoHTRecoSequence)
+#     HLTDoHTRecoSequence)
+    HLTDoJet30HTRecoSequence)
+
+DoHLTJetsU = cms.Path(HLTBeginSequence + 
+    HLTRecoJetSequenceU +
+    hltMet + 
+    HLTDoJet15UHTRecoSequence)
 
 # create the muon HLT reco path
 DoHltMuon = cms.Path(
@@ -605,6 +611,23 @@ DoHLTIsoTrack = cms.Path(
     hltHITCtfWithMaterialTracks1E31 +
     hltHITIPTCorrector1E31 +
     HLTEndSequence)
+
+DoHLTIsoTrack8E29 = cms.Path(
+    HLTBeginSequence +
+    hltL1sIsoTrack8E29 +
+    # hltPreIsoTrack8E29 +
+    HLTL2HcalIsolTrackSequence +
+    hltIsolPixelTrackProd8E29 +
+    hltIsolPixelTrackL2Filter8E29 +
+    HLTDoLocalStripSequence +
+    hltHITPixelPairSeedGenerator8E29 +
+    hltHITPixelTripletSeedGenerator8E29 +
+    hltHITSeedCombiner8E29 +
+    hltHITCkfTrackCandidates8E29 +
+    hltHITCtfWithMaterialTracks8E29 +
+    hltHITIPTCorrector8E29 +
+    HLTEndSequence)
+
 
 DoHLTMinBiasPixelTracks = cms.Path(
     HLTBeginSequence + 
