@@ -33,9 +33,9 @@ HLTInfo::HLTInfo() {
 void HLTInfo::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
 
   edm::ParameterSet myHltParams = pSet.getParameter<edm::ParameterSet>("RunParameters") ;
-  vector<std::string> parameterNames = myHltParams.getParameterNames() ;
+  std::vector<std::string> parameterNames = myHltParams.getParameterNames() ;
   
-  for ( vector<std::string>::iterator iParam = parameterNames.begin();
+  for ( std::vector<std::string>::iterator iParam = parameterNames.begin();
         iParam != parameterNames.end(); iParam++ ){
     if ( (*iParam) == "Debug" ) _Debug =  myHltParams.getParameter<bool>( *iParam );
   }
@@ -183,7 +183,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     // ...Fill the corresponding accepts in branch-variables
     for (int itrig = 0; itrig != ntrigs; ++itrig){
 
-      string trigName=triggerNames.triggerName(itrig);
+      std::string trigName=triggerNames.triggerName(itrig);
       bool accept = hltresults->accept(itrig);
 
       if (accept){trigflag[itrig] = 1;}
@@ -449,14 +449,14 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_OR_BXes){
       // look at all 5 bx window in case gt timing is off
       // get Field Decision Logic
-      vector<DecisionWord> m_gtDecisionWord5Bx;
-      vector<TechnicalTriggerWord> m_gtTechDecisionWord5Bx;
-      vector<int> m_ibxn;
+      std::vector<DecisionWord> m_gtDecisionWord5Bx;
+      std::vector<TechnicalTriggerWord> m_gtTechDecisionWord5Bx;
+      std::vector<int> m_ibxn;
 
       const std::vector<L1GtFdlWord> &m_gtFdlWord(L1GTRR->gtFdlVector());
       for (std::vector<L1GtFdlWord>::const_iterator itBx = m_gtFdlWord.begin();
 	   itBx != m_gtFdlWord.end(); ++itBx) {
-	if (_Debug && L1EvtCnt==0) cout << "bx: " << (*itBx).bxInEvent() << " ";
+	if (_Debug && L1EvtCnt==0) std::cout << "bx: " << (*itBx).bxInEvent() << " ";
 	m_gtDecisionWord5Bx.push_back((*itBx).gtDecisionWord());
 	m_gtTechDecisionWord5Bx.push_back((*itBx).gtTechnicalTriggerWord());
       }
@@ -477,7 +477,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 	    bool bitOn=bitword & (1 << i);
 	    std::cout << bitOn << " ";
 	  }
-	  cout << "\n";
+	  std::cout << "\n";
 	}
 	l1flag5Bx[iBit] = bitword;
       }
@@ -498,7 +498,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 	    bool bitOn=bitword & (1 << i);
 	    std::cout << bitOn << " ";
 	  }
-	  cout << "\n";
+	  std::cout << "\n";
 	}
 	l1techflag5Bx[iBit] = bitword;
       }
