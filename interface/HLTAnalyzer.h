@@ -18,6 +18,8 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
+#include "FWCore/ParameterSet/interface/Registry.h"
+
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 #include "Geometry/CaloEventSetup/interface/CaloTopologyRecord.h"  
 
