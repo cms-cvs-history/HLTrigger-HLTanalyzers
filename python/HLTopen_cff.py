@@ -7,7 +7,8 @@ from HLTrigger.Configuration.HLT_FULL_cff import *
 
 # create the jetMET HLT reco path
 DoHLTJets = cms.Path(HLTBeginSequence + 
-    HLTRecoJetMETSequence +
+    HLTRecoJetSequence +
+    HLTRecoMETSequence +                 
     HLTDoJet30HTRecoSequence
     #HLTDoHTRecoSequence
 )
@@ -40,53 +41,11 @@ DoHLTPhoton = cms.Path(
     HLTDoLocalHcalWithoutHOSequence + 
     hltL1IsolatedPhotonHcalIsol + 
     hltL1NonIsolatedPhotonHcalIsol + 
-    HLTDoLocalTrackerSequence + 
+#    HLTDoLocalTrackerSequence + 
     HLTL1IsoEgammaRegionalRecoTrackerSequence + 
     HLTL1NonIsoEgammaRegionalRecoTrackerSequence + 
     hltL1IsoPhotonHollowTrackIsol + 
     hltL1NonIsoPhotonHollowTrackIsol )
-
-##DoHLTElectron = cms.Path( 
-##    HLTBeginSequence + 
-##    HLTDoRegionalEgammaEcalSequence + 
-##    HLTL1IsolatedEcalClustersSequence + 
-##    HLTL1NonIsolatedEcalClustersSequence + 
-##    hltL1IsoRecoEcalCandidate + 
-##    hltL1NonIsoRecoEcalCandidate + 
-##    HLTDoLocalHcalWithoutHOSequence + 
-##    hltL1IsolatedElectronHcalIsol + 
-##    hltL1NonIsolatedElectronHcalIsol + 
-##    HLTDoLocalPixelSequence + 
-##    HLTDoLocalStripSequence + 
-##    HLTPixelMatchElectronL1IsoSequence + 
-##    HLTPixelMatchElectronL1NonIsoSequence + 
-##    HLTPixelMatchElectronL1IsoTrackingSequence + 
-##    HLTPixelMatchElectronL1NonIsoTrackingSequence + 
-##    HLTL1IsoElectronsRegionalRecoTrackerSequence + 
-##    HLTL1NonIsoElectronsRegionalRecoTrackerSequence + 
-##    hltL1IsoElectronTrackIsol + 
-##    hltL1NonIsoElectronTrackIsol )
-
-##DoHLTElectronStartUpWindows = cms.Path( 
-##    HLTBeginSequence + 
-##    HLTDoRegionalEgammaEcalSequence + 
-##    HLTL1IsolatedEcalClustersSequence + 
-##    HLTL1NonIsolatedEcalClustersSequence + 
-##    hltL1IsoRecoEcalCandidate + 
-##    hltL1NonIsoRecoEcalCandidate + 
-##    HLTDoLocalHcalWithoutHOSequence + 
-##    hltL1IsolatedElectronHcalIsol + 
-##    hltL1NonIsolatedElectronHcalIsol + 
-##    HLTDoLocalPixelSequence + 
-##    HLTDoLocalStripSequence + 
-##    hltL1IsoStartUpElectronPixelSeeds + 
-##    hltL1NonIsoStartUpElectronPixelSeeds + 
-##    HLTPixelMatchStartUpElectronL1IsoTrackingSequence + 
-##    HLTPixelMatchElectronL1NonIsoStartUpTrackingSequence + 
-##    HLTL1IsoStartUpElectronsRegionalRecoTrackerSequence + 
-##    HLTL1NonIsoStartUpElectronsRegionalRecoTrackerSequence + 
-##    hltL1IsoStartUpElectronTrackIsol + 
-##    hltL1NonIsoStartupElectronTrackIsol )
 
 ## LW ele RECO L1ISO
 hltCkfL1IsoLWTC = cms.EDProducer( "CkfTrackCandidateMaker",
@@ -514,16 +473,16 @@ DoHLTElectronStartUpWindows = cms.Path(
     hltL1IsoRecoEcalCandidate + 
     hltL1NonIsoRecoEcalCandidate + 
     HLTDoLocalHcalWithoutHOSequence + 
-    hltL1IsolatedElectronHcalIsol + 
-    hltL1NonIsolatedElectronHcalIsol + 
+##    hltL1IsolatedElectronHcalIsol + 
+##    hltL1NonIsolatedElectronHcalIsol + 
     HLTDoLocalPixelSequence + 
     HLTDoLocalStripSequence + 
     hltL1IsoStartUpElectronPixelSeeds + 
     hltL1NonIsoStartUpElectronPixelSeeds + 
     HLTPixelMatchElectronL1IsoTrackingSequence + 
     HLTPixelMatchElectronL1NonIsoTrackingSequence + 
-    HLTL1IsoElectronsRegionalRecoTrackerSequence + 
-    HLTL1NonIsoElectronsRegionalRecoTrackerSequence + 
+##    HLTL1IsoElectronsRegionalRecoTrackerSequence + 
+##    HLTL1NonIsoElectronsRegionalRecoTrackerSequence + 
     hltL1IsoElectronTrackIsol + 
     hltL1NonIsoElectronTrackIsol )
 
@@ -535,12 +494,12 @@ DoHLTElectronLargeWindows = cms.Path(
     hltL1IsoRecoEcalCandidate + 
     hltL1NonIsoRecoEcalCandidate + 
     HLTDoLocalHcalWithoutHOSequence + 
-    hltL1IsolatedElectronHcalIsol + 
-    hltL1NonIsolatedElectronHcalIsol + 
+##    hltL1IsolatedElectronHcalIsol + 
+##    hltL1NonIsolatedElectronHcalIsol + 
     HLTDoLocalPixelSequence + 
     HLTDoLocalStripSequence +
-    hltL1IsoLargeWindowElectronPixelSeeds +
-    hltL1NonIsoLargeWindowElectronPixelSeeds +
+##    hltL1IsoLargeWindowElectronPixelSeeds +
+##    hltL1NonIsoLargeWindowElectronPixelSeeds +
     DoLWTracking
     )
 
@@ -552,8 +511,8 @@ DoHLTElectronSiStrip = cms.Path(
     hltL1IsoRecoEcalCandidate + 
     hltL1NonIsoRecoEcalCandidate + 
     HLTDoLocalHcalWithoutHOSequence + 
-    hltL1IsolatedElectronHcalIsol + 
-    hltL1NonIsolatedElectronHcalIsol + 
+##    hltL1IsolatedElectronHcalIsol + 
+##    hltL1NonIsolatedElectronHcalIsol + 
     HLTDoLocalPixelSequence + 
     HLTDoLocalStripSequence +
     hltL1IsoSiStripElectronPixelSeeds +
@@ -581,12 +540,12 @@ DoHLTTau = cms.Path(HLTBeginSequence +
 from HLTrigger.HLTanalyzers.OpenHLT_BJet_cff import *
 DoHLTBTag = cms.Path(
     HLTBeginSequence +
-    HLTBCommonL2recoSequence +
+#    HLTBCommonL2recoSequence +
     OpenHLTBLifetimeL25recoSequence +
-    OpenHLTBSoftmuonL25recoSequence +
+    OpenHLTBSoftMuonL25recoSequence +
     OpenHLTBLifetimeL3recoSequence +
     OpenHLTBLifetimeL3recoSequenceStartup +
-    OpenHLTBSoftmuonL3recoSequence +
+    OpenHLTBSoftMuonL3recoSequence +
     HLTEndSequence )
 
 
