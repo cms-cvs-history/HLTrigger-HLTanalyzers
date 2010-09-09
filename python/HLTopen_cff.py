@@ -397,7 +397,9 @@ hltL1IsoLWEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProduce
     egTrkIsoConeSize = cms.double( 0.2 ),
     egTrkIsoZSpan = cms.double( 0.1 ),
     egTrkIsoRSpan = cms.double( 999999.0 ),
-    egTrkIsoVetoConeSize = cms.double( 0.02 )
+    egTrkIsoVetoConeSize = cms.double( 0.02 ),
+    egTrkIsoStripBarrel = cms.double( 0.03 ),
+    egTrkIsoStripEndcap = cms.double( 0.03 )
 )
 
 hltL1NonIsoLWEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProducers",
@@ -407,7 +409,9 @@ hltL1NonIsoLWEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProd
     egTrkIsoConeSize = cms.double( 0.2 ),
     egTrkIsoZSpan = cms.double( 0.1 ),
     egTrkIsoRSpan = cms.double( 999999.0 ),
-    egTrkIsoVetoConeSize = cms.double( 0.02 )
+    egTrkIsoVetoConeSize = cms.double( 0.02 ),
+    egTrkIsoStripBarrel = cms.double( 0.03 ),
+    egTrkIsoStripEndcap = cms.double( 0.03 )
 )
 
 ## track iso for SiStrip
@@ -418,7 +422,9 @@ hltL1IsoSSEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProduce
     egTrkIsoConeSize = cms.double( 0.2 ),
     egTrkIsoZSpan = cms.double( 0.1 ),
     egTrkIsoRSpan = cms.double( 999999.0 ),
-    egTrkIsoVetoConeSize = cms.double( 0.02 )
+    egTrkIsoVetoConeSize = cms.double( 0.02 ),
+    egTrkIsoStripBarrel = cms.double( 0.03 ),
+    egTrkIsoStripEndcap = cms.double( 0.03 )
 )
 
 hltL1NonIsoSSEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProducers",
@@ -428,7 +434,9 @@ hltL1NonIsoSSEleTrackIsol = cms.EDProducer( "EgammaHLTElectronTrackIsolationProd
     egTrkIsoConeSize = cms.double( 0.2 ),
     egTrkIsoZSpan = cms.double( 0.1 ),
     egTrkIsoRSpan = cms.double( 999999.0 ),
-    egTrkIsoVetoConeSize = cms.double( 0.02 )
+    egTrkIsoVetoConeSize = cms.double( 0.02 ),
+    egTrkIsoStripBarrel = cms.double( 0.03 ),
+    egTrkIsoStripEndcap = cms.double( 0.03 )
 )
 
 DoLWTracking = cms.Sequence(
@@ -467,24 +475,38 @@ DoSSTracking = cms.Sequence(
 
 DoHLTElectronStartUpWindows = cms.Path( 
     HLTBeginSequence + 
-    HLTDoRegionalEgammaEcalSequence + 
-    HLTL1IsolatedEcalClustersSequence + 
-    HLTL1NonIsolatedEcalClustersSequence + 
-    hltL1IsoRecoEcalCandidate + 
-    hltL1NonIsoRecoEcalCandidate + 
-    HLTDoLocalHcalWithoutHOSequence + 
+    HLTL1IsolatedEcalClustersSequence +
+    HLTL1NonIsolatedEcalClustersSequence +
+    hltL1IsoRecoEcalCandidate +
+    hltL1NonIsoRecoEcalCandidate +
+    HLTEgammaR9ShapeSequence +
+    HLTDoLocalHcalWithoutHOSequence +
+    hltL1IsolatedPhotonHcalForHE +
+    hltL1NonIsolatedPhotonHcalForHE +
+    HLTDoLocalPixelSequence +
+    HLTDoLocalStripSequence +
+    hltL1IsoStartUpElectronPixelSeeds +
+    hltL1NonIsoStartUpElectronPixelSeeds 
+)
+
+##    HLTDoRegionalEgammaEcalSequence + 
+##    HLTL1IsolatedEcalClustersSequence + 
+##    HLTL1NonIsolatedEcalClustersSequence + 
+##    hltL1IsoRecoEcalCandidate + 
+##    hltL1NonIsoRecoEcalCandidate + 
+##    HLTDoLocalHcalWithoutHOSequence + 
 ##    hltL1IsolatedElectronHcalIsol + 
 ##    hltL1NonIsolatedElectronHcalIsol + 
-    HLTDoLocalPixelSequence + 
-    HLTDoLocalStripSequence + 
-    hltL1IsoStartUpElectronPixelSeeds + 
-    hltL1NonIsoStartUpElectronPixelSeeds + 
-    HLTPixelMatchElectronL1IsoTrackingSequence + 
-    HLTPixelMatchElectronL1NonIsoTrackingSequence + 
+##    HLTDoLocalPixelSequence + 
+##    HLTDoLocalStripSequence + 
+##    hltL1IsoStartUpElectronPixelSeeds + 
+##    hltL1NonIsoStartUpElectronPixelSeeds + 
+##    HLTPixelMatchElectronL1IsoTrackingSequence + 
+##    HLTPixelMatchElectronL1NonIsoTrackingSequence + 
 ##    HLTL1IsoElectronsRegionalRecoTrackerSequence + 
 ##    HLTL1NonIsoElectronsRegionalRecoTrackerSequence + 
-    hltL1IsoElectronTrackIsol + 
-    hltL1NonIsoElectronTrackIsol )
+##    hltL1IsoElectronTrackIsol + 
+##    hltL1NonIsoElectronTrackIsol )
 
 DoHLTElectronLargeWindows = cms.Path( 
     HLTBeginSequence + 
@@ -504,26 +526,42 @@ DoHLTElectronLargeWindows = cms.Path(
     )
 
 DoHLTElectronSiStrip = cms.Path( 
-    HLTBeginSequence + 
-    HLTDoRegionalEgammaEcalSequence + 
-    HLTL1IsolatedEcalClustersSequence + 
-    HLTL1NonIsolatedEcalClustersSequence + 
-    hltL1IsoRecoEcalCandidate + 
-    hltL1NonIsoRecoEcalCandidate + 
-    HLTDoLocalHcalWithoutHOSequence + 
-##    hltL1IsolatedElectronHcalIsol + 
-##    hltL1NonIsolatedElectronHcalIsol + 
-    HLTDoLocalPixelSequence + 
+    HLTBeginSequence +
+    HLTDoRegionalEgammaEcalSequence +
+    HLTL1IsolatedEcalClustersSequence +
+    HLTL1NonIsolatedEcalClustersSequence +
+    hltL1IsoRecoEcalCandidate +
+    hltL1NonIsoRecoEcalCandidate +
+    HLTEgammaR9ShapeSequence +
+    HLTDoLocalHcalWithoutHOSequence +
+    hltL1IsolatedPhotonHcalForHE +
+    hltL1NonIsolatedPhotonHcalForHE +
+    HLTDoLocalPixelSequence +
     HLTDoLocalStripSequence +
     hltL1IsoSiStripElectronPixelSeeds +
-    hltL1NonIsoSiStripElectronPixelSeeds +
-    DoSSTracking
+    hltL1NonIsoSiStripElectronPixelSeeds
     )
+
+
+##    HLTBeginSequence + 
+##    HLTDoRegionalEgammaEcalSequence + 
+##    HLTL1IsolatedEcalClustersSequence + 
+##    HLTL1NonIsolatedEcalClustersSequence + 
+##    hltL1IsoRecoEcalCandidate + 
+##    hltL1NonIsoRecoEcalCandidate + 
+##    HLTDoLocalHcalWithoutHOSequence + 
+##    hltL1IsolatedElectronHcalIsol + 
+##    hltL1NonIsolatedElectronHcalIsol + 
+##    HLTDoLocalPixelSequence + 
+##    HLTDoLocalStripSequence +
+##    hltL1IsoSiStripElectronPixelSeeds +
+##    hltL1NonIsoSiStripElectronPixelSeeds +
+##    DoSSTracking
+##    )
 
 # create the tau HLT reco path
 from HLTrigger.HLTanalyzers.OpenHLT_Tau_cff import *
 DoHLTTau = cms.Path(HLTBeginSequence +
-                    openhltTauPrescaler +
                     OpenHLTCaloTausCreatorSequence +
                     openhltL2TauJets +
                     openhltL2TauIsolationProducer +
