@@ -122,6 +122,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   L1NonIsoPixelSeedsLW_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
   L1IsoPixelSeedsSS_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoSiStrip");
   L1NonIsoPixelSeedsSS_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoSiStrip");
+  IsoR9_                    = conf.getParameter<edm::InputTag> ("SpikeCleaningIsol");  
+  NonIsoR9_                 = conf.getParameter<edm::InputTag> ("SpikeCleaningNonIsol");   
 
   // AlCa OpenHLT input collections  
   EERecHitTag_              = conf.getParameter<edm::InputTag> ("EERecHits"); 
@@ -235,14 +237,18 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::JetTagCollection>               hPerformanceBJetsL3;
 
   // egamma OpenHLT input collections
-  edm::Handle<reco::GsfElectronCollection>                electrons;
-  edm::Handle<reco::PhotonCollection>                     photons;
+  edm::Handle<reco::GsfElectronCollection>          electrons;
+  edm::Handle<reco::PhotonCollection>               photons;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>    photonR9IsoHandle; 
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>    photonR9NonIsoHandle;  
   edm::Handle<reco::ElectronCollection>             electronIsoHandle;
   edm::Handle<reco::ElectronCollection>             electronIsoHandleLW;
   edm::Handle<reco::ElectronCollection>             electronIsoHandleSS;
   edm::Handle<reco::ElectronCollection>             electronNonIsoHandle;
   edm::Handle<reco::ElectronCollection>             electronNonIsoHandleLW;
   edm::Handle<reco::ElectronCollection>             electronNonIsoHandleSS;
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>    electronR9IsoHandle; 
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>    electronR9NonIsoHandle;  
   edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMap;
   edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapLW;
   edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapSS;
@@ -378,6 +384,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, EcalNonIsolMap,           EcalNonIso_,                kEcalNonIso);
   getCollection( iEvent, missing, HcalIsolMap,              HcalIsoPho_,                kHcalIsoPho);
   getCollection( iEvent, missing, HcalNonIsolMap,           HcalNonIsoPho_,             kHcalNonIsoPho);
+  getCollection( iEvent, missing, photonR9IsoHandle,        IsoR9_,                     kIsoR9); 
+  getCollection( iEvent, missing, photonR9NonIsoHandle,     NonIsoR9_,                  kNonIsoR9);  
   getCollection( iEvent, missing, electronIsoHandleLW,      IsoElectronLW_,             kIsoElectron);
   getCollection( iEvent, missing, electronIsoHandleSS,      IsoElectronSS_,             kIsoElectron);
   getCollection( iEvent, missing, electronIsoHandle,        IsoElectron_,               kIsoElectron);
@@ -400,6 +408,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, NonIsoTrackEleIsolMap,    NonIsoEleTrackIsol_,        kNonIsoEleTrackIsol);
   getCollection( iEvent, missing, TrackNonIsolMap,          NonIsoPhoTrackIsol_,        kNonIsoPhoTrackIsol);
   getCollection( iEvent, missing, TrackIsolMap,             IsoPhoTrackIsol_,           kIsoPhoTrackIsol);
+  getCollection( iEvent, missing, electronR9IsoHandle,      IsoR9_,                     kIsoR9);  
+  getCollection( iEvent, missing, electronR9NonIsoHandle,   NonIsoR9_,                  kNonIsoR9);   
   getCollection( iEvent, missing, eerechits,                EERecHitTag_,               kEErechits ); 
   getCollection( iEvent, missing, ebrechits,                EBRecHitTag_,               kEBrechits );  
   getCollection( iEvent, missing, pi0eerechits,             pi0EERecHitTag_,            kpi0EErechits );  
@@ -490,6 +500,10 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
      theMagField,
      BSPosition,
      eIDValueMap,
+     photonR9IsoHandle, 
+     photonR9NonIsoHandle, 
+     electronR9IsoHandle, 
+     electronR9NonIsoHandle, 
      HltTree);
 
   mct_analysis_.analyze(
