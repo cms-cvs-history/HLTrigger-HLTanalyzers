@@ -7,12 +7,14 @@ from HLTrigger.Configuration.HLT_FULL_cff import *
 
 # create the jetMET HLT reco path
 DoHLTJets = cms.Path(HLTBeginSequence + 
+    HLTBeginSequence +
     HLTRecoJetSequence +
     HLTRecoJetRegionalSequence +
     HLTRecoMETSequence +                 
     HLTDoJet15UHTRecoSequence
 )
 DoHLTJetsU = cms.Path(HLTBeginSequence +
+    HLTBeginSequence +
     HLTRecoJetSequenceU +
     hltMet +
     HLTRecoJetRegionalSequence +
@@ -51,6 +53,7 @@ DoHLTPhoton = cms.Path(
     hltL1NonIsoPhotonHollowTrackIsol )
 
 DoHLTElectron = cms.Path(
+    HLTBeginSequence +
     HLTDoRegionalEgammaEcalSequence +
     HLTL1IsolatedEcalClustersSequence +
     HLTL1NonIsolatedEcalClustersSequence +
