@@ -101,7 +101,7 @@ process.load('Configuration/StandardSequences/SimL1Emulator_cff')
 
 # OpenHLT specificss
 # Define the HLT reco paths
-process.load("HLTrigger.HLTanalyzers.HLTopen_cff")
+##process.load("HLTrigger.HLTanalyzers.HLTopen_cff")
 
 # Remove the PrescaleService which, in 31X, it is expected once HLT_XXX_cff is imported
 # del process.PrescaleService ## ccla no longer needed in for releases in 33x+?
@@ -160,50 +160,38 @@ elif (MENU == "LUMI8e29"):
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
 # Schedule the whole thing
-if (MENU == "GRun"):
-    process.schedule = cms.Schedule(
-        process.DoHLTJetsU,
-        process.DoHltMuon,
-        process.DoHLTPhoton,
-        process.DoHLTElectron,
-        process.DoHLTTau,
-        process.DoHLTBTag,
-        process.DoHLTAlCaECALPhiSym,
-        process.DoHLTAlCaPi0Eta8E29,
-        process.DoHLTMinBiasPixelTracks,
-        process.analyzeThis)
-        
-elif (MENU == "LUMI8e29"):
-    process.schedule = cms.Schedule(
-        process.DoHLTJetsU,
-        process.DoHltMuon,
-        process.DoHLTPhoton,
-        process.DoHLTElectron,
-        ##        process.DoHLTElectronStartUpWindows,
+if (MENU == "LUMI8e29"):
+##    process.schedule = cms.Schedule(
+        ##        process.DoHLTJetsU,
+    ##        process.DoHltMuon,
+##        process.DoHLTPhoton,
+        ##    process.DoHLTElectron,
+##        process.DoHLTElectronStartUpWindows,
         ##        process.DoHLTElectronLargeWindows,
-        ##        process.DoHLTElectronSiStrip,
-        process.DoHLTTau,
-        process.DoHLTBTag,
-        process.DoHLTAlCaECALPhiSym,
-        process.DoHLTAlCaPi0Eta8E29,
-        # process.DoHLTIsoTrack8E29, 
-        process.DoHLTMinBiasPixelTracks,
-        process.analyzeThis)
+##         process.DoHLTElectronSiStrip,
+##         process.DoHLTTau,
+##         process.DoHLTBTag,
+##         process.DoHLTAlCaECALPhiSym,
+##         process.DoHLTAlCaPi0Eta8E29,
+##         # process.DoHLTIsoTrack8E29, 
+##         process.DoHLTMinBiasPixelTracks,
+         process.analyzeThis
+        )
 else:
     process.schedule = cms.Schedule( 
-        process.DoHLTJets, 
-        process.DoHltMuon, 
-        process.DoHLTPhoton, 
-        process.DoHLTElectron, 
-        ##        process.DoHLTElectronStartUpWindows, 
-        ##        process.DoHLTElectronLargeWindows,
-        ##        process.DoHLTElectronSiStrip,
-        process.DoHLTTau, 
-        process.DoHLTBTag,
-        process.DoHLTAlCaECALPhiSym,
-        process.DoHLTAlCaPi0Eta1E31,
-        # process.DoHLTIsoTrack,
-        process.DoHLTMinBiasPixelTracks,
+##         process.DoHLTJets, 
+##         process.DoHltMuon, 
+##         process.DoHLTPhoton, 
+##         ##    process.DoHLTElectron, 
+##         process.DoHLTElectronStartUpWindows, 
+##         ##        process.DoHLTElectronLargeWindows,
+##         process.DoHLTElectronSiStrip,
+##         process.DoHLTTau, 
+##         process.DoHLTBTag,
+##         process.DoHLTAlCaECALPhiSym,
+##         process.DoHLTAlCaPi0Eta1E31,
+##         # process.DoHLTIsoTrack,
+##         process.DoHLTMinBiasPixelTracks,
         process.analyzeThis)
 
 #########################################################################################
