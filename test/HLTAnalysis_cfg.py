@@ -6,7 +6,7 @@ import FWCore.ParameterSet.Config as cms
 isData=1 # =1 running on real data, =0 running on MC
 
 
-OUTPUT_HIST='/tmp/jjhollar/openhlt.root'
+OUTPUT_HIST='openhlt.root'
 NEVTS=500
 MENU="LUMI8e29" # LUMI8e29 or LUMI1e31 for pre-38X MC, or GRun for data
 isRelval=1 # =1 for running on MC RelVals, =0 for standard production MC, no effect for data 
