@@ -113,7 +113,7 @@ process.DQMStore = cms.Service( "DQMStore",)
 
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
-process.analyzeThis = cms.Path( process.hltanalysis )
+process.analyzeThis = cms.Path( process.HLTBeginSequence + process.hltanalysis )
 
 process.hltanalysis.RunParameters.HistogramFile=OUTPUT_HIST
 process.hltanalysis.xSection=XSECTION
