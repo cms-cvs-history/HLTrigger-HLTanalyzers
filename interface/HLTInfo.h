@@ -20,8 +20,8 @@
 #include "DataFormats/L1Trigger/interface/L1JetParticleFwd.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticle.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticleFwd.h"
-# include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFRingEtSums.h"
-# include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFBitCounts.h"
+#include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFRingEtSums.h"
+#include "DataFormats/L1GlobalCaloTrigger/interface/L1GctHFBitCounts.h"
 #include "DataFormats/L1GlobalMuonTrigger/interface/L1MuGMTExtendedCand.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 
@@ -117,7 +117,7 @@ private:
 
   HLTConfigProvider hltConfig_; 
   L1GtUtils m_l1GtUtils;
-  string processName_;
+  std::string processName_;
 
   bool _OR_BXes;
   int UnpackBxInEvent; // save number of BXs unpacked in event
