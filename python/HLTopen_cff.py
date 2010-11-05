@@ -46,9 +46,16 @@ DoHLTPhoton = cms.Path(
     HLTDoLocalHcalWithoutHOSequence + 
     hltL1IsolatedPhotonHcalIsol + 
     hltL1NonIsolatedPhotonHcalIsol + 
-#    HLTDoLocalTrackerSequence + 
-    HLTL1IsoEgammaRegionalRecoTrackerSequence + 
-    HLTL1NonIsoEgammaRegionalRecoTrackerSequence + 
+    #JH
+    HLTDoLocalPixelSequence +
+    HLTDoLocalStripSequence +
+    hltL1IsoEgammaRegionalPixelSeedGenerator +
+    hltL1IsoEgammaRegionalCkfTrackCandidates +
+    hltL1IsoEgammaRegionalCTFFinalFitWithMaterial +
+    hltL1NonIsoEgammaRegionalPixelSeedGenerator +
+    hltL1NonIsoEgammaRegionalCkfTrackCandidates +
+    hltL1NonIsoEgammaRegionalCTFFinalFitWithMaterial +
+    #JH
     hltL1IsoPhotonHollowTrackIsol + 
     hltL1NonIsoPhotonHollowTrackIsol )
 
@@ -117,9 +124,9 @@ DoHLTBTag = cms.Path(
 #    HLTBCommonL2recoSequence +
     OpenHLTBLifetimeL25recoSequence +
     OpenHLTBSoftMuonL25recoSequence +
-    OpenHLTBLifetimeL3recoSequence +
-    OpenHLTBLifetimeL3recoSequenceStartup +
-    OpenHLTBSoftMuonL3recoSequence +
+#    OpenHLTBLifetimeL3recoSequence +
+#    OpenHLTBLifetimeL3recoSequenceStartup +
+#    OpenHLTBSoftMuonL3recoSequence +
     HLTEndSequence )
 
 

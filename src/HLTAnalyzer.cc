@@ -124,7 +124,9 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   L1NonIsoPixelSeedsSS_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoSiStrip");
   IsoR9_                    = conf.getParameter<edm::InputTag> ("SpikeCleaningIsol");  
   NonIsoR9_                 = conf.getParameter<edm::InputTag> ("SpikeCleaningNonIsol");   
-
+  IsoHoverEH_               = conf.getParameter<edm::InputTag> ("HcalForHoverEIsol");
+  NonIsoHoverEH_            = conf.getParameter<edm::InputTag> ("HcalForHoverENonIsol"); 
+  
   // AlCa OpenHLT input collections  
   EERecHitTag_              = conf.getParameter<edm::InputTag> ("EERecHits"); 
   EBRecHitTag_              = conf.getParameter<edm::InputTag> ("EBRecHits"); 
@@ -241,6 +243,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::PhotonCollection>               photons;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>    photonR9IsoHandle; 
   edm::Handle<reco::RecoEcalCandidateIsolationMap>    photonR9NonIsoHandle;  
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>  photonHoverEHIsoHandle;   
+  edm::Handle<reco::RecoEcalCandidateIsolationMap>  photonHoverEHNonIsoHandle;  
   edm::Handle<reco::ElectronCollection>             electronIsoHandle;
   edm::Handle<reco::ElectronCollection>             electronIsoHandleLW;
   edm::Handle<reco::ElectronCollection>             electronIsoHandleSS;
@@ -386,6 +390,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, HcalNonIsolMap,           HcalNonIsoPho_,             kHcalNonIsoPho);
   getCollection( iEvent, missing, photonR9IsoHandle,        IsoR9_,                     kIsoR9); 
   getCollection( iEvent, missing, photonR9NonIsoHandle,     NonIsoR9_,                  kNonIsoR9);  
+  getCollection( iEvent, missing, photonHoverEHIsoHandle,   IsoHoverEH_,                kIsoHoverEH);    
+  getCollection( iEvent, missing, photonHoverEHNonIsoHandle,NonIsoHoverEH_,             kNonIsoHoverEH);   
   getCollection( iEvent, missing, electronIsoHandleLW,      IsoElectronLW_,             kIsoElectron);
   getCollection( iEvent, missing, electronIsoHandleSS,      IsoElectronSS_,             kIsoElectron);
   getCollection( iEvent, missing, electronIsoHandle,        IsoElectron_,               kIsoElectron);
@@ -504,6 +510,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
      photonR9NonIsoHandle, 
      electronR9IsoHandle, 
      electronR9NonIsoHandle, 
+     photonHoverEHIsoHandle,  
+     photonHoverEHNonIsoHandle,  
      HltTree);
 
   mct_analysis_.analyze(

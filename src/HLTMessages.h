@@ -64,6 +64,8 @@ extern const char * kL1IsoPixelSeeds;
 extern const char * kL1NonIsoPixelSeeds;
 extern const char * kIsoR9;
 extern const char * kNonIsoR9;
+extern const char * kIsoHoverEH;
+extern const char * kNonIsoHoverEH; 
 extern const char * kEErechits;
 extern const char * kEBrechits; 
 extern const char * kHBHErechits;  

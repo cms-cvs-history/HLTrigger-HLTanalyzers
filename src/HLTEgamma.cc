@@ -60,6 +60,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   hphotl1iso        = new int[kMaxhPhot];
   hphotClusShap     = new float[kMaxhPhot];
   hphotR9           = new float[kMaxhPhot]; 
+  hphothovereh      = new float[kMaxhPhot];
 
   heleet            = new float[kMaxhEle];
   heleeta           = new float[kMaxhEle];
@@ -137,6 +138,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   HltTree->Branch("ohPhotL1iso",        hphotl1iso,         "ohPhotL1iso[NohPhot]/I");
   HltTree->Branch("ohPhotClusShap",     hphotClusShap,      "ohPhotClusShap[NohPhot]/F");
   HltTree->Branch("ohPhotR9",           hphotR9,            "ohPhotR9[NohPhot]/F");  
+  HltTree->Branch("ohPhotHforHoverE",   hphothovereh,       "ohPhotHforHoverE[NohPhot]/F");   
 
   HltTree->Branch("NohEle",             & nhltele,          "NohEle/I");
   HltTree->Branch("ohEleEt",            heleet,             "ohEleEt[NohEle]/F");
@@ -298,6 +300,8 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
                         const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9NonIsoMap,   
                         const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9IsoMap,   
                         const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9NonIsoMap,   
+			const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,      
+                        const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHNonIsoMap,       
                         TTree* HltTree)
 {
   // reset the tree variables
@@ -375,6 +379,7 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       HcalIsolMap,
       TrackIsolMap,
       photonR9IsoMap,
+      photonHoverEHIsoMap,
       lazyTools);
   MakeL1NonIsolatedPhotons(
       theHLTPhotons,
@@ -383,6 +388,7 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       HcalNonIsolMap,
       TrackNonIsolMap,
       photonR9NonIsoMap,
+      photonHoverEHNonIsoMap,
       lazyTools);
 
   std::sort(theHLTPhotons.begin(), theHLTPhotons.end(), EtGreater());
@@ -397,6 +403,7 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
     hphottiso[u]  = theHLTPhotons[u].trackIsol;
     hphotl1iso[u] = theHLTPhotons[u].L1Isolated;
     hphotClusShap[u] = theHLTPhotons[u].clusterShape;
+    hphothovereh[u] = theHLTPhotons[u].hovereh; 
     hphotR9[u] = theHLTPhotons[u].r9; 
   }
 
@@ -543,6 +550,7 @@ void HLTEgamma::MakeL1IsolatedPhotons(
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & HcalIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & TrackIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9IsoMap,    
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,     
     EcalClusterLazyTools& lazyTools )
 {
   // Iterator to the isolation-map
@@ -565,6 +573,7 @@ void HLTEgamma::MakeL1IsolatedPhotons(
       pho.eta        = recoecalcand->eta();
       pho.phi        = recoecalcand->phi();
       pho.r9        = -999.;
+      pho.hovereh = -999.;
 
       //Get the cluster shape
       //      std::vector<float> vCov = lazyTools.covariances( *(recoecalcand->superCluster()->seed()) );
@@ -600,6 +609,11 @@ void HLTEgamma::MakeL1IsolatedPhotons(
         mapi = (*photonR9IsoMap).find(ref); 
         if (mapi !=(*photonR9IsoMap).end()) { pho.r9 = mapi->val;} 
       }
+      // fill the H for H/E
+      if (photonHoverEHIsoMap.isValid()) {
+	mapi = (*photonHoverEHIsoMap).find(ref);  
+        if (mapi !=(*photonHoverEHIsoMap).end()) { pho.hovereh = mapi->val;}
+      }
       
       // store the photon into the vector
       theHLTPhotons.push_back(pho);
@@ -614,6 +628,7 @@ void HLTEgamma::MakeL1NonIsolatedPhotons(
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & HcalNonIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & TrackNonIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9NonIsoMap,     
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHNonIsoMap,      
     EcalClusterLazyTools& lazyTools )
 {
   reco::RecoEcalCandidateIsolationMap::const_iterator mapi;
@@ -632,6 +647,7 @@ void HLTEgamma::MakeL1NonIsolatedPhotons(
       pho.eta        = recoecalcand->eta();
       pho.phi        = recoecalcand->phi();
       pho.r9        = -999; 
+      pho.hovereh = -999.;
 
       //Get the cluster shape
       //      std::vector<float> vCov = lazyTools.covariances( *(recoecalcand->superCluster()->seed()) );
@@ -664,6 +680,11 @@ void HLTEgamma::MakeL1NonIsolatedPhotons(
       if (photonR9NonIsoMap.isValid()) { 
         mapi = (*photonR9NonIsoMap).find(ref);  
         if (mapi !=(*photonR9NonIsoMap).end()) { pho.r9 = mapi->val;}  
+      } 
+      // fill the H for H/E 
+      if (photonHoverEHNonIsoMap.isValid()) { 
+        mapi = (*photonHoverEHNonIsoMap).find(ref);   
+        if (mapi !=(*photonHoverEHNonIsoMap).end()) { pho.hovereh = mapi->val;} 
       } 
 
       // store the photon into the vector

@@ -105,6 +105,8 @@ public:
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9NonIsoMap, 
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9IsoMap, 
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9NonIsoMap, 
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHNonIsoMap, 
       TTree* tree);
 
 private:
@@ -118,6 +120,7 @@ private:
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & HcalIsolMap,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & TrackIsolMap,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9IsoMap, 
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap, 
       EcalClusterLazyTools& lazyTools
       );
 
@@ -128,6 +131,7 @@ private:
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & HcalNonIsolMap,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & TrackNonIsolMap,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonR9NonIsoMap,  
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHNonIsoMap,  
       EcalClusterLazyTools& lazyTools
       );
 
@@ -171,7 +175,7 @@ private:
   float *heleetLW, *heleetaLW, *helephiLW, *heleELW, *helepLW, *helehisoLW, *heletisoLW;
   float *heleetSS, *heleetaSS, *helephiSS, *heleESS, *helepSS, *helehisoSS, *heletisoSS;
   float *hphotClusShap, *heleClusShap, *heleDeta, *heleDphi, *heleClusShapLW, *heleDetaLW, *heleDphiLW, *heleClusShapSS, *heleDetaSS, *heleDphiSS;
-  float *hphotR9, *heleR9;
+  float *hphotR9, *heleR9, *hphothovereh;
   int *hphotl1iso, *helel1iso, *helePixelSeeds, *helel1isoLW, *helePixelSeedsLW, *helel1isoSS, *helePixelSeedsSS;
   int *eleId;// RL  + 2*RT + 4*L +  4*T 
   int *heleNewSC, *heleNewSCLW, *heleNewSCSS;
@@ -190,6 +194,7 @@ private:
     float r9;
     bool  L1Isolated;
     float clusterShape;
+    float hovereh;
     float et() const { return Et; } // Function defined as such to be compatible with EtGreater()
   };
 

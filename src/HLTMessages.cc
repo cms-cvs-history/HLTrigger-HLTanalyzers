@@ -63,9 +63,10 @@ const char * kIsoEleTrackIsol             = "isol Track electron";
 const char * kNonIsoEleTrackIsol          = "isol Track electron";
 const char * kL1IsoPixelSeeds             = "pixelSeed-SC association map for electron";
 const char * kL1NonIsoPixelSeeds          = "pixelSeed-SC for electron";
-const char * kNonIsoR9                    = "Spike-cleaning";
-const char * kIsoR9                       = "Spike-cleaning"; 
-
+const char * kNonIsoR9                    = "R9 spike-cleaning non-isol map";
+const char * kIsoR9                       = "R9 spike-cleaning isol map"; 
+const char * kIsoHoverEH                  = "H for H/E isol photon map";
+const char * kNonIsoHoverEH               = "H for H/E non-isol photon map"; 
 const char * kEErechits                   = "ECAL Endcap RecHits";
 const char * kEBrechits                   = "ECAL Barrel RecHits"; 
 const char * kHBHErechits                 = "HCAL Endcap-Barrel RecHits"; 
