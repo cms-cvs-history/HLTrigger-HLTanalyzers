@@ -27,6 +27,8 @@
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 
 #include "DataFormats/TauReco/interface/HLTTau.h"
+#include "DataFormats/TauReco/interface/PFTau.h"
+#include "DataFormats/TauReco/interface/PFTauFwd.h"
 
 #include "HLTrigger/HLTanalyzers/interface/JetUtil.h"
 #include "HLTrigger/HLTanalyzers/interface/CaloTowerBoundries.h"
@@ -34,67 +36,82 @@
 typedef std::vector<std::string> MyStrings;
 
 /** \class HLTJets
-  *  
-  * $Date: November 2006
-  * $Revision: 
-  * \author L. Apanasevich - UIC, P. Bargassa - Rice U.
-  */
+ *  
+ * $Date: November 2006
+ * $Revision: 
+ * \author L. Apanasevich - UIC, P. Bargassa - Rice U.
+ */
 
 class GetPtGreater {
-  public:
-  template <typename T> bool operator () (const T& i, const T& j) {
-    return (i.getPt() > j.getPt());
-  }
+public:
+    template <typename T> bool operator () (const T& i, const T& j) {
+        return (i.getPt() > j.getPt());
+    }
 };
 
+class GetPFPtGreater {
+public:
+    template <typename T> bool operator () (const T& i, const T& j) {
+        return (i.pt() > j.pt());
+    }
+};
 
 class HLTJets {
 public:
-  HLTJets(); 
-
-  void setup(const edm::ParameterSet& pSet, TTree* tree);
-
-  /** Analyze the Data */
-  void analyze(const edm::Handle<reco::CaloJetCollection>      & recojets,
-	       const edm::Handle<reco::CaloJetCollection>      & corjets,
-	       const edm::Handle<reco::GenJetCollection>       & gjets,
-	       const edm::Handle<reco::CaloMETCollection>      & rmets,
-	       const edm::Handle<reco::GenMETCollection>       & gmets,
-	       const edm::Handle<reco::METCollection>          & ht,
-	       const edm::Handle<reco::HLTTauCollection> & myHLTTau,
-	       const edm::Handle<CaloTowerCollection>    & caloTowers,
-	       double thresholdForSavingTowers,
-	       TTree * tree);
-
+    HLTJets(); 
+    
+    void setup(const edm::ParameterSet& pSet, TTree* tree);
+    
+    /** Analyze the Data */
+    void analyze(const edm::Handle<reco::CaloJetCollection>      & recojets,
+                 const edm::Handle<reco::CaloJetCollection>      & corjets,
+                 const edm::Handle<reco::GenJetCollection>       & gjets,
+                 const edm::Handle<reco::CaloMETCollection>      & rmets,
+                 const edm::Handle<reco::GenMETCollection>       & gmets,
+                 const edm::Handle<reco::METCollection>          & ht,                
+                 const edm::Handle<reco::HLTTauCollection> & myHLTTau,
+                  const edm::Handle<reco::PFTauCollection>        & myHLTPFTau,              
+                 const edm::Handle<CaloTowerCollection>    & caloTowers,
+                 double thresholdForSavingTowers,
+                  double                minPtCH,
+                  double                minPtGamma,
+                 TTree * tree);
+    
 private:
-
-  // Tree variables
-  float *jcalpt, *jcalphi, *jcaleta, *jcale, *jcalemf, *jcaln90;
-  float *jcorcalpt, *jcorcalphi, *jcorcaleta, *jcorcale, *jcorcalemf, *jcorcaln90;
-  float *jgenpt, *jgenphi, *jgeneta, *jgene;
-  float *towet, *toweta, *towphi, *towen, *towem, *towhd, *towoe;
-  float mcalmet,mcalphi,mcalsum;
-  float htcalet,htcalphi,htcalsum;
-  float mgenmet,mgenphi,mgensum;
-  int njetcal,ncorjetcal,njetgen,ntowcal;
-
-   // Taus
-  float *l2tauemiso, *l25tauPt, *l3tauPt;
-  int *l25tautckiso, *l3tautckiso;
-  int nohtau;
-  float *tauEta, *tauPt, *tauPhi; 
-  
-  // input variables
-  bool _Monte,_Debug;
-  float _CalJetMin, _GenJetMin;
-
-  int evtCounter;
-
-  const float etaBarrel() {return 1.4;}
-
-  //create maps linking histogram pointers to HCAL Channel hits and digis
-  TString gjetpfx, rjetpfx,gmetpfx, rmetpfx,calopfx;
-
+    
+    // Tree variables
+    float *jcalpt, *jcalphi, *jcaleta, *jcale, *jcalemf, *jcaln90;
+    float *jcorcalpt, *jcorcalphi, *jcorcaleta, *jcorcale, *jcorcalemf, *jcorcaln90;
+    float *jgenpt, *jgenphi, *jgeneta, *jgene;
+    float *towet, *toweta, *towphi, *towen, *towem, *towhd, *towoe;
+    float mcalmet,mcalphi,mcalsum;
+    float htcalet,htcalphi,htcalsum;
+    float mgenmet,mgenphi,mgensum;
+    int njetcal,ncorjetcal,njetgen,ntowcal;
+    
+    // Taus
+    float *l2tauemiso, *l25tauPt;
+    int *l3tautckiso;
+    int nohtau;
+    float *tauEta, *tauPt, *tauPhi; 
+    //PFTau
+      int nohPFTau;
+    float *pfTauEta,*pfTauPhi,*pfTauPt,*pfTauJetPt,*pfTauLeadTrackPt,*pfTauLeadPionPt;
+    int *pfTauTrkIso, *pfTauGammaIso;
+    float pfMHT;
+    
+    
+    // input variables
+    bool _Monte,_Debug;
+    float _CalJetMin, _GenJetMin;
+    
+    int evtCounter;
+    
+    const float etaBarrel() {return 1.4;}
+    
+    //create maps linking histogram pointers to HCAL Channel hits and digis
+    TString gjetpfx, rjetpfx,gmetpfx, rmetpfx,calopfx;
+    
 };
 
 #endif

@@ -91,7 +91,7 @@ private:
 
   edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;
   edm::InputTag oniaPixelTag_,oniaTrackTag_;
-  edm::InputTag HLTTau_;
+  edm::InputTag HLTTau_, PFTau_;
 
   // btag OpenHLT input collections
   edm::InputTag m_rawBJets;
@@ -164,6 +164,7 @@ private:
 
   std::string _HistName; // Name of histogram file
   double _EtaMin,_EtaMax;
+    double _MinPtChargedHadrons, _MinPtGammas;
   TFile* m_file; // pointer to Histogram file
 
 };

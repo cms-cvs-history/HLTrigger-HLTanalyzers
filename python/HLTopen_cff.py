@@ -46,7 +46,6 @@ DoHLTPhoton = cms.Path(
     HLTDoLocalHcalWithoutHOSequence + 
     hltL1IsolatedPhotonHcalIsol + 
     hltL1NonIsolatedPhotonHcalIsol + 
-    #JH
     HLTDoLocalPixelSequence +
     HLTDoLocalStripSequence +
     hltL1IsoEgammaRegionalPixelSeedGenerator +
@@ -55,7 +54,6 @@ DoHLTPhoton = cms.Path(
     hltL1NonIsoEgammaRegionalPixelSeedGenerator +
     hltL1NonIsoEgammaRegionalCkfTrackCandidates +
     hltL1NonIsoEgammaRegionalCTFFinalFitWithMaterial +
-    #JH
     hltL1IsoPhotonHollowTrackIsol + 
     hltL1NonIsoPhotonHollowTrackIsol )
 
@@ -108,14 +106,16 @@ DoHLTTau = cms.Path(HLTBeginSequence +
                     OpenHLTCaloTausCreatorSequence +
                     openhltL2TauJets +
                     openhltL2TauIsolationProducer +
-#                    openhltL2TauRelaxingIsolationSelector +
+                    #                    openhltL2TauRelaxingIsolationSelector +
                     HLTDoLocalPixelSequence +
                     HLTRecopixelvertexingSequence +
                     OpenHLTL25TauTrackReconstructionSequence +
                     OpenHLTL25TauTrackIsolation +
                     TauOpenHLT+
+                    HLTRecoJetSequencePrePF +
+                    HLTPFJetTriggerSequence +
+                    HLTPFTauSequence +
                     HLTEndSequence)
-
 
 # create the b-jet HLT paths
 from HLTrigger.HLTanalyzers.OpenHLT_BJet_cff import *
