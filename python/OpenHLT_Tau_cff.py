@@ -1155,9 +1155,8 @@ hltIcone5PFJets = cms.EDProducer( "FastjetJetProducer",
     doRhoFastjet = cms.bool( False ),
     subtractorName = cms.string( "" )
 )
-hltIcone5ConvPFJets = cms.EDProducer( "PFJetToCaloProducer",
-    Source = cms.InputTag( "hltIcone5PFJets" )
-)
+
+
 hltPFTauJetTracksAssociator = cms.EDProducer( "JetTracksAssociatorAtVertex",
     jets = cms.InputTag( "hltIcone5PFJets" ),
     tracks = cms.InputTag( "hltPFJetCtfWithMaterialTracks" ),
@@ -1244,6 +1243,10 @@ hltPFTaus = cms.EDProducer( "PFRecoTauProducer",
     AreaMetric_recoElements_maxabsEta = cms.double( 2.5 ),
     DataType = cms.string( "AOD" )
 )
+
+#Modifying the trajFilter
+trajFilterL3.maxNumberOfHits = cms.int32(100)
+trajFilterL3.minPt = cms.double(0.5)
 
 HLTRecoJetSequencePrePF = cms.Sequence( HLTDoCaloSequence + hltIterativeCone5CaloJets + hltIterativeCone5CaloJets8 )
 HLTTrackReconstructionForJets = cms.Sequence( hltPFJetPixelSeeds + hltPFJetCkfTrackCandidates + hltPFJetCtfWithMaterialTracks +hltPFJetCkfTrackCandidatesHighPurity )

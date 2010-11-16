@@ -11,6 +11,7 @@ const char * kHt                          = "HT object";
 const char * kMuon                        = "muon candidates";
 const char * kTaus                        = "tau candidates";
 const char * kPFTaus                        = "pftau candidates";
+const char * kPFJets                        = "particle flow jets";
 const char * kHltresults                  = "HLT results";
 const char * kL1extemi                    = "L1 isolated EM objects";
 const char * kL1extemn                    = "L1 non isolated EM objects";

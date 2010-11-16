@@ -35,6 +35,7 @@ extern const char * kIsoMap3;
 extern const char * kMulinks;
 extern const char * kTaus;
 extern const char * kPFTaus;
+extern const char * kPFJets;
 extern const char * kBTagJets;
 extern const char * kBTagCorrectedJets;
 extern const char * kBTagLifetimeBJetsL25;

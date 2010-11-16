@@ -92,6 +92,7 @@ private:
   edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;
   edm::InputTag oniaPixelTag_,oniaTrackTag_;
   edm::InputTag HLTTau_, PFTau_;
+    edm::InputTag PFJets_;
 
   // btag OpenHLT input collections
   edm::InputTag m_rawBJets;

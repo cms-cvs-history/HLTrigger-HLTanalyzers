@@ -80,8 +80,12 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     pfTauLeadPionPt  =  new float[kMaxPFTau];
     pfTauTrkIso         =  new int[kMaxPFTau];
     pfTauGammaIso         =  new int[kMaxPFTau];
-    pfMHT   = -100;
-    
+
+    pfMHT   = -100;    
+    const int kMaxPFJet = 500;
+    pfJetEta         = new float[kMaxPFJet];
+    pfJetPhi         = new float[kMaxPFJet];
+    pfJetPt         = new float[kMaxPFJet];
     
     // Jet- MEt-specific branches of the tree 
     HltTree->Branch("NrecoJetCal",&njetcal,"NrecoJetCal/I");
@@ -132,7 +136,8 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     HltTree->Branch("ohTauEiso",l2tauemiso,"ohTauEiso[NohTau]/F");
     HltTree->Branch("ohTauL25Tpt",l25tauPt,"ohTauL25Tpt[NohTau]/F");
     HltTree->Branch("ohTauL3Tiso",l3tautckiso,"ohTauL3Tiso[NohTau]/I");
-    
+
+    //PFTaus
     HltTree->Branch("NohPFTau",&nohPFTau,"NohPFTau/I");
     HltTree->Branch("pfTauPt",pfTauPt,"pfTauPt[NohPFTau]/F");
     HltTree->Branch("pfTauEta",pfTauEta,"pfTauEta[NohPFTau]/F");
@@ -142,7 +147,13 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     HltTree->Branch("pfTauTrkIso",pfTauTrkIso,"pfTauTrkIso[NohPFTau]/I");
     HltTree->Branch("pfTauGammaIso",pfTauGammaIso,"pfTauGammaIso[NohPFTau]/I");
     HltTree->Branch("pfTauJetPt",pfTauJetPt,"pfTauJetPt[NohPFTau]/F");    
+
+    //PFJets
     HltTree->Branch("pfMHT",&pfMHT,"pfMHT/F");
+    HltTree->Branch("NohPFJet",&nohPFJet,"NohPFJet/I");
+    HltTree->Branch("pfJetPt",pfJetPt,"pfJetPt[NohPFJet]/F");
+    HltTree->Branch("pfJetEta",pfJetEta,"pfJetEta[NohPFJet]/F");
+    HltTree->Branch("pfJetPhi",pfJetPhi,"pfJetPhi[NohPFJet]/F");
     
     
 }
@@ -156,6 +167,7 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
                       const edm::Handle<reco::METCollection>          & ht,
                       const edm::Handle<reco::HLTTauCollection>       & taujets,
                       const edm::Handle<reco::PFTauCollection>        & pfTaus,
+                      const edm::Handle<reco::PFJetCollection>        & pfJets,
                       const edm::Handle<CaloTowerCollection>          & caloTowers,
                       double thresholdForSavingTowers, 
                        double                minPtCH,
@@ -358,11 +370,34 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
                 if(i->isolationPFGammaCands()[iGamma]->pt() > minGammaPt) myGammas++;
             }                        
             pfTauGammaIso[ipftau] = myGammas;
+            ipftau++;
         } 
         pfMHT = sqrt(pfMHTx*pfMHTx + pfMHTy*pfMHTy);
         
     }
     
- 
+    ////////////////Particle Flow Jets ////////////////////////////////////
+    if(pfJets.isValid()) {
+        nohPFJet  = pfJets->size();
+        reco::PFJetCollection Jets = *pfJets;
+        std::sort(Jets.begin(),Jets.end(),GetPFPtGreater());
+        typedef reco::PFJetCollection::const_iterator pfJetit;
+        int ipfJet=0;
+        float pfMHTx = 0;
+        float pfMHTy = 0;
+        for(pfJetit i=Jets.begin(); i!=Jets.end(); i++){
+            //Ask for Eta,Phi and Et of the Jet:
+            pfJetEta[ipfJet] = i->eta();
+            pfJetPhi[ipfJet] = i->phi();
+            pfJetPt[ipfJet] = i->pt();           
+            
+            pfMHTx = pfMHTx + i->px();
+            pfMHTy = pfMHTy + i->py();
+            ipfJet++;   
+        } 
+        pfMHT = sqrt(pfMHTx*pfMHTx + pfMHTy*pfMHTy);
+        
+    }
+    
         
 }

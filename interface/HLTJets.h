@@ -13,6 +13,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/JetReco/interface/CaloJetCollection.h"
+#include "DataFormats/JetReco/interface/PFJetCollection.h"
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
 
 #include "DataFormats/METReco/interface/CaloMET.h"
@@ -70,7 +71,8 @@ public:
                  const edm::Handle<reco::GenMETCollection>       & gmets,
                  const edm::Handle<reco::METCollection>          & ht,                
                  const edm::Handle<reco::HLTTauCollection> & myHLTTau,
-                  const edm::Handle<reco::PFTauCollection>        & myHLTPFTau,              
+                  const edm::Handle<reco::PFTauCollection>        & myHLTPFTau,
+                 const edm::Handle<reco::PFJetCollection>         & myHLTPFJets,
                  const edm::Handle<CaloTowerCollection>    & caloTowers,
                  double thresholdForSavingTowers,
                   double                minPtCH,
@@ -98,8 +100,10 @@ private:
       int nohPFTau;
     float *pfTauEta,*pfTauPhi,*pfTauPt,*pfTauJetPt,*pfTauLeadTrackPt,*pfTauLeadPionPt;
     int *pfTauTrkIso, *pfTauGammaIso;
-    float pfMHT;
-    
+    //PFJets
+    float pfMHT;    
+    int nohPFJet;
+    float *pfJetEta, *pfJetPhi, *pfJetPt;
     
     // input variables
     bool _Monte,_Debug;

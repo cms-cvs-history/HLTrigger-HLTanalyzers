@@ -90,6 +90,9 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     HLTPFTau                        = cms.InputTag("hltPFTaus"),
     minPtChargedHadronsForTaus      = cms.double(1.5),
     minPtGammassForTaus             = cms.double(1.5),
+
+    ### particle flow jets OpenHLT related objects
+    HLTPFJet                        = cms.InputTag("hltIcone5PFJets"),
                              
     ### b-jet OpenHLT related objects
     CommonBJetsL2                   = cms.InputTag("hltIterativeCone5CaloJets"),
