@@ -119,16 +119,17 @@ DoHLTTau = cms.Path(HLTBeginSequence +
 
 # create the b-jet HLT paths
 from HLTrigger.HLTanalyzers.OpenHLT_BJet_cff import *
+# create the b-jet HLT paths
+from HLTrigger.HLTanalyzers.OpenHLT_BJet_cff import *
 DoHLTBTag = cms.Path(
-    HLTBeginSequence +
-#    HLTBCommonL2recoSequence +
-    OpenHLTBLifetimeL25recoSequence +
-    OpenHLTBSoftMuonL25recoSequence +
-#    OpenHLTBLifetimeL3recoSequence +
-#    OpenHLTBLifetimeL3recoSequenceStartup +
-#    OpenHLTBSoftMuonL3recoSequence +
-    HLTEndSequence )
-
+        HLTBeginSequence +
+    #    HLTBCommonL2recoSequence +
+        OpenHLTBLifetimeL25recoSequence +
+        OpenHLTBSoftMuonL25recoSequence +
+        OpenHLTBLifetimeL3recoSequence +
+        OpenHLTBLifetimeL3recoSequenceStartup +
+        OpenHLTBSoftMuonL3recoSequence +
+        HLTEndSequence )
 
 DoHLTAlCaPi0Eta1E31 = cms.Path(
     HLTBeginSequence +
