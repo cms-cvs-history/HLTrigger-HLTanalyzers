@@ -92,13 +92,6 @@ DoHLTElectron = cms.Path(
     hltL1NonIsoElectronTrackIsol
 )
 
-DoHLTElectronLargeWindows = cms.Path( 
-    HLTBeginSequence  
-    )
-
-DoHLTElectronSiStrip = cms.Path( 
-    HLTBeginSequence
-    )
 
 # create the tau HLT reco path
 from HLTrigger.HLTanalyzers.OpenHLT_Tau_cff import *

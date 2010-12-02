@@ -113,20 +113,8 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
     NonIsoEleHcal_            = conf.getParameter<edm::InputTag> ("HcalNonIsoEle");
     IsoEleTrackIsol_          = conf.getParameter<edm::InputTag> ("IsoEleTrackIsol");
     NonIsoEleTrackIsol_       = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsol");
-    IsoElectronLW_            = conf.getParameter<edm::InputTag> ("IsoElectronsLargeWindows");
-    NonIsoElectronLW_         = conf.getParameter<edm::InputTag> ("NonIsoElectronsLargeWindows");
-    IsoEleTrackIsolLW_        = conf.getParameter<edm::InputTag> ("IsoEleTrackIsolLargeWindows");
-    NonIsoEleTrackIsolLW_     = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsolLargeWindows");
-    IsoElectronSS_            = conf.getParameter<edm::InputTag> ("IsoElectronsSiStrip");
-    NonIsoElectronSS_         = conf.getParameter<edm::InputTag> ("NonIsoElectronsSiStrip");
-    IsoEleTrackIsolSS_        = conf.getParameter<edm::InputTag> ("IsoEleTrackIsolSiStrip");
-    NonIsoEleTrackIsolSS_     = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsolSiStrip");
     L1IsoPixelSeeds_          = conf.getParameter<edm::InputTag> ("PixelSeedL1Iso");
     L1NonIsoPixelSeeds_       = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
-    L1IsoPixelSeedsLW_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
-    L1NonIsoPixelSeedsLW_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
-    L1IsoPixelSeedsSS_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoSiStrip");
-    L1NonIsoPixelSeedsSS_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoSiStrip");
     IsoR9_                    = conf.getParameter<edm::InputTag> ("SpikeCleaningIsol");  
     NonIsoR9_                 = conf.getParameter<edm::InputTag> ("SpikeCleaningNonIsol");   
     IsoHoverEH_               = conf.getParameter<edm::InputTag> ("HcalForHoverEIsol");
@@ -252,25 +240,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     edm::Handle<reco::RecoEcalCandidateIsolationMap>  photonHoverEHIsoHandle;   
     edm::Handle<reco::RecoEcalCandidateIsolationMap>  photonHoverEHNonIsoHandle;    
     edm::Handle<reco::ElectronCollection>             electronIsoHandle;
-    edm::Handle<reco::ElectronCollection>             electronIsoHandleLW;
-    edm::Handle<reco::ElectronCollection>             electronIsoHandleSS;
     edm::Handle<reco::ElectronCollection>             electronNonIsoHandle;
-    edm::Handle<reco::ElectronCollection>             electronNonIsoHandleLW;
-    edm::Handle<reco::ElectronCollection>             electronNonIsoHandleSS;
     edm::Handle<reco::RecoEcalCandidateIsolationMap>    electronR9IsoHandle; 
     edm::Handle<reco::RecoEcalCandidateIsolationMap>    electronR9NonIsoHandle;  
     edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMap;
-    edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapLW;
-    edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapSS;
     edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMap;
-    edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMapLW;
-    edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMapSS;
     edm::Handle<reco::ElectronSeedCollection>         L1IsoPixelSeedsMap;
-    edm::Handle<reco::ElectronSeedCollection>         L1IsoPixelSeedsMapLW;
-    edm::Handle<reco::ElectronSeedCollection>         L1IsoPixelSeedsMapSS;
     edm::Handle<reco::ElectronSeedCollection>         L1NonIsoPixelSeedsMap;
-    edm::Handle<reco::ElectronSeedCollection>         L1NonIsoPixelSeedsMapLW;
-    edm::Handle<reco::ElectronSeedCollection>         L1NonIsoPixelSeedsMapSS;
     edm::Handle<reco::RecoEcalCandidateCollection>    recoIsolecalcands;
     edm::Handle<reco::RecoEcalCandidateCollection>    recoNonIsolecalcands;
     edm::Handle<reco::RecoEcalCandidateIsolationMap>  EcalIsolMap;
@@ -400,25 +376,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     getCollection( iEvent, missing, photonR9NonIsoHandle,     NonIsoR9_,                  kNonIsoR9);  
     getCollection( iEvent, missing, photonHoverEHIsoHandle,   IsoHoverEH_,                kIsoHoverEH);    
     getCollection( iEvent, missing, photonHoverEHNonIsoHandle,NonIsoHoverEH_,             kNonIsoHoverEH);   
-    getCollection( iEvent, missing, electronIsoHandleLW,      IsoElectronLW_,             kIsoElectron);
-    getCollection( iEvent, missing, electronIsoHandleSS,      IsoElectronSS_,             kIsoElectron);
     getCollection( iEvent, missing, electronIsoHandle,        IsoElectron_,               kIsoElectron);
     getCollection( iEvent, missing, HcalEleIsolMap,           IsoEleHcal_,                kIsoEleHcal);
-    getCollection( iEvent, missing, TrackEleIsolMapLW,        IsoEleTrackIsolLW_,         kIsoEleTrackIsol);
-    getCollection( iEvent, missing, TrackEleIsolMapSS,        IsoEleTrackIsolSS_,         kIsoEleTrackIsol);
     getCollection( iEvent, missing, TrackEleIsolMap,          IsoEleTrackIsol_,           kIsoEleTrackIsol);
-    getCollection( iEvent, missing, L1IsoPixelSeedsMapLW,     L1IsoPixelSeedsLW_,         kL1IsoPixelSeeds);
-    getCollection( iEvent, missing, L1IsoPixelSeedsMapSS,     L1IsoPixelSeedsSS_,         kL1IsoPixelSeeds);
     getCollection( iEvent, missing, L1IsoPixelSeedsMap,       L1IsoPixelSeeds_,           kL1IsoPixelSeeds);
-    getCollection( iEvent, missing, L1NonIsoPixelSeedsMapLW,  L1NonIsoPixelSeedsLW_,      kL1NonIsoPixelSeeds);
-    getCollection( iEvent, missing, L1NonIsoPixelSeedsMapSS,  L1NonIsoPixelSeedsSS_,      kL1NonIsoPixelSeeds);
     getCollection( iEvent, missing, L1NonIsoPixelSeedsMap,    L1NonIsoPixelSeeds_,        kL1NonIsoPixelSeeds);
-    getCollection( iEvent, missing, electronNonIsoHandleLW,   NonIsoElectronLW_,          kNonIsoElectron);
-    getCollection( iEvent, missing, electronNonIsoHandleSS,   NonIsoElectronSS_,          kNonIsoElectron);
     getCollection( iEvent, missing, electronNonIsoHandle,     NonIsoElectron_,            kNonIsoElectron);
     getCollection( iEvent, missing, HcalEleNonIsolMap,        NonIsoEleHcal_,             kIsoEleHcal);
-    getCollection( iEvent, missing, NonIsoTrackEleIsolMapLW,  NonIsoEleTrackIsolLW_,      kNonIsoEleTrackIsol);
-    getCollection( iEvent, missing, NonIsoTrackEleIsolMapSS,  NonIsoEleTrackIsolSS_,      kNonIsoEleTrackIsol);
     getCollection( iEvent, missing, NonIsoTrackEleIsolMap,    NonIsoEleTrackIsol_,        kNonIsoEleTrackIsol);
     getCollection( iEvent, missing, TrackNonIsolMap,          NonIsoPhoTrackIsol_,        kNonIsoPhoTrackIsol);
     getCollection( iEvent, missing, TrackIsolMap,             IsoPhoTrackIsol_,           kIsoPhoTrackIsol);
@@ -487,23 +451,11 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
                           electrons,
                           photons,
                           electronIsoHandle,
-                          electronIsoHandleLW,
-                          electronIsoHandleSS,
                           electronNonIsoHandle,
-                          electronNonIsoHandleLW,
-                          electronNonIsoHandleSS,
                           NonIsoTrackEleIsolMap,
-                          NonIsoTrackEleIsolMapLW,
-                          NonIsoTrackEleIsolMapSS,
                           TrackEleIsolMap,
-                          TrackEleIsolMapLW,
-                          TrackEleIsolMapSS,
                           L1IsoPixelSeedsMap,
-                          L1IsoPixelSeedsMapLW,
-                          L1IsoPixelSeedsMapSS,
                           L1NonIsoPixelSeedsMap,
-                          L1NonIsoPixelSeedsMapLW,
-                          L1NonIsoPixelSeedsMapSS,
                           recoIsolecalcands,
                           recoNonIsolecalcands,
                           EcalIsolMap,

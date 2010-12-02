@@ -70,23 +70,11 @@ public:
       const edm::Handle<reco::GsfElectronCollection>         & electrons,
       const edm::Handle<reco::PhotonCollection>              & photons,
       const edm::Handle<reco::ElectronCollection>            & electronIsoHandle,
-      const edm::Handle<reco::ElectronCollection>            & electronIsoHandleLW,
-      const edm::Handle<reco::ElectronCollection>            & electronIsoHandleSS,
       const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandle,
-      const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandleLW,
-      const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandleSS,
       const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMap,
-      const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMapLW,
-      const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMapSS,
       const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap,
-      const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMapLW,
-      const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMapSS,
       const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMap,
-      const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMapLW,
-      const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMapSS,
       const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMap,
-      const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMapLW,
-      const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMapSS,
       const edm::Handle<reco::RecoEcalCandidateCollection>   & recoIsolecalcands,
       const edm::Handle<reco::RecoEcalCandidateCollection>   & recoNonIsolecalcands,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalIsolMap,
@@ -143,6 +131,8 @@ private:
       const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMap,
       const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap,
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9IsoMap,  
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,  
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalIsolMap, 
       EcalClusterLazyTools& lazyTools,
       const edm::ESHandle<MagneticField>& theMagField,
       reco::BeamSpot::Point & BSPosition  );
@@ -155,6 +145,8 @@ private:
       const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMap,
       const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap, 
       const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9NonIsoMap,   
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,  
+      const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalIsolMap, 
       EcalClusterLazyTools& lazyTools,
       const edm::ESHandle<MagneticField>& theMagField,
       reco::BeamSpot::Point & BSPosition  );
@@ -170,16 +162,14 @@ private:
   float *elpt, *elphi, *eleta, *elet, *ele;
   float *photonpt, *photonphi, *photoneta, *photonet, *photone;
 
-  float *hphotet, *hphoteta, *hphotphi, *hphoteiso, *hphothiso, *hphottiso;
-  float *heleet, *heleeta, *helephi, *heleE, *helep, *helehiso, *heletiso;
-  float *heleetLW, *heleetaLW, *helephiLW, *heleELW, *helepLW, *helehisoLW, *heletisoLW;
-  float *heleetSS, *heleetaSS, *helephiSS, *heleESS, *helepSS, *helehisoSS, *heletisoSS;
-  float *hphotClusShap, *heleClusShap, *heleDeta, *heleDphi, *heleClusShapLW, *heleDetaLW, *heleDphiLW, *heleClusShapSS, *heleDetaSS, *heleDphiSS;
-  float *hphotR9, *heleR9, *hphothovereh;
-  int *hphotl1iso, *helel1iso, *helePixelSeeds, *helel1isoLW, *helePixelSeedsLW, *helel1isoSS, *helePixelSeedsSS;
+  float *hphotet, *hphoteta, *hphotphi, *hphoteiso, *hphothiso, *hphottiso, *hphothovereh;
+  float *heleet, *heleeta, *helephi, *heleE, *helep, *helehiso, *heletiso, *helehovereh, *heleeiso;
+  float *hphotClusShap, *heleClusShap, *heleDeta, *heleDphi;
+  float *hphotR9, *heleR9;
+  int *hphotl1iso, *helel1iso, *helePixelSeeds;
   int *eleId;// RL  + 2*RT + 4*L +  4*T 
-  int *heleNewSC, *heleNewSCLW, *heleNewSCSS;
-  int nele, nphoton, nhltgam, nhltele, nhlteleLW, nhlteleSS;
+  int *heleNewSC;
+  int nele, nphoton, nhltgam, nhltele;
 
 
 
@@ -206,6 +196,7 @@ private:
     float p;
     float hcalIsol;
     float trackIsol;
+    float ecalIsol;
     bool  L1Isolated;
     int   pixelSeeds;
     bool  newSC;
@@ -213,6 +204,7 @@ private:
     float r9;
     float Deta;
     float Dphi;
+    float hovereh; 
     float et() const { return Et; } // Function defined as such to be compatible with EtGreater()
   };
 

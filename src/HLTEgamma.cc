@@ -29,8 +29,6 @@ static const size_t kMaxEl     = 10000;
 static const size_t kMaxPhot   = 10000;
 static const size_t kMaxhPhot  =   500;
 static const size_t kMaxhEle   =   500;
-static const size_t kMaxhEleLW =   500;
-static const size_t kMaxhEleSS =   500;
 
 HLTEgamma::HLTEgamma() {
 }
@@ -68,6 +66,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   heleE             = new float[kMaxhEle];
   helep             = new float[kMaxhEle];
   helehiso          = new float[kMaxhEle];
+  heleeiso          = new float[kMaxhEle];
   heletiso          = new float[kMaxhEle];
   helel1iso         = new int[kMaxhEle];
   helePixelSeeds    = new int[kMaxhEle];
@@ -76,41 +75,12 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   heleDeta          = new float[kMaxhEle];
   heleDphi          = new float[kMaxhEle];
   heleR9            = new float[kMaxhEle]; 
-
-  heleetLW          = new float[kMaxhEleLW];
-  heleetaLW         = new float[kMaxhEleLW];
-  helephiLW         = new float[kMaxhEleLW];
-  heleELW           = new float[kMaxhEleLW];
-  helepLW           = new float[kMaxhEleLW];
-  helehisoLW        = new float[kMaxhEleLW];
-  heletisoLW        = new float[kMaxhEleLW];
-  helel1isoLW       = new int[kMaxhEleLW];
-  helePixelSeedsLW  = new int[kMaxhEleLW];
-  heleNewSCLW       = new int[kMaxhEleLW];
-  heleClusShapLW    = new float[kMaxhEleLW];
-  heleDetaLW        = new float[kMaxhEleLW];
-  heleDphiLW        = new float[kMaxhEleLW];
-
-  heleetSS          = new float[kMaxhEleSS];
-  heleetaSS         = new float[kMaxhEleSS];
-  helephiSS         = new float[kMaxhEleSS];
-  heleESS           = new float[kMaxhEleSS];
-  helepSS           = new float[kMaxhEleSS];
-  helehisoSS        = new float[kMaxhEleSS];
-  heletisoSS        = new float[kMaxhEleSS];
-  helel1isoSS       = new int[kMaxhEleSS];
-  helePixelSeedsSS  = new int[kMaxhEleSS];
-  heleNewSCSS       = new int[kMaxhEleSS];
-  heleClusShapSS    = new float[kMaxhEleSS];
-  heleDetaSS        = new float[kMaxhEleSS];
-  heleDphiSS        = new float[kMaxhEleSS];
+  helehovereh       = new float[kMaxhEle];
 
   nele      = 0;
   nphoton   = 0;
   nhltgam   = 0;
   nhltele   = 0;
-  nhlteleLW = 0;
-  nhlteleSS = 0;
 
   // Egamma-specific branches of the tree
   HltTree->Branch("NrecoElec",          & nele,             "NrecoElec/I");
@@ -148,6 +118,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   HltTree->Branch("ohEleP",             helep,              "ohEleP[NohEle]/F");
   HltTree->Branch("ohEleHiso",          helehiso,           "ohEleHiso[NohEle]/F");
   HltTree->Branch("ohEleTiso",          heletiso,           "ohEleTiso[NohEle]/F");
+  HltTree->Branch("ohEleEiso",          heleeiso,           "ohEleEiso[NohEle]/F"); 
   HltTree->Branch("ohEleL1iso",         helel1iso,          "ohEleLiso[NohEle]/I");
   HltTree->Branch("ohElePixelSeeds",    helePixelSeeds,     "ohElePixelSeeds[NohEle]/I");
   HltTree->Branch("ohEleNewSC",         heleNewSC,          "ohEleNewSC[NohEle]/I");
@@ -155,36 +126,7 @@ void HLTEgamma::setup(const edm::ParameterSet& pSet, TTree* HltTree)
   HltTree->Branch("ohEleDeta",          heleDeta,           "ohEleDeta[NohEle]/F");
   HltTree->Branch("ohEleDphi",          heleDphi,           "ohEleDphi[NohEle]/F");
   HltTree->Branch("ohEleR9",            heleR9,             "ohEleR9[NohEle]/F");  
-
-  HltTree->Branch("NohEleLW",           & nhlteleLW,        "NohEleLW/I");
-  HltTree->Branch("ohEleEtLW",          heleetLW,           "ohEleEtLW[NohEleLW]/F");
-  HltTree->Branch("ohEleEtaLW",         heleetaLW,          "ohEleEtaLW[NohEleLW]/F");
-  HltTree->Branch("ohElePhiLW",         helephiLW,          "ohElePhiLW[NohEleLW]/F");
-  HltTree->Branch("ohEleELW",           heleELW,            "ohEleELW[NohEleLW]/F");
-  HltTree->Branch("ohElePLW",           helepLW,            "ohElePLW[NohEleLW]/F");
-  HltTree->Branch("ohEleHisoLW",        helehisoLW,         "ohEleHisoLW[NohEleLW]/F");
-  HltTree->Branch("ohEleTisoLW",        heletisoLW,         "ohEleTisoLW[NohEleLW]/F");
-  HltTree->Branch("ohEleL1isoLW",       helel1isoLW,        "ohEleLisoLW[NohEleLW]/I");
-  HltTree->Branch("ohElePixelSeedsLW",  helePixelSeedsLW,   "ohElePixelSeedsLW[NohEleLW]/I");
-  HltTree->Branch("ohEleNewSCLW",       heleNewSCLW,        "ohEleNewSCLW[NohEleLW]/I");
-  HltTree->Branch("ohEleClusShapLW",    heleClusShapLW,     "ohEleClusShapLW[NohEleLW]/F");
-  HltTree->Branch("ohEleDetaLW",        heleDetaLW,         "ohEleDetaLW[NohEleLW]/F");
-  HltTree->Branch("ohEleDphiLW",        heleDphiLW,         "ohEleDphiLW[NohEleLW]/F");
-
-  HltTree->Branch("NohEleSS",           & nhlteleSS,        "NohEleSS/I");
-  HltTree->Branch("ohEleEtSS",          heleetSS,           "ohEleEtSS[NohEleSS]/F");
-  HltTree->Branch("ohEleEtaSS",         heleetaSS,          "ohEleEtaSS[NohEleSS]/F");
-  HltTree->Branch("ohElePhiSS",         helephiSS,          "ohElePhiSS[NohEleSS]/F");
-  HltTree->Branch("ohEleESS",           heleESS,            "ohEleESS[NohEleSS]/F");
-  HltTree->Branch("ohElePSS",           helepSS,            "ohElePSS[NohEleSS]/F");
-  HltTree->Branch("ohEleHisoSS",        helehisoSS,         "ohEleHisoSS[NohEleSS]/F");
-  HltTree->Branch("ohEleTisoSS",        heletisoSS,         "ohEleTisoSS[NohEleSS]/F");
-  HltTree->Branch("ohEleL1isoSS",       helel1isoSS,        "ohEleLisoSS[NohEleSS]/I");
-  HltTree->Branch("ohElePixelSeedsSS",  helePixelSeedsSS,   "ohElePixelSeedsSS[NohEleSS]/I");
-  HltTree->Branch("ohEleNewSCSS",       heleNewSCSS,        "ohEleNewSCSS[NohEleSS]/I");
-  HltTree->Branch("ohEleClusShapSS",    heleClusShapSS,     "ohEleClusShapSS[NohEleSS]/F");
-  HltTree->Branch("ohEleDetaSS",        heleDetaSS,         "ohEleDetaSS[NohEleSS]/F");
-  HltTree->Branch("ohEleDphiSS",        heleDphiSS,         "ohEleDphiSS[NohEleSS]/F");
+  HltTree->Branch("ohEleHforHoverE",    helehovereh,        "ohEleHforHoverE[NohEle]/F");    
 }
 
 void HLTEgamma::clear(void)
@@ -218,6 +160,8 @@ void HLTEgamma::clear(void)
   std::memset(helep,            '\0', kMaxhEle   * sizeof(float));
   std::memset(helehiso,         '\0', kMaxhEle   * sizeof(float));
   std::memset(heletiso,         '\0', kMaxhEle   * sizeof(float));
+  std::memset(heleeiso,         '\0', kMaxhEle   * sizeof(float)); 
+  std::memset(helehovereh,      '\0', kMaxhEle   * sizeof(float));
   std::memset(helel1iso,        '\0', kMaxhEle   * sizeof(int));
   std::memset(helePixelSeeds,   '\0', kMaxhEle   * sizeof(int));
   std::memset(heleNewSC,        '\0', kMaxhEle   * sizeof(int));
@@ -225,63 +169,21 @@ void HLTEgamma::clear(void)
   std::memset(heleDeta,         '\0', kMaxhEle  * sizeof(float));
   std::memset(heleDphi,         '\0', kMaxhEle  * sizeof(float));
 
-  std::memset(heleetLW,         '\0', kMaxhEleLW * sizeof(float));
-  std::memset(heleetaLW,        '\0', kMaxhEleLW * sizeof(float));
-  std::memset(helephiLW,        '\0', kMaxhEleLW * sizeof(float));
-  std::memset(heleELW,          '\0', kMaxhEleLW * sizeof(float));
-  std::memset(helepLW,          '\0', kMaxhEleLW * sizeof(float));
-  std::memset(helehisoLW,       '\0', kMaxhEleLW * sizeof(float));
-  std::memset(heletisoLW,       '\0', kMaxhEleLW * sizeof(float));
-  std::memset(helel1isoLW,      '\0', kMaxhEleLW * sizeof(int));
-  std::memset(helePixelSeedsLW, '\0', kMaxhEleLW * sizeof(int));
-  std::memset(heleNewSCLW,      '\0', kMaxhEleLW * sizeof(int));
-  std::memset(heleClusShapLW,   '\0', kMaxhEleLW  * sizeof(float));
-  std::memset(heleDetaLW,       '\0', kMaxhEleLW  * sizeof(float));
-  std::memset(heleDphiLW,       '\0', kMaxhEleLW  * sizeof(float));
-
-  std::memset(heleetSS,         '\0', kMaxhEleSS * sizeof(float));
-  std::memset(heleetaSS,        '\0', kMaxhEleSS * sizeof(float));
-  std::memset(helephiSS,        '\0', kMaxhEleSS * sizeof(float));
-  std::memset(heleESS,          '\0', kMaxhEleSS * sizeof(float));
-  std::memset(helepSS,          '\0', kMaxhEleSS * sizeof(float));
-  std::memset(helehisoSS,       '\0', kMaxhEleSS * sizeof(float));
-  std::memset(heletisoSS,       '\0', kMaxhEleSS * sizeof(float));
-  std::memset(helel1isoSS,      '\0', kMaxhEleSS * sizeof(int));
-  std::memset(helePixelSeedsSS, '\0', kMaxhEleSS * sizeof(int));
-  std::memset(heleNewSCSS,      '\0', kMaxhEleSS * sizeof(int));
-  std::memset(heleClusShapSS,   '\0', kMaxhEleSS  * sizeof(float));
-  std::memset(heleDetaSS,       '\0', kMaxhEleSS  * sizeof(float));
-  std::memset(heleDphiSS,       '\0', kMaxhEleSS  * sizeof(float));
-
   nele      = 0;
   nphoton   = 0;
   nhltgam   = 0;
   nhltele   = 0;
-  nhlteleLW = 0;
-  nhlteleSS = 0;
 }
 
 /* **Analyze the event** */
 void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         & electrons,
                         const edm::Handle<reco::PhotonCollection>              & photons,
                         const edm::Handle<reco::ElectronCollection>            & electronIsoHandle,
-                        const edm::Handle<reco::ElectronCollection>            & electronIsoHandleLW,
-			const edm::Handle<reco::ElectronCollection>            & electronIsoHandleSS,
                         const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandle,
-                        const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandleLW,
-			const edm::Handle<reco::ElectronCollection>            & electronNonIsoHandleSS,
                         const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMap,
-                        const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMapLW,
-			const edm::Handle<reco::ElectronIsolationMap>          & NonIsoTrackEleIsolMapSS,
                         const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap,
-                        const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMapLW,
-			const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMapSS,
                         const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMap,
-                        const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMapLW,
-			const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMapSS,
                         const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMap,
-                        const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMapLW,
-			const edm::Handle<reco::ElectronSeedCollection>        & L1NonIsoPixelSeedsMapSS,
                         const edm::Handle<reco::RecoEcalCandidateCollection>   & recoIsolecalcands,
                         const edm::Handle<reco::RecoEcalCandidateCollection>   & recoNonIsolecalcands,
                         const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalIsolMap,
@@ -417,6 +319,8 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       L1IsoPixelSeedsMap,
       TrackEleIsolMap,
       electronR9IsoMap,
+      photonHoverEHNonIsoMap, 
+      EcalIsolMap, 
       lazyTools,
       theMagField,
       BSPosition);
@@ -427,7 +331,9 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       HcalEleNonIsolMap,
       L1NonIsoPixelSeedsMap,
       NonIsoTrackEleIsolMap,
+      photonHoverEHNonIsoMap, 
       electronR9NonIsoMap, 
+      EcalNonIsolMap, 
       lazyTools,
       theMagField,
       BSPosition);
@@ -444,102 +350,14 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
     helehiso[u]       = theHLTElectrons[u].hcalIsol;
     helePixelSeeds[u] = theHLTElectrons[u].pixelSeeds;
     heletiso[u]       = theHLTElectrons[u].trackIsol;
+    heleeiso[u]       = theHLTElectrons[u].ecalIsol; 
     helel1iso[u]      = theHLTElectrons[u].L1Isolated;
     heleNewSC[u]      = theHLTElectrons[u].newSC;
     heleClusShap[u]   = theHLTElectrons[u].clusterShape;
     heleDeta[u]       = theHLTElectrons[u].Deta;
     heleDphi[u]       = theHLTElectrons[u].Dphi;
     heleR9[u]         = theHLTElectrons[u].r9;  
-  }
-
-  /////    Open-HLT electrons  LW /////////////////
-  std::vector<OpenHLTElectron> theHLTElectronsLargeWindows;
-  MakeL1IsolatedElectrons(
-      theHLTElectronsLargeWindows,
-      electronIsoHandleLW,
-      recoIsolecalcands,
-      HcalEleIsolMap,
-      L1IsoPixelSeedsMapLW,
-      TrackEleIsolMapLW,
-      electronR9IsoMap, 
-      lazyTools,
-      theMagField,
-      BSPosition);
-  MakeL1NonIsolatedElectrons(
-      theHLTElectronsLargeWindows,
-      electronNonIsoHandleLW,
-      recoNonIsolecalcands,
-      HcalEleNonIsolMap,
-      L1NonIsoPixelSeedsMapLW,
-      NonIsoTrackEleIsolMapLW,
-      electronR9NonIsoMap,  
-      lazyTools,
-      theMagField,
-      BSPosition);
-
-  std::sort(theHLTElectronsLargeWindows.begin(), theHLTElectronsLargeWindows.end(), EtGreater());
-  nhlteleLW = theHLTElectronsLargeWindows.size();
-
-  for (int u = 0; u < nhlteleLW; u++) {
-    heleetLW[u]         = theHLTElectronsLargeWindows[u].Et;
-    heleetaLW[u]        = theHLTElectronsLargeWindows[u].eta;
-    helephiLW[u]        = theHLTElectronsLargeWindows[u].phi;
-    heleELW[u]          = theHLTElectronsLargeWindows[u].E;
-    helepLW[u]          = theHLTElectronsLargeWindows[u].p;
-    helehisoLW[u]       = theHLTElectronsLargeWindows[u].hcalIsol;
-    helePixelSeedsLW[u] = theHLTElectronsLargeWindows[u].pixelSeeds;
-    heletisoLW[u]       = theHLTElectronsLargeWindows[u].trackIsol;
-    helel1isoLW[u]      = theHLTElectronsLargeWindows[u].L1Isolated;
-    heleNewSCLW[u]      = theHLTElectronsLargeWindows[u].newSC;
-    heleClusShapLW[u]   = theHLTElectronsLargeWindows[u].clusterShape;
-    heleDetaLW[u]       = theHLTElectronsLargeWindows[u].Deta;
-    heleDphiLW[u]       = theHLTElectronsLargeWindows[u].Dphi;
-
-  }
-
-  /////    Open-HLT electrons  SS /////////////////
-  std::vector<OpenHLTElectron> theHLTElectronsSiStrip;
-  MakeL1IsolatedElectrons(
-      theHLTElectronsSiStrip,
-      electronIsoHandleSS,
-      recoIsolecalcands,
-      HcalEleIsolMap,
-      L1IsoPixelSeedsMapSS,
-      TrackEleIsolMapSS,
-      electronR9IsoMap,  
-      lazyTools,
-      theMagField,
-      BSPosition);
-  MakeL1NonIsolatedElectrons(
-      theHLTElectronsSiStrip,
-      electronNonIsoHandleSS,
-      recoNonIsolecalcands,
-      HcalEleNonIsolMap,
-      L1NonIsoPixelSeedsMapSS,
-      NonIsoTrackEleIsolMapSS,
-      electronR9NonIsoMap,  
-      lazyTools,
-      theMagField,
-      BSPosition);
-
-  std::sort(theHLTElectronsSiStrip.begin(), theHLTElectronsSiStrip.end(), EtGreater());
-  nhlteleSS = theHLTElectronsSiStrip.size();
-
-  for (int u = 0; u < nhlteleSS; u++) {
-    heleetSS[u]         = theHLTElectronsSiStrip[u].Et;
-    heleetaSS[u]        = theHLTElectronsSiStrip[u].eta;
-    helephiSS[u]        = theHLTElectronsSiStrip[u].phi;
-    heleESS[u]          = theHLTElectronsSiStrip[u].E;
-    helepSS[u]          = theHLTElectronsSiStrip[u].p;
-    helehisoSS[u]       = theHLTElectronsSiStrip[u].hcalIsol;
-    helePixelSeedsSS[u] = theHLTElectronsSiStrip[u].pixelSeeds;
-    heletisoSS[u]       = theHLTElectronsSiStrip[u].trackIsol;
-    helel1isoSS[u]      = theHLTElectronsSiStrip[u].L1Isolated;
-    heleNewSCSS[u]      = theHLTElectronsSiStrip[u].newSC;
-    heleClusShapSS[u]   = theHLTElectronsSiStrip[u].clusterShape;
-    heleDetaSS[u]       = theHLTElectronsSiStrip[u].Deta;
-    heleDphiSS[u]       = theHLTElectronsSiStrip[u].Dphi;
-
+    helehovereh[u]    = theHLTElectrons[u].hovereh;
   }
 }
 
@@ -698,9 +516,11 @@ void HLTEgamma::MakeL1IsolatedElectrons(
     const edm::Handle<reco::ElectronCollection>            & electronIsoHandle,
     const edm::Handle<reco::RecoEcalCandidateCollection>   & recoIsolecalcands,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & HcalEleIsolMap,
-    const edm::Handle<reco::ElectronSeedCollection>   & L1IsoPixelSeedsMap,
+    const edm::Handle<reco::ElectronSeedCollection>        & L1IsoPixelSeedsMap,
     const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9IsoMap,     
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHIsoMap,      
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalIsolMap, 
     EcalClusterLazyTools& lazyTools,
     const edm::ESHandle<MagneticField>& theMagField,
     reco::BeamSpot::Point & BSPosition )
@@ -718,6 +538,7 @@ void HLTEgamma::MakeL1IsolatedElectrons(
       OpenHLTElectron ele;
       ele.hcalIsol   = -999;
       ele.trackIsol  = -999;
+      ele.ecalIsol   = -999;
       ele.L1Isolated = true;
       ele.p          = -999;
       ele.pixelSeeds = -999;
@@ -725,6 +546,7 @@ void HLTEgamma::MakeL1IsolatedElectrons(
       ele.clusterShape = -999;
       ele.Dphi = 700; 
       ele.Deta = 700;
+      ele.hovereh = -999;
       ele.Et         = recoecalcand->et();
       ele.eta        = recoecalcand->eta();
       ele.phi        = recoecalcand->phi();
@@ -740,6 +562,11 @@ void HLTEgamma::MakeL1IsolatedElectrons(
       ele.clusterShape = sigmaee;
       ele.r9 = -999.;
 
+      // fill the ecal Isolation 
+      if (EcalIsolMap.isValid()) { 
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*EcalIsolMap).find(ref); 
+        if (mapi !=(*EcalIsolMap).end()) { ele.ecalIsol = mapi->val;} 
+      } 
       // fill the hcal Isolation
       if (HcalEleIsolMap.isValid()) {
         //reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoIsolecalcands, distance(recoIsolecalcands->begin(), recoecalcand)) );
@@ -751,6 +578,11 @@ void HLTEgamma::MakeL1IsolatedElectrons(
 	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*electronR9IsoMap).find( ref );   
 	if (mapi !=(*electronR9IsoMap).end()) { ele.r9 = mapi->val; }   
       }   
+      // fill the H for H/E 
+      if (photonHoverEHIsoMap.isValid()) { 
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*photonHoverEHIsoMap).find(ref);   
+        if (mapi !=(*photonHoverEHIsoMap).end()) { ele.hovereh = mapi->val;} 
+      } 
       // look if the SC has associated pixelSeeds
       int nmatch = 0;
 
@@ -805,6 +637,8 @@ void HLTEgamma::MakeL1IsolatedElectrons(
               ele2.newSC = false;
               ele2.p = electronref->track()->momentum().R();
 	      ele2.r9 = ele.r9;
+	      ele2.hovereh = ele.hovereh;
+	      ele2.ecalIsol = ele.ecalIsol;
 	      float deta=-100, dphi=-100;
               CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
               ele2.Dphi=dphi; ele2.Deta=deta;
@@ -834,6 +668,8 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
     const edm::Handle<reco::ElectronSeedCollection>   & L1NonIsoPixelSeedsMap,
     const edm::Handle<reco::ElectronIsolationMap>          & TrackEleIsolMap,
     const edm::Handle<reco::RecoEcalCandidateIsolationMap> & electronR9NonIsoMap,     
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & photonHoverEHNonIsoMap,      
+    const edm::Handle<reco::RecoEcalCandidateIsolationMap> & EcalNonIsolMap, 
     EcalClusterLazyTools& lazyTools,
     const edm::ESHandle<MagneticField>& theMagField,
     reco::BeamSpot::Point & BSPosition  )
@@ -851,6 +687,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
       OpenHLTElectron ele;
       ele.hcalIsol   = -999;
       ele.trackIsol  = -999;
+      ele.ecalIsol   = -999; 
       ele.L1Isolated = false;
       ele.p          = -999;
       ele.pixelSeeds = -999;
@@ -859,6 +696,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
       ele.Dphi = 700; 
       ele.Deta = 700;
       ele.r9 = -999.;
+      ele.hovereh = -999; 
       ele.Et         = recoecalcand->et();
       ele.eta        = recoecalcand->eta();
       ele.phi        = recoecalcand->phi();
@@ -873,6 +711,11 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
       }
       ele.clusterShape = sigmaee;
 
+      // fill the ecal Isolation 
+      if (EcalNonIsolMap.isValid()) { 
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*EcalNonIsolMap).find(ref); 
+        if (mapi !=(*EcalNonIsolMap).end()) { ele.ecalIsol = mapi->val;} 
+      } 
       // fill the hcal Isolation
       if (HcalEleIsolMap.isValid()) {
         // reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*HcalEleIsolMap).find( reco::RecoEcalCandidateRef(recoNonIsolecalcands, distance(recoNonIsolecalcands->begin(), recoecalcand)) );
@@ -884,6 +727,11 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
 	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*electronR9NonIsoMap).find( ref );    
 	if (mapi !=(*electronR9NonIsoMap).end()) { ele.r9 = mapi->val; }    
       }    
+      // fill the H for H/E 
+      if (photonHoverEHNonIsoMap.isValid()) { 
+	reco::RecoEcalCandidateIsolationMap::const_iterator mapi = (*photonHoverEHNonIsoMap).find(ref);   
+        if (mapi !=(*photonHoverEHNonIsoMap).end()) { ele.hovereh = mapi->val;} 
+      } 
       // look if the SC has associated pixelSeeds
       int nmatch = 0;
 
@@ -926,6 +774,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
               OpenHLTElectron ele2;
               ele2.hcalIsol   = ele.hcalIsol;
               ele2.trackIsol  =-999;
+	      ele2.ecalIsol = ele.ecalIsol;
 	      ele2.Dphi = 700; 
 	      ele2.Deta = 700;
               ele2.Et         = ele.Et;
@@ -938,6 +787,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
               ele2.newSC      = false;
               ele2.p          = electronref->track()->momentum().R();
 	      ele2.r9         = ele.r9;
+              ele2.hovereh = ele.hovereh; 
 	      float deta=-100, dphi=-100;
               CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
               ele2.Dphi=dphi; ele2.Deta=deta;
