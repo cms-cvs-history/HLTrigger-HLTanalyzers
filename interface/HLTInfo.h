@@ -98,6 +98,7 @@ private:
   float *l1extiemet, *l1extieme, *l1extiemeta, *l1extiemphi;
   float *l1extnemet, *l1extneme, *l1extnemeta, *l1extnemphi;
   float *l1extmupt, *l1extmue, *l1extmueta, *l1extmuphi;
+  int *l1extmuchg;
   float *l1extjtcet, *l1extjtce, *l1extjtceta, *l1extjtcphi;
   float *l1extjtfet, *l1extjtfe, *l1extjtfeta, *l1extjtfphi;
   float *l1exttauet, *l1exttaue, *l1exttaueta, *l1exttauphi;
