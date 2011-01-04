@@ -552,13 +552,13 @@ void HLTEgamma::MakeL1IsolatedElectrons(
       ele.phi        = recoecalcand->phi();
       ele.E          = recrSC->energy();
       //Get the cluster shape
-      std::vector<float> vCov = lazyTools.covariances( *(recrSC->seed()) );
-      //      std::vector<float> vCov = lazyTools.localCovariances( *(recrSC->seed()) );
+      //      std::vector<float> vCov = lazyTools.covariances( *(recrSC->seed()) );
+      std::vector<float> vCov = lazyTools.localCovariances( *(recrSC->seed()) );
       double sigmaee = sqrt(vCov[0]);
-      float EtaSC = fabs(recoecalcand->eta());
-      if(EtaSC > 1.479 ) {//Endcap
-        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
-      }
+      //      float EtaSC = fabs(recoecalcand->eta());
+      //      if(EtaSC > 1.479 ) {//Endcap
+      //        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
+      //      }
       ele.clusterShape = sigmaee;
       ele.r9 = -999.;
 
@@ -702,13 +702,13 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
       ele.phi        = recoecalcand->phi();
       ele.E          = recrSC->energy();
       //Get the cluster shape
-      std::vector<float> vCov = lazyTools.covariances( *(recrSC->seed()) );
-      //      std::vector<float> vCov = lazyTools.localCovariances( *(recrSC->seed()) );
+      //      std::vector<float> vCov = lazyTools.covariances( *(recrSC->seed()) );
+      std::vector<float> vCov = lazyTools.localCovariances( *(recrSC->seed()) );
       double sigmaee = sqrt(vCov[0]);
-      float EtaSC = fabs(recoecalcand->eta());
-      if(EtaSC > 1.479 ) {//Endcap
-        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
-      }
+      //      float EtaSC = fabs(recoecalcand->eta());
+      //      if(EtaSC > 1.479 ) {//Endcap
+      //        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
+      //      }
       ele.clusterShape = sigmaee;
 
       // fill the ecal Isolation 
