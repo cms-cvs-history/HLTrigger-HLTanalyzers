@@ -526,7 +526,6 @@ void HLTEgamma::MakeL1IsolatedElectrons(
     reco::BeamSpot::Point & BSPosition )
 {
   // if there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
-
   if (recoIsolecalcands.isValid()) {
     for (reco::RecoEcalCandidateCollection::const_iterator recoecalcand = recoIsolecalcands->begin();
          recoecalcand!= recoIsolecalcands->end(); recoecalcand++) {
@@ -611,7 +610,7 @@ void HLTEgamma::MakeL1IsolatedElectrons(
               FirstElectron = false;
               ele.p = electronref->track()->momentum().R();
 	      float deta=-100, dphi=-100;
-              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
+              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi, false);
               ele.Dphi=dphi; ele.Deta=deta;
               // fill the track Isolation
               if (TrackEleIsolMap.isValid()) {
@@ -640,7 +639,7 @@ void HLTEgamma::MakeL1IsolatedElectrons(
 	      ele2.hovereh = ele.hovereh;
 	      ele2.ecalIsol = ele.ecalIsol;
 	      float deta=-100, dphi=-100;
-              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
+              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi, false);
               ele2.Dphi=dphi; ele2.Deta=deta;
               // fill the track Isolation
               if (TrackEleIsolMap.isValid()) {
@@ -675,7 +674,6 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
     reco::BeamSpot::Point & BSPosition  )
 {
   // if there are electrons, then the isolation maps and the SC should be in the event; if not it is an error
-
   if (recoNonIsolecalcands.isValid()) {
     for (reco::RecoEcalCandidateCollection::const_iterator recoecalcand = recoNonIsolecalcands->begin();
          recoecalcand!= recoNonIsolecalcands->end(); recoecalcand++) {
@@ -760,7 +758,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
               FirstElectron = false;
               ele.p = electronref->track()->momentum().R();
 	      float deta=-100, dphi=-100;
-              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
+              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi, false);
               ele.Dphi=dphi; ele.Deta=deta;
 
               // fill the track Isolation
@@ -789,7 +787,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
 	      ele2.r9         = ele.r9;
               ele2.hovereh = ele.hovereh; 
 	      float deta=-100, dphi=-100;
-              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi);
+              CalculateDetaDphi(theMagField,BSPosition , electronref , deta, dphi, false);
               ele2.Dphi=dphi; ele2.Deta=deta;
 
               // fill the track Isolation
@@ -813,30 +811,40 @@ void HLTEgamma::CalculateDetaDphi(const edm::ESHandle<MagneticField>& theMagFiel
                                   reco::BeamSpot::Point & BSPosition, 
                                   const reco::ElectronRef eleref, 
                                   float& deltaeta, 
-                                  float& deltaphi )
+                                  float& deltaphi, bool useTrackProjectionToEcal )
 {
   
+
   const reco::SuperClusterRef theClus = eleref->superCluster();
+  math::XYZVector scv(theClus->x(), theClus->y(), theClus->z());
+  
   const math::XYZVector trackMom =  eleref->track()->momentum();
 
     math::XYZPoint SCcorrPosition(theClus->x()-BSPosition.x(), theClus->y()-BSPosition.y() , theClus->z()-eleref->track()->vz() );
     deltaeta = SCcorrPosition.eta()-eleref->track()->eta();
 
-    ECALPositionCalculator posCalc;
-    const math::XYZPoint vertex(BSPosition.x(),BSPosition.y(),eleref->track()->vz());
-
-    float phi1= posCalc.ecalPhi(theMagField.product(),trackMom,vertex,1);
-    float phi2= posCalc.ecalPhi(theMagField.product(),trackMom,vertex,-1);
-
-    float deltaphi1=fabs( phi1 - theClus->position().phi() );
-    if(deltaphi1>6.283185308) deltaphi1 -= 6.283185308;
-    if(deltaphi1>3.141592654) deltaphi1 = 6.283185308-deltaphi1;
-
-    float deltaphi2=fabs( phi2 - theClus->position().phi() );
-    if(deltaphi2>6.283185308) deltaphi2 -= 6.283185308;
-    if(deltaphi2>3.141592654) deltaphi2 = 6.283185308-deltaphi2;
-
-    deltaphi = deltaphi1;
-    if(deltaphi2<deltaphi1){ deltaphi = deltaphi2;}
+    if(useTrackProjectionToEcal){
+      ECALPositionCalculator posCalc;
+      const math::XYZPoint vertex(BSPosition.x(),BSPosition.y(),eleref->track()->vz());
+      
+      float phi1= posCalc.ecalPhi(theMagField.product(),trackMom,vertex,1);
+      float phi2= posCalc.ecalPhi(theMagField.product(),trackMom,vertex,-1);
+      
+      float deltaphi1=fabs( phi1 - theClus->position().phi() );
+      if(deltaphi1>6.283185308) deltaphi1 -= 6.283185308;
+      if(deltaphi1>3.141592654) deltaphi1 = 6.283185308-deltaphi1;
+      
+      float deltaphi2=fabs( phi2 - theClus->position().phi() );
+      if(deltaphi2>6.283185308) deltaphi2 -= 6.283185308;
+      if(deltaphi2>3.141592654) deltaphi2 = 6.283185308-deltaphi2;
+      
+      deltaphi = deltaphi1;
+      if(deltaphi2<deltaphi1){ deltaphi = deltaphi2;}
+    }
+    else {
+      deltaphi=fabs(eleref->track()->outerPosition().phi()-theClus->phi());
+      if(deltaphi>6.283185308) deltaphi -= 6.283185308;
+      if(deltaphi>3.141592654) deltaphi = 6.283185308-deltaphi;
+    }
 
 }

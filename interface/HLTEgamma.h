@@ -156,7 +156,7 @@ private:
 		       reco::BeamSpot::Point & BSPosition, 
 		       const reco::ElectronRef eleref, 
 		       float& deltaeta, 
-		       float& deltaphi );
+		       float& deltaphi, bool useTrackProjectionToEcal);
 
   // Tree variables
   float *elpt, *elphi, *eleta, *elet, *ele;
