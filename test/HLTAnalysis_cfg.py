@@ -52,8 +52,8 @@ process.options = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-                                 '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/86044E5C-77C7-DF11-902B-001D09F28F25.root',
-                                 '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/6EC49446-5DC7-DF11-B529-001D09F2447F.root'
+                                  '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/86044E5C-77C7-DF11-902B-001D09F28F25.root',
+                                  '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/6EC49446-5DC7-DF11-B529-001D09F2447F.root'
     )
 )
 
@@ -97,6 +97,11 @@ process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',WhichHLTProce
 process.hltanalysis.HLTProcessName = WhichHLTProcess
 process.hltanalysis.ht = "hltJet30Ht"
 process.hltanalysis.genmet = "genMetTrue"
+
+# Switch on ECAL alignment to be consistent with full HLT Event Setup
+process.EcalBarrelGeometryEP.applyAlignment = True
+process.EcalEndcapGeometryEP.applyAlignment = True
+process.EcalPreshowerGeometryEP.applyAlignment = True
 
 if (MENU == "GRun"):
     # get the objects associated with the menu
