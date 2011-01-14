@@ -319,7 +319,7 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       L1IsoPixelSeedsMap,
       TrackEleIsolMap,
       electronR9IsoMap,
-      photonHoverEHNonIsoMap, 
+      photonHoverEHIsoMap, 
       EcalIsolMap, 
       lazyTools,
       theMagField,

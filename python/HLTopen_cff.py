@@ -196,3 +196,6 @@ DoHLTMinBiasPixelTracks = cms.Path(
     hltPixelVertices +
     hltPixelVerticesForMultiVertex)
 
+hltPixelVertices.beamSpot = cms.InputTag( "hltOnlineBeamSpot" )
+hltBLifetimeRegionalCtfWithMaterialTracksStartupU.beamSpot = cms.InputTag("hltOnlineBeamSpot")
+hltBLifetimeRegionalCtfWithMaterialTracksStartup.beamSpot = cms.InputTag("hltOnlineBeamSpot")
