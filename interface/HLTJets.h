@@ -34,6 +34,8 @@
 #include "HLTrigger/HLTanalyzers/interface/JetUtil.h"
 #include "HLTrigger/HLTanalyzers/interface/CaloTowerBoundries.h"
 
+#include "DataFormats/TauReco/interface/PFTauDiscriminator.h"
+
 typedef std::vector<std::string> MyStrings;
 
 /** \class HLTJets
@@ -70,13 +72,21 @@ public:
                  const edm::Handle<reco::CaloMETCollection>      & rmets,
                  const edm::Handle<reco::GenMETCollection>       & gmets,
                  const edm::Handle<reco::METCollection>          & ht,                
-                 const edm::Handle<reco::HLTTauCollection> & myHLTTau,
-                  const edm::Handle<reco::PFTauCollection>        & myHLTPFTau,
-                 const edm::Handle<reco::PFJetCollection>         & myHLTPFJets,
-                 const edm::Handle<CaloTowerCollection>    & caloTowers,
+                 const edm::Handle<reco::HLTTauCollection>       & myHLTTau,
+                 const edm::Handle<reco::PFTauCollection>        & myHLTPFTau,
+                 const edm::Handle<reco::PFJetCollection>        & myHLTPFJets,                
+		 const edm::Handle<reco::PFTauCollection>	 & myRecoPFTau,
+		 const edm::Handle<PFTauDiscriminator>           & theRecoPFTauDiscrByTanCOnePercent,
+		 const edm::Handle<PFTauDiscriminator>		 & theRecoPFTauDiscrByTanCHalfPercent,
+		 const edm::Handle<PFTauDiscriminator>		 & theRecoPFTauDiscrByTanCQuarterPercent,
+		 const edm::Handle<PFTauDiscriminator>		 & theRecoPFTauDiscrByTanCTenthPercent,
+		 const edm::Handle<PFTauDiscriminator>		 & theRecoPFTauDiscrByIsolation,
+		 const edm::Handle<PFTauDiscriminator>           & theRecoPFTauDiscrAgainstElec,
+		 const edm::Handle<PFTauDiscriminator>           & theRecoPFTauDiscrAgainstMuon,
+		 const edm::Handle<CaloTowerCollection>          & caloTowers,	      
                  double thresholdForSavingTowers,
-                  double                minPtCH,
-                  double                minPtGamma,
+                 double                minPtCH,
+                 double                minPtGamma,
                  TTree * tree);
     
 private:
@@ -97,14 +107,19 @@ private:
     int nohtau;
     float *tauEta, *tauPt, *tauPhi; 
     //PFTau
-      int nohPFTau;
-    float *pfTauEta,*pfTauPhi,*pfTauPt,*pfTauJetPt,*pfTauLeadTrackPt,*pfTauLeadPionPt;
-    int *pfTauTrkIso, *pfTauGammaIso;
+    int nohPFTau;
+    float *ohpfTauEta,*ohpfTauPhi,*ohpfTauPt,*ohpfTauJetPt,*ohpfTauLeadTrackPt,*ohpfTauLeadPionPt;
+    int *ohpfTauTrkIso, *ohpfTauGammaIso;
     //PFJets
     float pfMHT;    
     int nohPFJet;
     float *pfJetEta, *pfJetPhi, *pfJetPt;
-    
+    //Reco PFTau
+    int nRecoPFTau;
+    float *recopfTauEta,*recopfTauPhi,*recopfTauPt,*recopfTauJetPt,*recopfTauLeadTrackPt,*recopfTauLeadPionPt;
+    int   *recopfTauTrkIso, *recopfTauGammaIso;
+    float *recopfTauDiscrByTancOnePercent,*recopfTauDiscrByTancHalfPercent, *recopfTauDiscrByTancQuarterPercent, *recopfTauDiscrByTancTenthPercent, *recopfTauDiscrByIso, *recopfTauDiscrAgainstMuon, *recopfTauDiscrAgainstElec;
+  
     // input variables
     bool _Monte,_Debug;
     float _CalJetMin, _GenJetMin;

@@ -35,6 +35,8 @@
 
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
+#include "DataFormats/TauReco/interface/PFTauDiscriminator.h"
+
 /** \class HLTAnalyzer
   *  
   * $Date: November 2006
@@ -92,8 +94,19 @@ private:
   edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;
   edm::InputTag oniaPixelTag_,oniaTrackTag_;
   edm::InputTag HLTTau_, PFTau_;
-    edm::InputTag PFJets_;
-
+  edm::InputTag PFJets_;
+  
+  //offline reco tau collection and discriminators
+  edm::InputTag RecoPFTau_;
+  edm::InputTag RecoPFTauDiscrByTanCOnePercent_;
+  edm::InputTag RecoPFTauDiscrByTanCHalfPercent_;
+  edm::InputTag RecoPFTauDiscrByTanCQuarterPercent_;
+  edm::InputTag RecoPFTauDiscrByTanCTenthPercent_;
+  edm::InputTag RecoPFTauDiscrByIso_;
+  edm::InputTag RecoPFTauAgainstMuon_;
+  edm::InputTag RecoPFTauAgainstElec_;
+  
+ 
   // btag OpenHLT input collections
   edm::InputTag m_rawBJets;
   edm::InputTag m_correctedBJets;

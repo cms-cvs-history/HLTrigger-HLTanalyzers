@@ -331,8 +331,8 @@ void HLTEgamma::analyze(const edm::Handle<reco::GsfElectronCollection>         &
       HcalEleNonIsolMap,
       L1NonIsoPixelSeedsMap,
       NonIsoTrackEleIsolMap,
+      electronR9NonIsoMap,  
       photonHoverEHNonIsoMap, 
-      electronR9NonIsoMap, 
       EcalNonIsolMap, 
       lazyTools,
       theMagField,
@@ -556,7 +556,7 @@ void HLTEgamma::MakeL1IsolatedElectrons(
       double sigmaee = sqrt(vCov[0]);
       //      float EtaSC = fabs(recoecalcand->eta());
       //      if(EtaSC > 1.479 ) {//Endcap
-      //        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
+      //	sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
       //      }
       ele.clusterShape = sigmaee;
       ele.r9 = -999.;
@@ -705,7 +705,7 @@ void HLTEgamma::MakeL1NonIsolatedElectrons(
       double sigmaee = sqrt(vCov[0]);
       //      float EtaSC = fabs(recoecalcand->eta());
       //      if(EtaSC > 1.479 ) {//Endcap
-      //        sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
+      //	sigmaee = sigmaee - 0.02*(EtaSC - 2.3);
       //      }
       ele.clusterShape = sigmaee;
 
@@ -814,7 +814,6 @@ void HLTEgamma::CalculateDetaDphi(const edm::ESHandle<MagneticField>& theMagFiel
                                   float& deltaphi, bool useTrackProjectionToEcal )
 {
   
-
   const reco::SuperClusterRef theClus = eleref->superCluster();
   math::XYZVector scv(theClus->x(), theClus->y(), theClus->z());
   
@@ -822,7 +821,7 @@ void HLTEgamma::CalculateDetaDphi(const edm::ESHandle<MagneticField>& theMagFiel
 
     math::XYZPoint SCcorrPosition(theClus->x()-BSPosition.x(), theClus->y()-BSPosition.y() , theClus->z()-eleref->track()->vz() );
     deltaeta = SCcorrPosition.eta()-eleref->track()->eta();
-
+    
     if(useTrackProjectionToEcal){
       ECALPositionCalculator posCalc;
       const math::XYZPoint vertex(BSPosition.x(),BSPosition.y(),eleref->track()->vz());

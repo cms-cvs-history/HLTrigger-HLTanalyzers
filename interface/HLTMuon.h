@@ -67,7 +67,9 @@ public:
 private:
 
   // Tree variables
-  float *muonpt, *muonphi, *muoneta, *muonet, *muone; 
+  float *muonpt, *muonphi, *muoneta, *muonet, *muone, *muonchi2NDF, *muoncharge,
+  *muonTrkIsoR03, *muonECalIsoR03, *muonHCalIsoR03, *muonD0;
+  int *muontype, *muonNValidTrkHits, *muonNValidMuonHits;
   float *muonl2pt, *muonl2eta, *muonl2phi, *muonl2dr, *muonl2dz;
   float *muonl3pt, *muonl3eta, *muonl3phi, *muonl3dr, *muonl3dz;
   float *muonl2pterr, *muonl3pterr;

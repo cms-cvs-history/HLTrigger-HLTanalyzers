@@ -37,6 +37,15 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   muoneta = new float[kMaxMuon];
   muonet = new float[kMaxMuon];
   muone = new float[kMaxMuon];
+  muonchi2NDF = new float[kMaxMuon];
+  muoncharge = new float[kMaxMuon];
+  muonTrkIsoR03 = new float[kMaxMuon];
+  muonECalIsoR03 = new float[kMaxMuon];
+  muonHCalIsoR03 = new float[kMaxMuon];
+  muonD0 = new float[kMaxMuon];
+  muontype = new int[kMaxMuon];
+  muonNValidTrkHits = new int[kMaxMuon];
+  muonNValidMuonHits = new int[kMaxMuon];
   const int kMaxMuonL2 = 500;
   muonl2pt = new float[kMaxMuonL2];
   muonl2phi = new float[kMaxMuonL2];
@@ -83,6 +92,16 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("recoMuonEta",muoneta,"recoMuonEta[NrecoMuon]/F");
   HltTree->Branch("recoMuonEt",muonet,"recoMuonEt[NrecoMuon]/F");
   HltTree->Branch("recoMuonE",muone,"recoMuonE[NrecoMuon]/F");
+  HltTree->Branch("recoMuonChi2NDF",        muonchi2NDF,       "recoMuonChi2NDF[NrecoMuon]/F");
+  HltTree->Branch("recoMuonCharge",         muoncharge  ,      "recoMuonCharge[NrecoMuon]/F");
+  HltTree->Branch("recoMuonTrkIsoR03",      muonTrkIsoR03 ,    "recoMuonTrkIsoR03[NrecoMuon]/F");
+  HltTree->Branch("recoMuonECalIsoR03",     muonECalIsoR03 ,   "recoMuonECalIsoR03[NrecoMuon]/F");
+  HltTree->Branch("recoMuonHCalIsoR03",     muonHCalIsoR03 ,   "recoMuonHCalIsoR03[NrecoMuon]/F");
+  HltTree->Branch("recoMuonD0",             muonD0 , 	       "recoMuonD0[NrecoMuon]/F");
+  HltTree->Branch("recoMuonType",           muontype       ,   "recoMuonType[NrecoMuon]/I");
+  HltTree->Branch("recoMuonNValidTrkHits",  muonNValidTrkHits, "recoMuonNValidTrkHits[NrecoMuon]/I");
+  HltTree->Branch("recoMuonNValidMuonHits", muonNValidMuonHits,"recoMuonNValidMuonHits[NrecoMuon]/I");
+  
   HltTree->Branch("NohMuL2",&nmu2cand,"NohMuL2/I");
   HltTree->Branch("ohMuL2Pt",muonl2pt,"ohMuL2Pt[NohMuL2]/F");
   HltTree->Branch("ohMuL2Phi",muonl2phi,"ohMuL2Phi[NohMuL2]/F");
@@ -145,12 +164,36 @@ void HLTMuon::analyze(const edm::Handle<reco::MuonCollection>                 & 
     nmuon = mymuons.size();
     typedef reco::MuonCollection::const_iterator muiter;
     int imu=0;
-    for (muiter i=mymuons.begin(); i!=mymuons.end(); i++) {
-      muonpt[imu] = i->pt();
-      muonphi[imu] = i->phi();
-      muoneta[imu] = i->eta();
-      muonet[imu] = i->et();
-      muone[imu] = i->energy();
+    for (muiter i=mymuons.begin(); i!=mymuons.end(); i++) 
+    {
+      muonpt[imu]         = i->pt();
+      muonphi[imu]        = i->phi();
+      muoneta[imu]        = i->eta();
+      muonet[imu]         = i->et();
+      muone[imu]          = i->energy(); 
+      muontype[imu]       = i->type();
+      muoncharge[imu]     = i->charge(); 
+      muonTrkIsoR03[imu]  = i->isolationR03().sumPt;
+      muonECalIsoR03[imu] = i->isolationR03().emEt;
+      muonHCalIsoR03[imu] = i->isolationR03().hadEt;
+      
+      
+      if (i->globalTrack().isNonnull())
+      {
+        muonchi2NDF[imu] = i->globalTrack()->normalizedChi2();
+        muonD0[imu] = i->globalTrack()->dxy(BSPosition);
+       }
+      else 
+      {
+        muonchi2NDF[imu] = -99.;
+        muonD0[imu] = -99.;}
+      
+      if (i->innerTrack().isNonnull()) muonNValidTrkHits[imu] = i->innerTrack()->numberOfValidHits();
+      else muonNValidTrkHits[imu] = -99;
+      
+      if (i->isGlobalMuon()!=0) muonNValidMuonHits[imu] = i->globalTrack()->hitPattern().numberOfValidMuonHits();
+      else muonNValidMuonHits[imu] = -99;
+      
       imu++;
     }
   }

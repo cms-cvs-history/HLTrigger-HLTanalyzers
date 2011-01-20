@@ -20,7 +20,7 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     ### Trigger objects
     l1GctHFBitCounts                = cms.InputTag("hltGctDigis"),
     l1GctHFRingSums                 = cms.InputTag("hltGctDigis"),
-     l1GtObjectMapRecord             = cms.InputTag("hltL1GtObjectMap::HLT"),
+    l1GtObjectMapRecord             = cms.InputTag("hltL1GtObjectMap::HLT"),
     l1GtReadoutRecord               = cms.InputTag("hltGtDigis::HLT"),
 
     l1extramc                       = cms.string('hltL1extraParticles'),
@@ -80,7 +80,17 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
 
     ### particle flow jets OpenHLT related objects
     HLTPFJet                        = cms.InputTag("hltIcone5PFJets"),
-                             
+    
+    ### reco offline particle flow tau related objects
+    RecoPFTau		               = cms.InputTag("shrinkingConePFTauProducer"),    
+    RecoPFTauAgainstMuon               = cms.InputTag("shrinkingConePFTauDiscrByIsolation"),
+    RecoPFTauAgainstElec               = cms.InputTag("shrinkingConePFTauDiscrAgainstElectron"),
+    RecoPFTauDiscrByIso                = cms.InputTag("shrinkingConePFTauDiscrAgainstMuon"), 
+    RecoPFTauDiscrByTanCOnePercent     = cms.InputTag("shrinkingConePFTauDiscrByTaNCfrOnePercent"), 
+    RecoPFTauDiscrByTanCHalfPercent    = cms.InputTag("shrinkingConePFTauDiscrByTaNCfrHalfPercent"), 
+    RecoPFTauDiscrByTanCQuarterPercent = cms.InputTag("shrinkingConePFTauDiscrByTaNCfrQuarterPercent"), 
+    RecoPFTauDiscrByTanCTenthPercent   = cms.InputTag("shrinkingConePFTauDiscrByTaNCfrTenthPercent"), 
+             
     ### b-jet OpenHLT related objects
     CommonBJetsL2                   = cms.InputTag("hltIterativeCone5CaloJets"),
     CorrectedBJetsL2                = cms.InputTag("hltMCJetCorJetIcone5Regional"),

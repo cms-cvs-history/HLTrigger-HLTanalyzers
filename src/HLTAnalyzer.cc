@@ -84,6 +84,17 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
 
     PFJets_          = conf.getParameter<edm::InputTag> ("HLTPFJet");
     
+    // offline reco tau collection and discriminators
+    RecoPFTau_                          = conf.getParameter<edm::InputTag> ("RecoPFTau");
+    RecoPFTauDiscrByTanCOnePercent_     = conf.getParameter<edm::InputTag> ("RecoPFTauDiscrByTanCOnePercent"); 
+    RecoPFTauDiscrByTanCHalfPercent_    = conf.getParameter<edm::InputTag> ("RecoPFTauDiscrByTanCHalfPercent");  
+    RecoPFTauDiscrByTanCQuarterPercent_ = conf.getParameter<edm::InputTag> ("RecoPFTauDiscrByTanCQuarterPercent");
+    RecoPFTauDiscrByTanCTenthPercent_   = conf.getParameter<edm::InputTag> ("RecoPFTauDiscrByTanCTenthPercent");
+    RecoPFTauDiscrByIso_                = conf.getParameter<edm::InputTag> ("RecoPFTauDiscrByIso");  
+    RecoPFTauAgainstMuon_               = conf.getParameter<edm::InputTag> ("RecoPFTauAgainstMuon");  
+    RecoPFTauAgainstElec_               = conf.getParameter<edm::InputTag> ("RecoPFTauAgainstElec");  
+   
+    
     // btag OpenHLT input collections
     m_rawBJets                = conf.getParameter<edm::InputTag>("CommonBJetsL2");
     m_correctedBJets          = conf.getParameter<edm::InputTag>("CorrectedBJetsL2");
@@ -219,7 +230,18 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     edm::Handle<reco::HLTTauCollection>               taus;
     edm::Handle<reco::PFTauCollection>               pftaus;
     edm::Handle<reco::PFJetCollection>               pfjets;
-
+    
+    // offline reco tau collection and discriminators
+    edm::Handle<reco::PFTauCollection>  recoPftaus;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCOnePercent;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCHalfPercent; 
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCQuarterPercent;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCTenthPercent;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByIsolation;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrAgainstMuon;
+    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrAgainstElec;
+   
+    
     // btag OpenHLT input collections
     edm::Handle<edm::View<reco::Jet> >                hRawBJets;
     edm::Handle<edm::View<reco::Jet> >                hCorrectedBJets;
@@ -317,8 +339,16 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     getCollection( iEvent, missing, ht,              ht_,                kHt );
     getCollection( iEvent, missing, muon,            muon_,              kMuon );
     getCollection( iEvent, missing, taus,            HLTTau_,            kTaus );
-    getCollection( iEvent, missing, pftaus,            PFTau_,            kPFTaus );
-    getCollection( iEvent, missing, pfjets,            PFJets_,            kPFJets );
+    getCollection( iEvent, missing, pftaus,          PFTau_,		 kPFTaus );
+    getCollection( iEvent, missing, pfjets,          PFJets_,		 kPFJets );  
+    getCollection( iEvent, missing, recoPftaus,                            RecoPFTau_,                          kRecoPFTaus );
+    getCollection( iEvent, missing, theRecoPFTauDiscrByTanCOnePercent,     RecoPFTauDiscrByTanCOnePercent_,     ktheRecoPFTauDiscrByTanCOnePercent); 
+    getCollection( iEvent, missing, theRecoPFTauDiscrByTanCHalfPercent,    RecoPFTauDiscrByTanCHalfPercent_,    ktheRecoPFTauDiscrByTanCHalfPercent); 
+    getCollection( iEvent, missing, theRecoPFTauDiscrByTanCQuarterPercent, RecoPFTauDiscrByTanCQuarterPercent_, ktheRecoPFTauDiscrByTanCQuarterPercent); 
+    getCollection( iEvent, missing, theRecoPFTauDiscrByTanCTenthPercent,   RecoPFTauDiscrByTanCTenthPercent_,   ktheRecoPFTauDiscrByTanCTenthPercent);     
+    getCollection( iEvent, missing, theRecoPFTauDiscrByIsolation,          RecoPFTauDiscrByIso_,                ktheRecoPFTauDiscrByIsolation); 
+    getCollection( iEvent, missing, theRecoPFTauDiscrAgainstMuon,          RecoPFTauAgainstMuon_,               ktheRecoPFTauDiscrAgainstMuon); 
+    getCollection( iEvent, missing, theRecoPFTauDiscrAgainstElec,          RecoPFTauAgainstElec_,               ktheRecoPFTauDiscrAgainstElec); 
     getCollection( iEvent, missing, hltresults,      hltresults_,        kHltresults );
     getCollection( iEvent, missing, l1extemi,        m_l1extraemi,       kL1extemi );
     getCollection( iEvent, missing, l1extemn,        m_l1extraemn,       kL1extemn );
@@ -401,6 +431,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     getCollection( iEvent, missing, pixeltracksL3,            PixelTracksTagL3_,          kPixelTracksL3 ); 
     getCollection( iEvent, missing, recoVertexs,              VertexTag_,                 kRecoVertices ); 
     
+  
     
     double ptHat=-1.;
     if (genEventInfo.isValid()) {ptHat=genEventInfo->qScale();}
@@ -429,6 +460,14 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
                           taus,
                           pftaus,
                           pfjets,
+			  recoPftaus,
+			  theRecoPFTauDiscrByTanCOnePercent,
+			  theRecoPFTauDiscrByTanCHalfPercent,
+			  theRecoPFTauDiscrByTanCQuarterPercent,
+			  theRecoPFTauDiscrByTanCTenthPercent,
+			  theRecoPFTauDiscrByIsolation,
+			  theRecoPFTauDiscrAgainstMuon,
+			  theRecoPFTauDiscrAgainstElec,
                           caloTowers,
                           towerThreshold_,
                           _MinPtGammas,
