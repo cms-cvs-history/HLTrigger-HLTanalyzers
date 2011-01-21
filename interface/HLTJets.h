@@ -109,7 +109,7 @@ private:
     //PFTau
     int nohPFTau;
     float *ohpfTauEta,*ohpfTauPhi,*ohpfTauPt,*ohpfTauJetPt,*ohpfTauLeadTrackPt,*ohpfTauLeadPionPt;
-    int *ohpfTauTrkIso, *ohpfTauGammaIso;
+    float *ohpfTauTrkIso, *ohpfTauGammaIso;
     //PFJets
     float pfMHT;    
     int nohPFJet;

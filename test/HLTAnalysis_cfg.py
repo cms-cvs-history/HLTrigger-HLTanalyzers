@@ -6,7 +6,7 @@ import FWCore.ParameterSet.Config as cms
 isData=1 # =1 running on real data, =0 running on MC
 
 
-OUTPUT_HIST='/tmp/jjhollar/openhlt_egmon.root'
+OUTPUT_HIST='openhlt.root'
 NEVTS=5000
 MENU="GRun" # GRun for data or MC with >= CMSSW_3_8_X
 isRelval=1 # =0 for running on MC RelVals, =0 for standard production MC, no effect for data 

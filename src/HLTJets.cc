@@ -78,8 +78,8 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     ohpfTauJetPt       =  new float[kMaxPFTau];
     ohpfTauLeadTrackPt =  new float[kMaxPFTau];
     ohpfTauLeadPionPt  =  new float[kMaxPFTau];
-    ohpfTauTrkIso      =  new int[kMaxPFTau];
-    ohpfTauGammaIso    =  new int[kMaxPFTau];
+    ohpfTauTrkIso      =  new float[kMaxPFTau];
+    ohpfTauGammaIso    =  new float[kMaxPFTau];
     
     recopfTauEta 	 =  new float[kMaxPFTau];
     recopfTauPhi 	 =  new float[kMaxPFTau];
@@ -160,8 +160,8 @@ void HLTJets::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
     HltTree->Branch("ohpfTauPhi",ohpfTauPhi,"ohpfTauPhi[NohpfTau]/F");
     HltTree->Branch("ohpfTauLeadTrackPt",ohpfTauLeadTrackPt,"ohpfTauLeadTrackPt[NohpfTau]/F");
     HltTree->Branch("ohpfTauLeadPionPt",ohpfTauLeadPionPt,"ohpfTauLeadPionPt[NohpfTau]/F");
-    HltTree->Branch("ohpfTauTrkIso",ohpfTauTrkIso,"ohpfTauTrkIso[NohpfTau]/I");
-    HltTree->Branch("ohpfTauGammaIso",ohpfTauGammaIso,"ohpfTauGammaIso[NohpfTau]/I");
+    HltTree->Branch("ohpfTauTrkIso",ohpfTauTrkIso,"ohpfTauTrkIso[NohpfTau]/F");
+    HltTree->Branch("ohpfTauGammaIso",ohpfTauGammaIso,"ohpfTauGammaIso[NohpfTau]/F");
     HltTree->Branch("ohpfTauJetPt",ohpfTauJetPt,"ohpfTauJetPt[NohpfTau]/F");    
    
    //Reco PFTaus
@@ -373,8 +373,8 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
     
     ////////////////Particle Flow Taus ////////////////////////////////////
     if(pfTaus.isValid()) {
-        float minTrkPt = minPtCH;
-        float minGammaPt = minPtGamma;
+        //float minTrkPt = minPtCH;
+        //float minGammaPt = minPtGamma;
         nohPFTau  = pfTaus->size();
         reco::PFTauCollection taus = *pfTaus;
         std::sort(taus.begin(),taus.end(),GetPFPtGreater());
@@ -400,19 +400,19 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
                 ohpfTauLeadPionPt[ipftau] = i->leadPFNeutralCand()->pt();        
             if((i->leadPFChargedHadrCand()).isNonnull())
                 ohpfTauLeadTrackPt[ipftau] = i->leadPFChargedHadrCand()->pt();
-            int myTrks=0;
+            float maxPtTrkIso = 0;
             for (unsigned int iTrk = 0; iTrk < i->isolationPFChargedHadrCands().size(); iTrk++)
             {
-                if(i->isolationPFChargedHadrCands()[iTrk]->pt() > minTrkPt) myTrks++;
+                if(i->isolationPFChargedHadrCands()[iTrk]->pt() > maxPtTrkIso) maxPtTrkIso = i->isolationPFChargedHadrCands()[iTrk]->pt();
             }
                 
-            ohpfTauTrkIso[ipftau] = myTrks;
-            int myGammas=0;
+            ohpfTauTrkIso[ipftau] = maxPtTrkIso;
+            float maxPtGammaIso = 0;
             for (unsigned int iGamma = 0; iGamma < i->isolationPFGammaCands().size(); iGamma++)
             {
-                if(i->isolationPFGammaCands()[iGamma]->pt() > minGammaPt) myGammas++;
+                if(i->isolationPFGammaCands()[iGamma]->pt() > maxPtGammaIso) maxPtGammaIso = i->isolationPFGammaCands()[iGamma]->pt();
             }                        
-            ohpfTauGammaIso[ipftau] = myGammas;
+            ohpfTauGammaIso[ipftau] = maxPtTrkIso;
             ipftau++;
         } 
         pfMHT = sqrt(pfMHTx*pfMHTx + pfMHTy*pfMHTy);
