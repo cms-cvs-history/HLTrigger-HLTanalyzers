@@ -84,6 +84,15 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   oniaTrackchg = new int[kMaxTrackPixel];
   oniaTrackHits = new int[kMaxTrackPixel];
   oniaTrackNormChi2 = new float[kMaxTrackPixel];
+  const int kMaxMuonL2NoVtx = 500; 
+  muonl2novtxpt = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtxphi = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtxeta = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtxdr = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtxdz = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtxchg = new int[kMaxMuonL2NoVtx]; 
+  muonl2novtxpterr = new float[kMaxMuonL2NoVtx]; 
+  muonl2novtx1idx = new int[kMaxMuonL2NoVtx]; 
 
   // Muon-specific branches of the tree 
   HltTree->Branch("NrecoMuon",&nmuon,"NrecoMuon/I");
@@ -140,6 +149,15 @@ void HLTMuon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("ohOniaTrackDz",oniaTrackdz,"ohOniaTrackDz[NohOniaTrack]/F");
   HltTree->Branch("ohOniaTrackHits",oniaTrackHits,"ohOniaTrackHits[NohOniaTrack]/I");
   HltTree->Branch("ohOniaTrackNormChi2",oniaTrackNormChi2,"ohOniaTrackNormChi2[NohOniaTrack]/F");
+  HltTree->Branch("NohMuL2NoVtx",&nmu2cand,"NohMuL2NoVtx/I"); 
+  HltTree->Branch("ohMuL2NoVtxPt",muonl2novtxpt,"ohMuL2NoVtxPt[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxPhi",muonl2novtxphi,"ohMuL2NoVtxPhi[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxEta",muonl2novtxeta,"ohMuL2NoVtxEta[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxChg",muonl2novtxchg,"ohMuL2NoVtxChg[NohMuL2NoVtx]/I"); 
+  HltTree->Branch("ohMuL2NoVtxPtErr",muonl2novtxpterr,"ohMuL2NoVtxPtErr[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxDr",muonl2novtxdr,"ohMuL2NoVtxDr[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxDz",muonl2novtxdz,"ohMuL2NoVtxDz[NohMuL2NoVtx]/F"); 
+  HltTree->Branch("ohMuL2NoVtxL1idx",muonl2novtx1idx,"ohMuL2NoVtxL1idx[NohMuL2NoVtx]/I");    
 
 }
 
@@ -152,6 +170,7 @@ void HLTMuon::analyze(const edm::Handle<reco::MuonCollection>                 & 
 		      const edm::Handle<edm::ValueMap<bool> >                 & isoMap3,
 	              const edm::Handle<reco::RecoChargedCandidateCollection> & oniaPixelCands,
 	              const edm::Handle<reco::RecoChargedCandidateCollection> & oniaTrackCands,
+                      const edm::Handle<reco::RecoChargedCandidateCollection> & MuNoVtxCands2, 
                       const reco::BeamSpot::Point & BSPosition,
 		      TTree* HltTree) {
 
@@ -254,11 +273,11 @@ void HLTMuon::analyze(const edm::Handle<reco::MuonCollection>                 & 
       // We use the charge in some dimuon paths
 			muonl2pterr[imu2c] = l2_err0/l2_abspar0;
       muonl2chg[imu2c] = tk->charge();
-
+      
       if (isoMap2.isValid()){
-	// Isolation flag (this is a bool value: true => isolated)
-	edm::ValueMap<bool> ::value_type muon1IsIsolated = (*isoMap2)[tk];
-	muonl2iso[imu2c] = muon1IsIsolated;
+      	// Isolation flag (this is a bool value: true => isolated)
+      	edm::ValueMap<bool> ::value_type muon1IsIsolated = (*isoMap2)[tk];
+      	muonl2iso[imu2c] = muon1IsIsolated;
       }
       else {muonl2iso[imu2c] = -999;}
 
@@ -368,6 +387,56 @@ void HLTMuon::analyze(const edm::Handle<reco::MuonCollection>                 & 
     }
   }
   else {nmu3cand = 0;}
+
+  // Dealing with L2 no-Vertex muons
+  reco::RecoChargedCandidateCollection muNoVtxMucands2;
+  if (MuNoVtxCands2.isValid()) {
+    muNoVtxMucands2 = * MuNoVtxCands2;
+    std::sort(muNoVtxMucands2.begin(),muNoVtxMucands2.end(),PtGreater());
+    nmu2cand = muNoVtxMucands2.size();
+    typedef reco::RecoChargedCandidateCollection::const_iterator cand;
+    int imu2c=0;
+    for (cand i=muNoVtxMucands2.begin(); i!=muNoVtxMucands2.end(); i++) {
+      reco::TrackRef tk = i->get<reco::TrackRef>();
+
+      muonl2novtxpt[imu2c] = tk->pt();
+      muonl2novtxeta[imu2c] = tk->eta();
+      muonl2novtxphi[imu2c] = tk->phi();
+      muonl2novtxdr[imu2c] = fabs(tk->dxy(BSPosition));
+      muonl2novtxdz[imu2c] = tk->dz(BSPosition);
+
+      double l2_err0 = tk->error(0); // error on q/p
+      double l2_abspar0 = fabs(tk->parameter(0)); // |q/p|
+      
+      muonl2novtxpterr[imu2c] = l2_err0/l2_abspar0;
+      muonl2novtxchg[imu2c] = tk->charge();
+      
+      l1extra::L1MuonParticleRef l1; 
+      int il2 = 0; 
+      //find the corresponding L1 
+      l1 = tk->seedRef().castTo<edm::Ref< L2MuonTrajectorySeedCollection> >()->l1Particle();
+      il2++; 
+      int imu1idx = 0; 
+      if (MuCands1.isValid()) { 
+        typedef l1extra::L1MuonParticleCollection::const_iterator candl1; 
+        for (candl1 j=myMucands1.begin(); j!=myMucands1.end(); j++) { 
+	  if((j->pt() == l1->pt()) &&
+	     (j->eta() == l1->eta()) &&
+	     (j->phi() == l1->phi()) &&
+	     (j->gmtMuonCand().quality() == l1->gmtMuonCand().quality()))
+	    {break;}
+          imu1idx++; 
+        } 
+      } 
+      else {imu1idx = -999;} 
+      muonl2novtx1idx[imu2c] = imu1idx; // Index of the L1 muon having matched with the L2 muon with index imu2c 
+
+      imu2c++;
+    }
+  }
+  else {nmu2cand = 0;}
+ 
+
 
   // Dealing with Onia Pixel tracks
   reco::RecoChargedCandidateCollection myOniaPixelCands;

@@ -4047,6 +4047,68 @@ int OHltTree::OpenHltTauPassed(float Et,float Eiso, float L25Tpt, int L25Tiso, f
   return rc;
 }
 
+int OHltTree::OpenHltTriJetPassedPlusTauPFId(double pt, double etaJet, double ptTau)
+{
+  int njet = 0;
+  int rc = 0;
+  bool foundPFTau = false;
+  for (int i=0;i<NrecoJetCorCal;i++) {
+    if(recoJetCorCalPt[i] > pt && fabs(recoJetCorCalEta[i]) < etaJet) {  // Jet pT cut
+      njet++;
+      for (int j=0; j<NohPFTau;j++){
+	
+	if(pfTauPt[j] > ptTau && pfTauLeadTrackPt[j]>= 5 && fabs(pfTauEta[j]) <2.5  && pfTauTrkIso[j] <1 && pfTauGammaIso[j] <1){
+	  
+	  float deltaEta = pfTauEta[j] - recoJetCorCalEta[i];
+	  float deltaPhi = pfTauPhi[j] - recoJetCorCalPhi[i];
+	  
+	  if(fabs(deltaPhi)>3.141592654) deltaPhi = 6.283185308-fabs(deltaPhi);
+	  
+	  float deltaR = sqrt ( pow(deltaEta, 2) +  pow(deltaPhi, 2));
+	  
+	  if(deltaR<0.3){ foundPFTau = true; }
+	}
+      }
+      
+    }
+    
+  }      
+  if(njet >= 3 && foundPFTau == true)
+    rc = 1;
+  
+  return rc;
+}
+
+int OHltTree::OpenHltTriJetPassedPlusTauId(double pt, double etaJet, double ptTau)
+{
+  int njet = 0;
+  int rc = 0;
+  bool foundTau = false;
+  // Loop over all oh jets
+  for (int i=0;i<NrecoJetCorCal;i++) {
+    if(recoJetCorCalPt[i] > pt && fabs(recoJetCorCalEta[i]) < etaJet) {  // Jet pT cut
+      njet++;
+      for (int j=0; j<NohTau;j++){
+	if( ohTauPt[j]> ptTau && ohTauEiso[j] < (5 + 0.025*ohTauPt[j] + 0.0015*ohTauPt[j]*ohTauPt[j])  && ohTauL25Tpt[j] >= 5 && ohTauL3Tiso[j] >= 1)
+	  
+	  {
+	    float deltaEta = ohTauEta[j] - recoJetCorCalEta[i];
+	    float deltaPhi = ohTauPhi[j] - recoJetCorCalPhi[i];
+	    if(fabs(deltaPhi)>3.141592654) deltaPhi = 6.283185308-fabs(deltaPhi);
+            
+	    float deltaR = sqrt ( pow(deltaEta, 2) +  pow(deltaPhi, 2));
+	    if(deltaR<0.3){foundTau = true;}
+	  }
+      }
+    }
+  }
+  
+  if(njet >= 3 && foundTau == true)
+    rc = 1;
+  
+  return rc;
+} 
+
 // L2 Ecal sliding cut isolation
 int OHltTree::OpenHltTauL2SCPassed(float Et,float L25Tpt, int L25Tiso, float L3Tpt, int L3Tiso,
 				   float L1TauThr, float L1CenJetThr)

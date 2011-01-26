@@ -91,7 +91,7 @@ private:
   edm::InputTag gtReadoutRecord_,gtObjectMap_; 
   edm::InputTag gctBitCounts_,gctRingSums_;
 
-  edm::InputTag MuCandTag2_,MuIsolTag2_,MuCandTag3_,MuIsolTag3_;
+  edm::InputTag MuCandTag2_,MuIsolTag2_,MuNoVtxCandTag2_,MuCandTag3_,MuIsolTag3_;
   edm::InputTag oniaPixelTag_,oniaTrackTag_;
   edm::InputTag HLTTau_, PFTau_;
   edm::InputTag PFJets_;

@@ -71,16 +71,17 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
     gctBitCounts_        = edm::InputTag( conf.getParameter<edm::InputTag>("l1GctHFBitCounts").label(), "" );
     gctRingSums_         = edm::InputTag( conf.getParameter<edm::InputTag>("l1GctHFRingSums").label(), "" );
     
-    MuCandTag2_       = conf.getParameter<edm::InputTag> ("MuCandTag2");
-    MuIsolTag2_       = conf.getParameter<edm::InputTag> ("MuIsolTag2");
-    MuCandTag3_       = conf.getParameter<edm::InputTag> ("MuCandTag3");
-    MuIsolTag3_       = conf.getParameter<edm::InputTag> ("MuIsolTag3");
-    oniaPixelTag_       = conf.getParameter<edm::InputTag> ("OniaPixelTag");
-    oniaTrackTag_       = conf.getParameter<edm::InputTag> ("OniaTrackTag");
-    HLTTau_           = conf.getParameter<edm::InputTag> ("HLTTau");
-    PFTau_           = conf.getParameter<edm::InputTag> ("HLTPFTau");
+    MuCandTag2_          = conf.getParameter<edm::InputTag> ("MuCandTag2");
+    MuIsolTag2_          = conf.getParameter<edm::InputTag> ("MuIsolTag2");
+    MuNoVtxCandTag2_     = conf.getParameter<edm::InputTag> ("MuNoVtxCandTag2");
+    MuCandTag3_          = conf.getParameter<edm::InputTag> ("MuCandTag3");
+    MuIsolTag3_          = conf.getParameter<edm::InputTag> ("MuIsolTag3");
+    oniaPixelTag_        = conf.getParameter<edm::InputTag> ("OniaPixelTag");
+    oniaTrackTag_        = conf.getParameter<edm::InputTag> ("OniaTrackTag");
+    HLTTau_              = conf.getParameter<edm::InputTag> ("HLTTau");
+    PFTau_               = conf.getParameter<edm::InputTag> ("HLTPFTau");
     _MinPtChargedHadrons = conf.getParameter<double>("minPtChargedHadronsForTaus");
-    _MinPtGammas = conf.getParameter<double>("minPtGammassForTaus");
+    _MinPtGammas         = conf.getParameter<double>("minPtGammassForTaus");
 
     PFJets_          = conf.getParameter<edm::InputTag> ("HLTPFJet");
     
@@ -224,7 +225,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     edm::Handle< L1GctHFBitCountsCollection >         gctBitCounts ;
     edm::Handle< L1GctHFRingEtSumsCollection >        gctRingSums ;
     
-    edm::Handle<reco::RecoChargedCandidateCollection> mucands2, mucands3;
+    edm::Handle<reco::RecoChargedCandidateCollection> mucands2, mucands3, munovtxcands2;
     edm::Handle<reco::RecoChargedCandidateCollection> oniaPixelCands, oniaTrackCands;
     edm::Handle<edm::ValueMap<bool> >                 isoMap2,  isoMap3;
     edm::Handle<reco::HLTTauCollection>               taus;
@@ -366,6 +367,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     getCollection( iEvent, missing, simVertices,     simhits_,           kSimhit );
     getCollection( iEvent, missing, genEventInfo,    genEventInfo_,      kGenEventInfo );
     getCollection( iEvent, missing, mucands2,        MuCandTag2_,        kMucands2 );
+    getCollection( iEvent, missing, munovtxcands2,   MuNoVtxCandTag2_,   kMunovtxcands2 ); 
     getCollection( iEvent, missing, mucands3,        MuCandTag3_,        kMucands3 );
     getCollection( iEvent, missing, oniaPixelCands,        oniaPixelTag_,        kOniaPixelCands );
     getCollection( iEvent, missing, oniaTrackCands,        oniaTrackTag_,        kOniaTrackCands );
@@ -483,6 +485,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
                            isoMap3,
                            oniaPixelCands,
                            oniaTrackCands,
+			   munovtxcands2,
                            BSPosition,
                            HltTree);
     

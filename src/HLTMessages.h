@@ -28,6 +28,7 @@ extern const char * kSimhit;
 extern const char * kGenEventInfo;
 extern const char * kMucands2;
 extern const char * kMucands3;
+extern const char * kMunovtxcands2; 
 extern const char * kOniaPixelCands;
 extern const char * kOniaTrackCands;
 extern const char * kIsoMap2;

@@ -52,7 +52,8 @@ process.options = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2010B/EGMonitor/RAW/v1/000/149/181/6E6CB5CD-74E2-DF11-9AB5-003048F024E0.root'
+        '/store/data/Run2010B/Cosmics/RAW/v1/000/149/181/402B2406-4CE2-DF11-BA98-001D09F2516D.root'
+#        '/store/data/Run2010B/EGMonitor/RAW/v1/000/149/181/6E6CB5CD-74E2-DF11-9AB5-003048F024E0.root'
 #        '/store/data/Run2010B/Electron/RAW/v1/000/149/181/E4BAADC6-2DE2-DF11-B9C7-001D09F28F1B.root'
 #        '/store/data/Run2010B/Photon/RAW/v1/000/149/181/F4E5DF0F-6DE2-DF11-A879-0019DB2F3F9A.root',
 #        '/store/data/Run2010B/Photon/RAW/v1/000/149/181/F4AAD84C-5EE2-DF11-B19C-003048F110BE.root',

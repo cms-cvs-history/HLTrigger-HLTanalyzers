@@ -38,6 +38,7 @@ const char * kSimhit                      = "SimHit information";
 const char * kGenEventInfo                = "generator information";
 const char * kMucands2                    = "L2 muon candidates";
 const char * kMucands3                    = "L3 muon candidates";
+const char * kMunovtxcands2               = "L2 no-vertex muon candidates"; 
 const char * kIsoMap2                     = "L2 muon isolation map";
 const char * kIsoMap3                     = "L3 muon isolation map";
 const char * kMulinks                     = "L3 muon link";

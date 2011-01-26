@@ -2955,6 +2955,12 @@ public :
   int OpenHltCorDiJetAvePassed(double pt);
   int OpenHltQuadJetPassed(double pt);
   int OpenHltQuadCorJetPassed(double pt);
+<<<<<<< OHltTree.h
+  int OpenHltQuadJetPassedPlusTauPFId(double pt, double etaJet, double ptTau); 
+  int OpenHltTriJetPassedPlusTauPFId(double pt, double etaJet, double ptTau); 
+  int OpenHltTriJetPassedPlusTauId(double pt, double etaJet, double ptTau); 
+=======
+>>>>>>> 1.98.2.7
   int OpenHltJRMuonPassed(double ptl1,double ptl2,double ptl3,double dr,int iso,double ptl3hi);
   int OpenHltSumHTPassed(double sumHTthreshold, double jetthreshold) ;
   int OpenHltSumHTPassed(double sumHTthreshold, double jetthreshold, double etajetthreshold) ;
