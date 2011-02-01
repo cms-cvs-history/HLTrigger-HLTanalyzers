@@ -7,9 +7,9 @@ isData=1 # =1 running on real data, =0 running on MC
 
 
 OUTPUT_HIST='openhlt.root'
-NEVTS=5000
+NEVTS=-1
 MENU="GRun" # GRun for data or MC with >= CMSSW_3_8_X
-isRelval=1 # =0 for running on MC RelVals, =0 for standard production MC, no effect for data 
+isRelval=0 # =0 for running on MC RelVals, =0 for standard production MC, no effect for data 
 
 WhichHLTProcess="HLT"
 
@@ -52,14 +52,8 @@ process.options = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/data/Run2010B/Cosmics/RAW/v1/000/149/181/402B2406-4CE2-DF11-BA98-001D09F2516D.root'
-#        '/store/data/Run2010B/EGMonitor/RAW/v1/000/149/181/6E6CB5CD-74E2-DF11-9AB5-003048F024E0.root'
-#        '/store/data/Run2010B/Electron/RAW/v1/000/149/181/E4BAADC6-2DE2-DF11-B9C7-001D09F28F1B.root'
-#        '/store/data/Run2010B/Photon/RAW/v1/000/149/181/F4E5DF0F-6DE2-DF11-A879-0019DB2F3F9A.root',
-#        '/store/data/Run2010B/Photon/RAW/v1/000/149/181/F4AAD84C-5EE2-DF11-B19C-003048F110BE.root',
-#        '/store/data/Run2010B/Photon/RAW/v1/000/149/181/F2B31A26-55E2-DF11-ACC3-001D09F2A690.root'
-#                                  '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/86044E5C-77C7-DF11-902B-001D09F28F25.root',
-#                                  '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/6EC49446-5DC7-DF11-B529-001D09F2447F.root'
+                    '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/86044E5C-77C7-DF11-902B-001D09F28F25.root',
+                    '/store/data/Run2010B/MinimumBias/RAW/v1/000/146/511/6EC49446-5DC7-DF11-B529-001D09F2447F.root'
     )
 )
 
