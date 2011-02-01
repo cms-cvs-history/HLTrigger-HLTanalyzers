@@ -8,25 +8,25 @@ from HLTrigger.Configuration.HLT_FULL_cff import *
 # create the jetMET HLT reco path
 DoHLTJets = cms.Path(HLTBeginSequence + 
     HLTBeginSequence +
-    HLTRecoJetSequence +
+    HLTRecoJetSequenceU +
     HLTRecoJetRegionalSequence +
     HLTRecoMETSequence +                 
-    HLTDoJet15UHTRecoSequence
+    HLTDoJet20UHTRecoSequence
 )
 DoHLTJetsU = cms.Path(HLTBeginSequence +
     HLTBeginSequence +
     HLTRecoJetSequenceU +
     hltMet +
     HLTRecoJetRegionalSequence +
-    HLTDoJet15UHTRecoSequence
+    HLTDoJet20UHTRecoSequence
 )
 
 # create the muon HLT reco path
 DoHltMuon = cms.Path(
     HLTBeginSequence +
+    HLTL2muonrecoSequenceNoVtx +
     HLTL2muonrecoSequence + 
     HLTL2muonisorecoSequence + 
-    HLTL2muonrecoSequenceNoVtx +
     HLTL3muonrecoSequence + 
     HLTL3muonisorecoSequence +
     HLTMuTrackJpsiPixelRecoSequence + 
@@ -111,6 +111,7 @@ DoHLTTau = cms.Path(HLTBeginSequence +
                     HLTPFTauSequence +
                     HLTEndSequence)
 
+
 # create the b-jet HLT paths
 from HLTrigger.HLTanalyzers.OpenHLT_BJet_cff import *
 # create the b-jet HLT paths
@@ -127,10 +128,7 @@ DoHLTBTag = cms.Path(
 
 DoHLTAlCaPi0Eta1E31 = cms.Path(
     HLTBeginSequence +
-    hltL1sAlCaEcalPi0Eta1E31 +
-    #hltPreAlCaEcalPi01E31 +
-    #HLTDoRegionalPi0EtaESSequence +
-    #HLTDoRegionalPi0EtaEcalSequence +
+    hltL1sAlCaEcalPi0Eta8E29 +
     HLTDoRegionalPi0EtaSequence +
     HLTEndSequence )
 
@@ -197,6 +195,3 @@ DoHLTMinBiasPixelTracks = cms.Path(
     hltPixelVertices +
     hltPixelVerticesForMultiVertex)
 
-hltPixelVertices.beamSpot = cms.InputTag( "hltOnlineBeamSpot" )
-hltBLifetimeRegionalCtfWithMaterialTracksStartupU.beamSpot = cms.InputTag("hltOnlineBeamSpot")
-hltBLifetimeRegionalCtfWithMaterialTracksStartup.beamSpot = cms.InputTag("hltOnlineBeamSpot")

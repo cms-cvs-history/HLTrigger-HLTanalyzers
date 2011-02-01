@@ -234,13 +234,13 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     
     // offline reco tau collection and discriminators
     edm::Handle<reco::PFTauCollection>  recoPftaus;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCOnePercent;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCHalfPercent; 
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCQuarterPercent;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByTanCTenthPercent;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrByIsolation;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrAgainstMuon;
-    edm::Handle<PFTauDiscriminator> theRecoPFTauDiscrAgainstElec;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrByTanCOnePercent;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrByTanCHalfPercent; 
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrByTanCQuarterPercent;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrByTanCTenthPercent;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrByIsolation;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrAgainstMuon;
+    edm::Handle<reco::PFTauDiscriminator> theRecoPFTauDiscrAgainstElec;
    
     
     // btag OpenHLT input collections

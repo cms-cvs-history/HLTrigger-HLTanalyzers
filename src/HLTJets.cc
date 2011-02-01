@@ -204,13 +204,13 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
                       const edm::Handle<reco::PFTauCollection>        & pfTaus,
                       const edm::Handle<reco::PFJetCollection>        & pfJets,
                       const edm::Handle<reco::PFTauCollection>        & recoPfTaus,  
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCOnePercent,
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCHalfPercent,
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCQuarterPercent,
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCTenthPercent,			  
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrByIsolation,
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrAgainstElec,
-		      const edm::Handle<PFTauDiscriminator>	      & theRecoPFTauDiscrAgainstMuon,	 
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCOnePercent,
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCHalfPercent,
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCQuarterPercent,
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrByTanCTenthPercent,			  
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrByIsolation,
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrAgainstElec,
+		      const edm::Handle<reco::PFTauDiscriminator>	      & theRecoPFTauDiscrAgainstMuon,	 
 		      const edm::Handle<CaloTowerCollection>          & caloTowers,
                       double thresholdForSavingTowers, 
                       double		    minPtCH,
@@ -455,7 +455,7 @@ void HLTJets::analyze(const edm::Handle<reco::CaloJetCollection>      & calojets
             }                        
             recopfTauGammaIso[ipftau] = myGammas;
 	    
-	    const PFTauRef thisTauRef(recoPfTaus,ipftau);
+	    const reco::PFTauRef thisTauRef(recoPfTaus,ipftau);
             
 	    if(theRecoPFTauDiscrByTanCOnePercent.isValid()){
 	    recopfTauDiscrByTancOnePercent[ipftau] = (*theRecoPFTauDiscrByTanCOnePercent)[thisTauRef];}
