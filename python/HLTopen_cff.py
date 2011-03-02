@@ -30,13 +30,13 @@ DoHLTJets = cms.Path(HLTBeginSequence +
     HLTRecoJetSequenceAK5Corrected +
     HLTRegionalRecoJetSequenceAK5Corrected +
     HLTRecoMETSequence +                 
-    HLTDoJet30HTRecoSequence
+    HLTDoJet40HTRecoSequence
 )
 DoHLTJetsU = cms.Path(HLTBeginSequence +
     HLTBeginSequence +
     HLTRecoJetSequenceAK5Uncorrected +
     hltMet +
-    HLTDoJet30HTRecoSequence
+    HLTDoJet40HTRecoSequence
 )
 
 # create the muon HLT reco path
