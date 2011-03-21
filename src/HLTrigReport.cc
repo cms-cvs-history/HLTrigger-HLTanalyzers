@@ -2,8 +2,8 @@
  *
  * See header file for documentation
  *
- *  $Date: 2010/12/06 15:14:39 $
- *  $Revision: 1.28 $
+ *  $Date: 2011/03/11 16:34:14 $
+ *  $Revision: 1.31 $
  *
  *  \author Martin Grunewald
  *
@@ -18,6 +18,9 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "Math/QuantFuncMathCore.h"
+
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "HLTrigger/HLTanalyzers/interface/HLTrigReportService.h"
 
 #include <iomanip>
 #include <cstring>
@@ -37,6 +40,7 @@ HLTrigReport::HLTrigReport(const edm::ParameterSet& iConfig) :
   hltL1s_(0),
   hltPre_(0),
   hlAccept_(0),
+  hlAccTot_(0),
   hlErrors_(0),
   posL1s_(0),
   posPre_(0),
@@ -54,27 +58,14 @@ HLTrigReport::HLTrigReport(const edm::ParameterSet& iConfig) :
   refPath_("HLTriggerFinalPath"),
   refIndex_(0),
   refRate_(100.0),
-  reportByLumi_(false),
-  reportByRun_(false),
-  reportByJob_(true),
+  reportBy_(0),
+  resetBy_(0),
+  serviceBy_(0),
   hltConfig_()
 {
-  const std::string & reportEvery = iConfig.getUntrackedParameter<std::string>("ReportEvery", "job");
-  if (strcasecmp(reportEvery.c_str(), "job") == 0) {
-    reportByLumi_ = false;
-    reportByRun_  = false;
-    reportByJob_  = true;
-  } else if (strcasecmp(reportEvery.c_str(), "run") == 0) {
-    reportByLumi_ = false;
-    reportByRun_  = true;
-    reportByJob_  = false;
-  } else if (strcasecmp(reportEvery.c_str(), "lumi") == 0) {
-    reportByLumi_ = true;
-    reportByRun_  = false;
-    reportByJob_  = false;
-  } else {
-    edm::LogError("Configuration") << "Invalid value for HLTrigReport.ReportEvery: \"" << reportEvery << "\". Valid values are: \"lumi\", \"run\", \"job\".";
-  }
+  reportBy_ = iConfig.getUntrackedParameter<int>("reportBy" ,4);
+  resetBy_  = iConfig.getUntrackedParameter<int>("resetBy"  ,0);
+  serviceBy_= iConfig.getUntrackedParameter<int>("serviceBy",0);
 
   const edm::ParameterSet customDatasets(iConfig.getUntrackedParameter<edm::ParameterSet>("CustomDatasets", edm::ParameterSet()));
   isCustomDatasets_ = (customDatasets != edm::ParameterSet());
@@ -101,17 +92,34 @@ HLTrigReport::HLTrigReport(const edm::ParameterSet& iConfig) :
   LogDebug("HLTrigReport")
     << "HL TiggerResults: " + hlTriggerResults_.encode()
     << " using reference path and rate: " + refPath_ + " " << refRate_;
+
+  if(serviceBy_ && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->registerModule(this);
+  }
+
 }
 
-HLTrigReport::~HLTrigReport()
-{ }
+HLTrigReport::~HLTrigReport() { }
 
 //
 // member functions
 //
-void
-HLTrigReport::reset(bool changed /* = false */)
-{
+
+const std::vector<std::string>& HLTrigReport::datasetNames() const {
+  return datasetNames_;
+}
+const std::vector<std::string>& HLTrigReport::streamNames() const {
+  return streamNames_;
+}
+const std::vector<unsigned int>& HLTrigReport::datasetCounts() const {
+  return hlAllTotDS_;
+}
+const std::vector<unsigned int>& HLTrigReport::streamCounts() const {
+  return dsAllTotS_;
+}
+
+void HLTrigReport::reset(bool changed /* = false */) {
+
   // reset global counters
   nEvents_ = 0;
   nWasRun_ = 0;
@@ -174,11 +182,14 @@ HLTrigReport::reset(bool changed /* = false */)
     hlIndex_.clear();
     hlIndex_.resize(datasetNames_.size());
     hlAccTotDS_.clear();
+    hlAllTotDS_.clear();
     hlAccTotDS_.resize(datasetNames_.size());
+    hlAllTotDS_.resize(datasetNames_.size());
     for (unsigned int ds = 0; ds < datasetNames_.size(); ds++) {
       unsigned int size = datasetContents_[ds].size();
       hlIndex_[ds].reserve(size);
       hlAccTotDS_[ds].reserve(size);
+      hlAllTotDS_[ds]=0;
       for (unsigned int p = 0; p < size; ++p) {
         unsigned int i = hltConfig_.triggerIndex(datasetContents_[ds][p]);
         if (i<n) {
@@ -189,9 +200,11 @@ HLTrigReport::reset(bool changed /* = false */)
     }
   } else {
     // reset the matrix of hlAccTotDS_
-    for (unsigned int ds = 0; ds < datasetNames_.size(); ds++)
+    for (unsigned int ds = 0; ds < datasetNames_.size(); ds++) {
+      hlAllTotDS_[ds]=0;
       for (unsigned int i = 0; i < hlAccTotDS_[ds].size(); ++i)
           hlAccTotDS_[ds][i] = 0;
+    }
   }
 
   if (changed) {
@@ -199,11 +212,14 @@ HLTrigReport::reset(bool changed /* = false */)
     dsIndex_.clear();
     dsIndex_.resize(streamNames_.size());
     dsAccTotS_.clear();
+    dsAllTotS_.clear();
     dsAccTotS_.resize(streamNames_.size());
+    dsAllTotS_.resize(streamNames_.size());
     for (unsigned int s = 0; s < streamNames_.size(); ++s) {
       unsigned int size = streamContents_[s].size();
       dsIndex_.reserve(size);
       dsAccTotS_.reserve(size);
+      dsAllTotS_[s]=0;
       for (unsigned int ds = 0; ds < size; ++ds) {
         unsigned int i = 0;
         for (; i<datasetNames_.size(); i++) if (datasetNames_[i] == streamContents_[s][ds]) 
@@ -217,9 +233,11 @@ HLTrigReport::reset(bool changed /* = false */)
     }
   } else {
     // reset the matrix of dsAccTotS_
-    for (unsigned int s = 0; s < streamNames_.size(); ++s)
+    for (unsigned int s = 0; s < streamNames_.size(); ++s) {
+      dsAllTotS_[s]=0;
       for (unsigned int i = 0; i < dsAccTotS_[s].size(); ++i)
         dsAccTotS_[s][i] = 0;
+    }
   }
 
   // if needed, update the reference path
@@ -241,6 +259,28 @@ HLTrigReport::reset(bool changed /* = false */)
     }
   }
 
+  if(changed && serviceBy_ && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->setDatasetNames(datasetNames_);
+    edm::Service<HLTrigReportService>()->setStreamNames(streamNames_);
+  }
+
+}
+
+void HLTrigReport::beginJob() {
+  if (resetBy_==4) reset();
+}
+
+void HLTrigReport::endJob() {
+  if (reportBy_==4) {
+    std::stringstream stream;
+    stream << "Summary for Job ";
+    dumpReport(stream.str());
+  }
+  if(serviceBy_==4 && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->setDatasetCounts(datasetCounts());
+    edm::Service<HLTrigReportService>()->setStreamCounts(streamCounts());
+  }
+
 }
 
 void
@@ -250,11 +290,11 @@ HLTrigReport::beginRun(edm::Run const & iRun, edm::EventSetup const& iSetup)
   if (hltConfig_.init(iRun, iSetup, hlTriggerResults_.process(), changed)) {
     configured_ = true;
     if (changed) {
-      dumpReport();
+      dumpReport("Dump for this HLT table");
       reset(true);
     }
   } else {
-    dumpReport();
+    dumpReport("Dump for this HLT table");
     // cannot initialize the HLT menu - reset and clear all counters and tables
     configured_ = false;
     nEvents_    = 0;
@@ -272,8 +312,41 @@ HLTrigReport::beginRun(edm::Run const & iRun, edm::EventSetup const& iSetup)
     hlNames_.clear();
     hlIndex_.clear();
     hlAccTotDS_.clear();
+    hlAllTotDS_.clear();
     dsIndex_.clear();
     dsAccTotS_.clear();
+    dsAllTotS_.clear();
+  }
+
+  if (resetBy_==3) reset();
+
+}
+
+void HLTrigReport::endRun(edm::Run const & run, edm::EventSetup const & setup) {
+  if (reportBy_==3) {
+    std::stringstream stream;
+    stream << "Summary for Run " << run.run();
+    dumpReport(stream.str());
+  }
+  if(serviceBy_==3 && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->setDatasetCounts(datasetCounts());
+    edm::Service<HLTrigReportService>()->setStreamCounts(streamCounts());
+  }
+}
+
+void HLTrigReport::beginLuminosityBlock(edm::LuminosityBlock const & lumi, edm::EventSetup const & setup) {
+  if (resetBy_==3)  reset();
+}
+
+void HLTrigReport::endLuminosityBlock(edm::LuminosityBlock const & lumi, edm::EventSetup const & setup) {
+  if (reportBy_==2) {
+    std::stringstream stream;
+    stream << "Summary for Run " << lumi.run() << ", LumiSection " << lumi.luminosityBlock();
+    dumpReport(stream.str());
+  }
+  if(serviceBy_==2 && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->setDatasetCounts(datasetCounts());
+    edm::Service<HLTrigReportService>()->setStreamCounts(streamCounts());
   }
 }
 
@@ -286,6 +359,8 @@ HLTrigReport::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   using namespace std;
   using namespace edm;
+
+  if (resetBy_==1) reset();
 
   nEvents_++;
 
@@ -338,6 +413,7 @@ HLTrigReport::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         hlAccTotDS_[ds][p]++;
       }
     }
+    if (acceptedByDS[ds]) hlAllTotDS_[ds]++;
   }
 
   // calculate accumulation of accepted events by a dataset within a stream
@@ -349,39 +425,18 @@ HLTrigReport::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         dsAccTotS_[s][ds]++;
       }
     }
+    if (acceptedByS) dsAllTotS_[s]++;
   }
 
-}
-
-void
-HLTrigReport::endLuminosityBlock(edm::LuminosityBlock const & lumi, edm::EventSetup const & setup)
-{
-  if (reportByLumi_) {
+  if (reportBy_==1) {
     std::stringstream stream;
-    stream << "Summary for Run " << lumi.run() << ", LumiSection " << lumi.luminosityBlock();
-    dumpReport(stream.str());
-    reset();
+    stream << "Summary for Run " << iEvent.run() << ", LumiSection " << iEvent.luminosityBlock() << ", Event " << iEvent.id();
   }
-}
+  if(serviceBy_==1 && edm::Service<HLTrigReportService>()) {
+    edm::Service<HLTrigReportService>()->setDatasetCounts(datasetCounts());
+    edm::Service<HLTrigReportService>()->setStreamCounts(streamCounts());
+  }
 
-void
-HLTrigReport::endRun(edm::Run const & run, edm::EventSetup const & setup)
-{
-  if (reportByRun_) {
-    std::stringstream stream;
-    stream << "Summary for Run " << run.run();
-    dumpReport(stream.str());
-    reset();
-  }
-}
-
-void
-HLTrigReport::endJob()
-{
-  if (reportByJob_) {
-    dumpReport();
-    reset();
-  }
 }
 
 void
@@ -452,7 +507,7 @@ HLTrigReport::dumpReport(std::string const & header /* = std::string() */)
     // now for each dataset
     for (size_t ds=0; ds<hlIndex_.size(); ++ds) {
       LogVerbatim("HLTrigReport") << endl;
-      LogVerbatim("HLTrigReport") << "HLT-Report " << "---------- Dataset Summary: " << datasetNames_[ds] << " ------------" << endl;
+      LogVerbatim("HLTrigReport") << "HLT-Report " << "---------- Dataset Summary: " << datasetNames_[ds] << " ------------" << hlAllTotDS_[ds] << endl;
       LogVerbatim("HLTrigReport") << "HLT-Report "
          << right << setw(7) << "HLT #" << " "
          << right << setw(7) << "WasRun" << " "
@@ -489,7 +544,7 @@ HLTrigReport::dumpReport(std::string const & header /* = std::string() */)
     // now for each stream
     for (size_t s=0; s<dsIndex_.size(); ++s) {
       LogVerbatim("HLTrigReport") << endl;
-      LogVerbatim("HLTrigReport") << "HLT-Report " << "---------- Stream Summary: " << streamNames_[s] << " ------------" << endl;
+      LogVerbatim("HLTrigReport") << "HLT-Report " << "---------- Stream Summary: " << streamNames_[s] << " ------------" << dsAllTotS_[s] << endl;
       LogVerbatim("HLTrigReport") << "HLT-Report "
          << right << setw(10) << "Dataset #" << " "
          << right << setw(10) << "Individual" << " "
