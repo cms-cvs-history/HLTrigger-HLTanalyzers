@@ -31,7 +31,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   // If your module takes parameters, here is where you would define
   // their names and types, and access them to initialize internal
   // variables. Example as follows:
-  std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
+  //  std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
   recjets_          = conf.getParameter<edm::InputTag> ("recjets");
   reccorjets_       = conf.getParameter<edm::InputTag> ("reccorjets");
   genjets_          = conf.getParameter<edm::InputTag> ("genjets");

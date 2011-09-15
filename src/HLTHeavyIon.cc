@@ -118,7 +118,7 @@ void HLTHeavyIon::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   HltTree->Branch("hiNpixelTracks",&hiNpixelTracks,"hiNpixelTracks/I");
   HltTree->Branch("hiNtracks",&hiNtracks,"hiNtracks/I");
   HltTree->Branch("hiNevtPlane",&nEvtPlanes,"hiNevtPlane/I");
-  HltTree->Branch("hiEvtPlanes",hiEvtPlane,"hiEvtPlanes/F");
+  HltTree->Branch("hiEvtPlanes",hiEvtPlane,"hiEvtPlanes[hiNevtPlane]/F");
   HltTree->Branch("hiNtracksPtCut",&hiNtracksPtCut,"hiNtracksPtCut/I");
   HltTree->Branch("hiNtracksEtaCut",&hiNtracksEtaCut,"hiNtracksEtaCut/I");
   HltTree->Branch("hiNtracksEtaPtCut",&hiNtracksEtaPtCut,"hiNtracksEtaPtCut/I");
