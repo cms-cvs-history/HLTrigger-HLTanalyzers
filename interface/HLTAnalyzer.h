@@ -213,7 +213,7 @@ private:
   bool _UseTFileService;
 
   int errCnt;
-  const int errMax(){return 100;}
+  const int errMax(){return 1;}
 
   std::string _HistName; // Name of histogram file
   double _EtaMin,_EtaMax;
