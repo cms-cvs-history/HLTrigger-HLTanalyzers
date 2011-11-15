@@ -13,7 +13,7 @@ process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring("rfio:/castor/cern.ch/user/j/jalimena/176304/HT/out_176304_HT_0.root")
                             )
 
-process.load("HLTrigger.HLTanalyzers.hltOfflineReproducibility_DQM_cfi")
+process.load("HLTrigger.HLTanalyzers.hltOfflineReproducibilityDQM_cfi")
 
 process.DQMoutput = cms.OutputModule("PoolOutputModule",
                                      splitLevel = cms.untracked.int32(0),
@@ -25,7 +25,7 @@ process.DQMoutput = cms.OutputModule("PoolOutputModule",
     )
                                      )
 
-process.p_step = cms.Path(process.hltofflinereproducibility_dqm)
+process.p_step = cms.Path(process.hltOfflineReproducibilityDQM)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 
