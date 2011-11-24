@@ -210,6 +210,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         HltTree->Branch(trigName+"_Prescl",trigPrescl+itrig,trigName+"_Prescl/I");
       }
 
+      int itdum = ntrigs;
       for (unsigned int idum = 0; idum < dummyBranches_.size(); ++idum) {
 	TString trigName(dummyBranches_[idum].data());
 	bool addThisBranch = 1;
@@ -218,8 +219,11 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 	  if(trigName == realTrigName) addThisBranch = 0;
 	}
 	if(addThisBranch){
-	  HltTree->Branch(trigName,trigflag+idum,trigName+"/I");
-	  HltTree->Branch(trigName+"_Prescl",trigPrescl+idum,trigName+"_Prescl/I");
+	  HltTree->Branch(trigName,trigflag+itdum,trigName+"/I");
+	  HltTree->Branch(trigName+"_Prescl",trigPrescl+itdum,trigName+"_Prescl/I");
+	  trigflag[itdum] = 0;
+	  trigPrescl[itdum] = 0;
+	  ++itdum;
 	}
       }
 
