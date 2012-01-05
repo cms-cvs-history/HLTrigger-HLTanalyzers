@@ -15,6 +15,12 @@ process.source = cms.Source("PoolSource",
 
 process.load("HLTrigger.HLTanalyzers.hltOfflineReproducibilityDQM_cfi")
 
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cfi')
+from Configuration.AlCa.autoCond import autoCond
+process.GlobalTag.globaltag = autoCond['hltonline']
+process.GlobalTag.connect   = 'frontier://FrontierProd/CMS_COND_31X_GLOBALTAG'
+process.GlobalTag.pfnPrefix = cms.untracked.string('frontier://FrontierProd/')
+
 process.DQMoutput = cms.OutputModule("PoolOutputModule",
                                      splitLevel = cms.untracked.int32(0),
                                      outputCommands = process.DQMEventContent.outputCommands,
