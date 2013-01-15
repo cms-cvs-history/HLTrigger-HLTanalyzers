@@ -20,6 +20,7 @@
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetup.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 
+using namespace std;
 
 HLTInfo::HLTInfo() {
 
@@ -192,13 +193,13 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 		      edm::Event const& iEvent,
                       TTree* HltTree) {
 
-//   std::cout << " Beginning HLTInfo " << std::endl;
-
+  //  std::cout << " Beginning HLTInfo " << std::endl;
 
   /////////// Analyzing HLT Trigger Results (TriggerResults) //////////
   if (hltresults.isValid()) {
     int ntrigs = hltresults->size();
     if (ntrigs==0){std::cout << "%HLTInfo -- No trigger name given in TriggerResults of the input " << std::endl;}
+    // cout<<"n trigs : "<<ntrigs<<endl;
 
     edm::TriggerNames const& triggerNames = iEvent.triggerNames(*hltresults);
 
@@ -211,7 +212,10 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       }
 
       int itdum = ntrigs;
+      //      cout<<"N dummy branches : "<<dummyBranches_.size()<<endl;
+
       for (unsigned int idum = 0; idum < dummyBranches_.size(); ++idum) {
+	cout<<"dummy : "<<idum<<endl;
 	TString trigName(dummyBranches_[idum].data());
 	bool addThisBranch = 1;
 	for (int itrig = 0; itrig != ntrigs; ++itrig) {
@@ -219,6 +223,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 	  if(trigName == realTrigName) addThisBranch = 0;
 	}
 	if(addThisBranch){
+	  cout<<"Adding branch : "<<trigName.Data()<<endl;
 	  HltTree->Branch(trigName,trigflag+itdum,trigName+"/I");
 	  HltTree->Branch(trigName+"_Prescl",trigPrescl+itdum,trigName+"_Prescl/I");
 	  trigflag[itdum] = 0;
@@ -231,10 +236,12 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     }
     // ...Fill the corresponding accepts in branch-variables
 
-    //std::cout << "Number of prescale sets: " << hltConfig_.prescaleSize() << std::endl;
-    //std::cout << "Number of HLT paths: " << hltConfig_.size() << std::endl;
-    //int presclSet = hltConfig_.prescaleSet(iEvent, eventSetup);
-    //std::cout<<"\tPrescale set number: "<< presclSet <<std::endl; 
+    if(_Debug){
+    std::cout << "Number of prescale sets: " << hltConfig_.prescaleSize() << std::endl;
+    std::cout << "Number of HLT paths: " << hltConfig_.size() << std::endl;
+    int presclSet = hltConfig_.prescaleSet(iEvent, eventSetup);
+    std::cout<<"\tPrescale set number: "<< presclSet <<std::endl; 
+    }
 
     for (int itrig = 0; itrig != ntrigs; ++itrig){
 
@@ -243,6 +250,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 
       trigPrescl[itrig] = hltConfig_.prescaleValue(iEvent, eventSetup, trigName);
 
+      //      _Debug = true;
 
       if (accept){trigflag[itrig] = 1;}
       else {trigflag[itrig] = 0;}
@@ -256,7 +264,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   else { if (_Debug) std::cout << "%HLTInfo -- No Trigger Result" << std::endl;}
 
   /////////// Analyzing L1Extra objects //////////
-
+  cout<<"beginning L1Extra"<<endl;
   const int maxL1EmIsol = 4;
   for (int i=0; i!=maxL1EmIsol; ++i){
     l1extiemet[i] = -999.;
@@ -413,7 +421,10 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     myl1taus = * L1ExtTau;
     std::sort(myl1taus.begin(),myl1taus.end(),EtGreater());
     int il1extau = 0;
+
     for (l1extra::L1JetParticleCollection::const_iterator tauItr = myl1taus.begin(); tauItr != myl1taus.end(); ++tauItr) {
+
+      if(_Debug) cout<<"il1extau "<<il1extau<<endl;
       l1exttauet[il1extau] = tauItr->et();
       l1exttaue[il1extau] = tauItr->energy();
       l1exttaueta[il1extau] = tauItr->eta();
@@ -426,7 +437,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_Debug) std::cout << "%HLTInfo -- No L1 TAU object" << std::endl;
   }
 
-  if (L1ExtMet.isValid()) {
+  if (L1ExtMet.isValid() && L1ExtMet->size() > 0) {
     met    = L1ExtMet->begin()->etMiss();
     metphi = L1ExtMet->begin()->phi();
     ettot  = L1ExtMet->begin()->etTotal();
@@ -435,7 +446,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_Debug) std::cout << "%HLTInfo -- No L1 MET object" << std::endl;
   }
 
-  if (L1ExtMht.isValid()) {
+  if (L1ExtMht.isValid() && L1ExtMht->size() > 0) {
     mht    = L1ExtMht->begin()->etMiss();
     mhtphi = L1ExtMht->begin()->phi();
     ethad  = L1ExtMht->begin()->etTotal();
@@ -447,6 +458,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   //==============L1 information=======================================
 
   // L1 Triggers from Menu
+  if(_Debug) cout<<"Beginning L1 menu"<<endl;
 
   m_l1GtUtils.retrieveL1EventSetup(eventSetup);
   edm::ESHandle<L1GtTriggerMenu> menuRcd;
